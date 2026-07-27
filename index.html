@@ -40,9 +40,7 @@
         #pdfViewerContainer { width: 100%; height: 600px; border: 1px solid #ccc; background: #f0f0f0; display: none; }
         iframe { width: 100%; height: 100%; border: none; }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
-</head
+</head>
 <body>
 
 <div class="container">
@@ -89,6 +87,7 @@
             </div>
         </div>
     </div>
+    
     <!-- 2.5 Fascia -->
     <div class="section">
         <h2>2.5 Fascia</h2>
@@ -101,6 +100,7 @@
             </select>
         </div>
     </div>
+
     <!-- 3. Sezione Classi di Concorso -->
     <div class="section">
         <h2>3. Classi di Concorso</h2>
@@ -120,10 +120,10 @@
     <!-- 4. Sezione Visualizzazione PDF -->
     <div class="section">
         <h2>4. Anteprima Documento</h2>
-        <div id="pdfViewerContainer" style="width: 100%; height: 600px; border: 1px solid #ccc; background: #f0f0f0; display: none; overflow: auto;">
-            <div id="pdfViewer" style="display: inline-block; min-width: 100%; padding: 15px; box-sizing: border-box;"></div>
+        <div id="pdfViewerContainer">
+            <iframe id="pdfViewer" title="Anteprima PDF"></iframe>
         </div>
-    </div
+    </div>
 </div>
 
 <script>
@@ -310,7 +310,7 @@
         statusMsg.innerText = "Estrazione dati in corso... Attendi. (Il primo avvio può richiedere fino a 1 minuto).";
 
         try {
-                        const fasciaSelezionata = document.getElementById('fasciaSelect').value;
+            const fasciaSelezionata = document.getElementById('fasciaSelect').value;
 
             const response = await fetch(RENDER_URL, {
                 method: 'POST',
@@ -334,51 +334,12 @@
             }
 
             const blob = await response.blob();
-            const arrayBuffer = await blob.arrayBuffer();
-            
-            // Pulizia viewer precedente
-            const pdfViewerDiv = document.getElementById('pdfViewer');
-            pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
+            const url = window.URL.createObjectURL(blob);
+            pdfViewer.src = url;
             pdfContainer.style.display = 'block';
 
-            try {
-                // Usa PDF.js per leggere il PDF e trasformarlo in immagini visibili su mobile
-                const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-                pdfViewerDiv.innerHTML = ''; // Pulisce il messaggio di caricamento
-
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    const page = await pdf.getPage(pageNum);
-                    const viewport = page.getViewport({ scale: 1.5 });
-
-                    // Crea un canvas (tela) per ogni pagina
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    canvas.style.display = "block";
-                    canvas.style.marginBottom = "15px";
-                    canvas.style.border = "1px solid #ccc";
-                    canvas.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
-                    canvas.style.maxWidth = "none"; // IMPEDISCE AL BROWSER DI RIMPICCIOLIRE IL PDF
-
-                    pdfViewerDiv.appendChild(canvas);
-
-                    // Disegna la pagina sul canvas
-                    await page.render({
-                        canvasContext: context,
-                        viewport: viewport
-                    }).promise;
-                }
-
-                statusMsg.style.color = "green";
-                statusMsg.innerText = "PDF generato con successo! Visualizzalo qui sotto.";
-
-            } catch (renderError) {
-                console.error('Errore rendering PDF:', renderError);
-                pdfViewerDiv.innerHTML = '<p style="color:red;">Errore nella visualizzazione del PDF.</p>';
-                statusMsg.style.color = "red";
-                statusMsg.innerText = "Errore di visualizzazione.";
-            }
+            statusMsg.style.color = "green";
+            statusMsg.innerText = "PDF generato con successo! Visualizzalo nella Sezione 4.";
 
         } catch (error) {
             console.error('Errore:', error);
