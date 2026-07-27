@@ -122,9 +122,10 @@
     <!-- 4. Sezione Visualizzazione PDF -->
     <div class="section">
         <h2>4. Anteprima Documento</h2>
-        <div id="pdfViewerContainer">
-            <div id="pdfViewer" style="width: 100%; min-height: 600px; background: #f0f0f0; display: flex; flex-direction: column; align-items: center;"></div>
+        <div id="pdfViewerContainer" style="width: 100%; height: 600px; border: 1px solid #ccc; background: #f0f0f0; display: none; overflow-y: auto;">
+            <div id="pdfViewer" style="display: flex; flex-direction: column; align-items: center; padding: 15px; box-sizing: border-box;"></div>
         </div>
+    </div>
     </div>
 </div>
 
@@ -335,16 +336,15 @@
                 throw new Error(errorMessage);
             }
 
-            const blob = await response.blob();
+                        const blob = await response.blob();
             const arrayBuffer = await blob.arrayBuffer();
             
-            // Pulizia viewer precedente
             const pdfViewerDiv = document.getElementById('pdfViewer');
             pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
             pdfContainer.style.display = 'block';
 
             try {
-                // Usa PDF.js per leggere il PDF e trasformarlo in immagini visibili su mobile
+                // Usa PDF.js per leggere il PDF
                 const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
                 pdfViewerDiv.innerHTML = ''; // Pulisce il messaggio di caricamento
 
@@ -357,10 +357,12 @@
                     const context = canvas.getContext('2d');
                     canvas.width = viewport.width;
                     canvas.height = viewport.height;
-                    canvas.style.width = "100%";
+                    
+                    // QUESTE TRE RIGHE SONO FONDAMENTALI PER NON ROMPERE IL LAYOUT SU MOBILE
+                    canvas.style.display = "block";
+                    canvas.style.maxWidth = "100%";
                     canvas.style.height = "auto";
-                    canvas.style.marginBottom = "10px";
-                    canvas.style.border = "1px solid #ccc";
+                    canvas.style.marginBottom = "15px";
                     canvas.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
 
                     pdfViewerDiv.appendChild(canvas);
@@ -381,16 +383,6 @@
                 statusMsg.style.color = "red";
                 statusMsg.innerText = "Errore di visualizzazione.";
             }
-
-        } catch (error) {
-            console.error('Errore:', error);
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Errore: " + error.message;
-        } finally {
-            // Riabilita il bottone a fine operazione
-            btn.disabled = false;
-            btn.innerText = "Genera e Visualizza PDF";
-        }
     }
 </script>
 </body>
