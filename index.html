@@ -403,14 +403,6 @@
                 statusMsg.style.color = "red";
                 statusMsg.innerText = "Errore di visualizzazione.";
             }
-        } catch (error) {
-            console.error('Errore:', error);
-            statusMsg.style.color = "red";
-            statusMsg.innerText = error.message || "Errore nella generazione del PDF.";
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Genera PDF";
-        }
     }
 </script>
 </body>
