@@ -48,15 +48,15 @@
             border: 1px solid #ddd; border-radius: 8px; background: #fff; height: 450px;
         }
         
-        .formula-box {
-            text-align: center; margin-bottom: 20px; font-size: 1.1em; color: #555;
-        }
+        /* Stile per la frazione matematica in puro CSS */
+        .formula-box { text-align: center; margin: 30px 0; font-size: 1.2em; color: #333; }
+        .fraction { display: inline-block; vertical-align: middle; text-align: center; margin: 0 5px; }
+        .fraction .numerator { display: block; border-bottom: 2px solid #333; padding: 0 5px 2px 5px; }
+        .fraction .denominator { display: block; padding: 2px 5px 0 5px; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Libreria MathJax per la formula matematica -->
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
 
@@ -132,7 +132,13 @@
         
         <div class="formula-box">
             <p>Indica quante opzioni scolastiche teoriche ha a disposizione ciascun candidato.</p>
-            <p>$$\text{Scuole per Candidato} = \frac{\text{Numero Scuole }(S)}{\text{Numero Candidati }(C)}$$</p>
+            <p>
+                Scuole per Candidato = 
+                <span class="fraction">
+                    <span class="numerator">Numero Scuole (S)</span>
+                    <span class="denominator">Numero Candidati (C)</span>
+                </span>
+            </p>
         </div>
 
         <div id="chartContainer">
@@ -381,11 +387,6 @@
                 });
                 
                 chartSection.style.display = 'block';
-                
-                // Forza MathJax a renderizzare la formula nel caso non l'avesse fatto a caricamento pagina
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([chartSection]);
-                }
             } else {
                 chartSection.style.display = 'none';
             }
