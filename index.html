@@ -273,6 +273,9 @@
 
             // Riceve il pacchetto JSON con PDF e Stats
             const data = await response.json();
+            
+            // --- RIGA DI DEBUG ---
+            console.log("DEBUG DATI RICEVUTI DAL SERVER:", data);
 
             // 1. Decodifica il PDF Base64 e mostralo
             const byteCharacters = atob(data.pdf_base64);
