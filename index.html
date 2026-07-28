@@ -307,22 +307,26 @@
 
             const data = await response.json();
 
-            // 1. Decodifica PDF
-            const byteCharacters = atob(data.pdf_base64);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
-            const arrayBuffer = new Uint8Array(byteNumbers).buffer;
+// 1. Decodifica PDF
+const byteCharacters = atob(data.pdf_base64);
+const byteNumbers = new Array(byteCharacters.length);
+for (let i = 0; i < byteCharacters.length; i++) { 
+    byteNumbers[i] = byteCharacters.charCodeAt(i); 
+}
+const arrayBuffer = new Uint8Array(byteNumbers).buffer;
 
-            pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
-            pdfContainer.style.display = 'block';
+pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
+pdfContainer.style.display = 'block';
 
-            // isEvalSupported: false RISOLVE L'ERRORE CSP eval()
-            const pdf = await pdfjsLib.getDocument({ 
-                data: arrayBuffer, 
-                isEvalSupported: false 
-            }).promise;
-            
-            pdfViewerDiv.innerHTML = '';
+// === MODIFICA QUI ===
+// Aggiungi l'opzione isEvalSupported: false all'oggetto di configurazione
+const pdf = await pdfjsLib.getDocument({
+    data: arrayBuffer,
+    isEvalSupported: false // <--- Disabilita l'uso interno di eval() / new Function()
+}).promise;
+// ====================
+
+pdfViewerDiv.innerHTML = '';
 
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
