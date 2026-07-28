@@ -15,12 +15,10 @@
         
         select, input[type="text"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
         
-        /* Layout per Select ridotta + Box dei Tag */
         .multi-select-wrapper { display: flex; gap: 15px; align-items: flex-start; }
         .select-box { width: 30%; }
         .tags-container { flex: 1; min-height: 35px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
         
-        /* Stili dei Tag (scelte fatte) */
         .tag { background: #3498db; color: white; padding: 5px 10px; border-radius: 15px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
         .tag .remove-tag { cursor: pointer; font-weight: bold; background: rgba(0,0,0,0.2); border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1; }
         .tag .remove-tag:hover { background: rgba(0,0,0,0.4); }
@@ -38,43 +36,36 @@
         #statusMessage { text-align: center; margin-top: 15px; font-weight: bold; }
         #noClassiMsg { color: #e74c3c; font-style: italic; display: none; }
         
-        /* BOX VISUALIZZAZIONE PDF */
+        /* BOX PDF */
         #pdfViewerContainer { 
-            width: 100%; 
-            height: 600px; /* Altezza fissa del box */
-            border: 1px solid #ccc; 
-            background: #f0f0f0; 
+            width: 100%; height: 600px; border: 1px solid #ccc; background: #f0f0f0; 
+            display: none; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; 
+        }
+        #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; box-sizing: border-box; }
+        #pdfViewer canvas { max-width: 100%; height: auto; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; }
+
+        /* BOX GRAFICO */
+        #chartContainer { 
             display: none; 
-            overflow-y: auto; /* Barra di scorrimento verticale DENTRO il box */
-            overflow-x: hidden; 
-            -webkit-overflow-scrolling: touch; /* Scorrevolezza fluida su iPhone */
-        }
-        #pdfViewer {
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Centra i fogli PDF nel box */
-            padding: 15px;
-            box-sizing: border-box;
-        }
-        /* Stili per le pagine PDF generate (Canvas) */
-        #pdfViewer canvas {
-            max-width: 100%; /* IMPEDISCE AI FOGLI DI SFONDARE IL BOX LATERALMENTE */
-            height: auto;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            background: white;
+            max-width: 500px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            background: #fff; 
         }
     </style>
-    <!-- Libreria PDF.js per visualizzare il PDF su tutti i dispositivi (PC e Cellulare) -->
+    <!-- Librerie PDF.js e Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
 <div class="container">
     <h1>Portale Estrazione PDF</h1>
 
-    <!-- 1. Sezione Regioni e Province Multiple -->
+    <!-- 1. Luogo -->
     <div class="section">
         <h2>1. Luogo</h2>
         <div class="form-group">
@@ -97,22 +88,13 @@
         </div>
     </div>
 
-    <!-- 2. Ordine di Scuola -->
+    <!-- 2. Ordine -->
     <div class="section">
         <h2>2. Ordine di Scuola</h2>
         <div class="checkbox-group" onchange="aggiornaClassiVisibili()">
-            <div class="checkbox-item">
-                <input type="checkbox" id="ord_inf_prim" name="ordineScuola" value="infanzia_primaria">
-                <label for="ord_inf_prim" style="display:inline;">Infanzia e Primaria</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="ord_sec1" name="ordineScuola" value="secondaria_I">
-                <label for="ord_sec1" style="display:inline;">Sec. I grado</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="ord_sec2" name="ordineScuola" value="secondaria_II">
-                <label for="ord_sec2" style="display:inline;">Sec. II grado</label>
-            </div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_inf_prim" name="ordineScuola" value="infanzia_primaria"><label for="ord_inf_prim" style="display:inline;">Infanzia e Primaria</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_sec1" name="ordineScuola" value="secondaria_I"><label for="ord_sec1" style="display:inline;">Sec. I grado</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_sec2" name="ordineScuola" value="secondaria_II"><label for="ord_sec2" style="display:inline;">Sec. II grado</label></div>
         </div>
     </div>
     
@@ -129,7 +111,7 @@
         </div>
     </div>
 
-    <!-- 3. Sezione Classi di Concorso -->
+    <!-- 3. Classi -->
     <div class="section">
         <h2>3. Classi di Concorso</h2>
         <div class="form-group">
@@ -139,15 +121,23 @@
         <p id="noClassiMsg">Seleziona almeno un Ordine di Scuola per visualizzare le classi.</p>
     </div>
 
-    <!-- Pulsante Genera PDF -->
+    <!-- Pulsante -->
     <div class="section">
-        <button id="generaBtn" onclick="generaPDF()">Genera e Visualizza PDF</button>
+        <button id="generaBtn" onclick="generaPDF()">Genera e Visualizza Dati e PDF</button>
         <div id="statusMessage"></div>
     </div>
 
-    <!-- 4. Sezione Visualizzazione PDF -->
+    <!-- 4. Grafico Statistiche -->
+    <div class="section" id="chartSection" style="display: none;">
+        <h2>4. Statistiche Estrazione</h2>
+        <div id="chartContainer">
+            <canvas id="statsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- 5. PDF -->
     <div class="section">
-        <h2>4. Anteprima Documento</h2>
+        <h2>5. Anteprima Documento</h2>
         <div id="pdfViewerContainer">
             <div id="pdfViewer"></div>
         </div>
@@ -155,33 +145,13 @@
 </div>
 
 <script>
-    // ⚠️ INSERISCI QUI L'URL DEL TUO SERVER RENDER (con /genera-pdf alla fine)
     const RENDER_URL = "https://gps-posizione.onrender.com/genera-pdf";
 
-    const regioniProvince = {
-        "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"],
-        "Basilicata": ["Matera", "Potenza"],
-        "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"],
-        "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"],
-        "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"],
-        "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"],
-        "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"],
-        "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"],
-        "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"],
-        "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"],
-        "Molise": ["Campobasso", "Isernia"],
-        "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"],
-        "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"],
-        "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"],
-        "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"],
-        "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"],
-        "Trentino-Alto Adige": ["Bolzano", "Trento"],
-        "Umbria": ["Perugia", "Terni"],
-        "Valle d'Aosta": ["Aosta"],
-        "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"]
+    const regioniProvince = { /* Invariato */
+        "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"]
     };
 
-    const classiConcorsoDB = {
+    const classiConcorsoDB = { /* Invariato */
         "infanzia_primaria": ["AA01 - Sostegno Infanzia", "AA02 - Sostegno Primaria", "AE01 - Educatore dei servizi per l'infanzia", "AB1 - Scuola dell'infanzia e primaria"],
         "secondaria_I": ["AB24 - Sostegno Sec. I grado", "A011 - Arte e immagine", "A012 - Diritto ed economia", "A013 - Educazione musicale", "A014 - Educazione tecnica", "A015 - Educazione fisica", "A016 - Francese", "A017 - Geografia", "A018 - Inglese", "A019 - Italiano, storia, geografia", "A020 - Latino e storia", "A021 - Matematica e scienze", "A022 - Scienze integrate", "A023 - Spagnolo", "A024 - Tedesco", "A076 - Strumento musicale (Scuola Sec. I grado)", "A077 - Musica d'insieme (Scuola Sec. I grado)", "AM56 - Scuola Secondaria I grado (MM)"],
         "secondaria_II": ["AB25 - Sostegno Sec. II grado", "A019 - Italiano, Storia, Geografia (Sec. II)", "A020 - Latino, Storia, Geografia (Sec. II)", "A017 - Filosofia e Storia", "A018 - Lettere", "A050 - Storia, Filosofia e Pedagogia", "A026 - Matematica", "A027 - Matematica e Fisica", "A028 - Informatica", "A029 - Fisica", "A030 - Scienze naturali, chimica e biologia", "A031 - Chimica", "A032 - Scienze e tecnologie chimiche", "A034 - Francese (Sec. II)", "A035 - Inglese (Sec. II)", "A036 - Spagnolo (Sec. II)", "A037 - Tedesco (Sec. II)", "A040 - Disegno e storia dell'arte", "A041 - Costruzioni, tecnica e progettazione", "A043 - Tecnologia della progettazione", "A044 - Elettronica", "A045 - Elettrotecnica e automazione", "A046 - Meccanica e macchine", "A047 - Tecnologia e disegno", "A048 - Informatica (professionale)", "A049 - Discipline geometriche", "A052 - Discipline muscolari e sportive", "A054 - Discipline giuridiche ed economiche", "A055 - Diritto ed economia politica", "A053 - Geografia", "A054 - Scienze umane", "A055 - Storia, filosofia e scienze umane", "A031 - Canto (Liceo Musicale)", "A032 - Composizione (Liceo Musicale)", "A033 - Direzione di coro e composizione corale", "A034 - Strumenti a tastiera (Pianoforte e Organo)", "A035 - Strumenti ad arco (Violino, Viola, Violoncello, Contrabbasso)", "A036 - Strumenti a pizzico (Chitarra, Arpa, Liuto)", "A037 - Strumenti a fiato (Flauto, Clarinetto, Oboe, Fagotto, Sassofoni)", "A038 - Strumenti a percussione", "A039 - Storia della musica (Liceo Musicale)", "A040 - Tecnica del suono e delle riprese audio"]
@@ -189,129 +159,73 @@
 
     let selectedRegioni = [];
     let selectedProvince = [];
+    let myChart = null; // Variabile per il grafico
 
     window.onload = function() {
         const regioneSelect = document.getElementById('regioneSelect');
         for (let regione in regioniProvince) {
             let option = document.createElement('option');
-            option.value = regione;
-            option.text = regione;
-            regioneSelect.add(option);
+            option.value = regione; option.text = regione; regioneSelect.add(option);
         }
         aggiornaClassiVisibili();
     };
 
-    function addRegione() {
+    function addRegione() { /* Invariato */
         const select = document.getElementById('regioneSelect');
-        if (select.value && !selectedRegioni.includes(select.value)) {
-            selectedRegioni.push(select.value);
-            renderTags();
-            updateProvinceDropdown();
-        }
+        if (select.value && !selectedRegioni.includes(select.value)) { selectedRegioni.push(select.value); renderTags(); updateProvinceDropdown(); }
         select.value = "";
     }
-
-    function removeRegione(val) {
+    function removeRegione(val) { /* Invariato */
         selectedRegioni = selectedRegioni.filter(r => r !== val);
         selectedProvince = selectedProvince.filter(p => !regioniProvince[val].includes(p));
-        renderTags();
-        updateProvinceDropdown();
+        renderTags(); updateProvinceDropdown();
     }
-
-    function addProvincia() {
+    function addProvincia() { /* Invariato */
         const select = document.getElementById('provinciaSelect');
-        if (select.value && !selectedProvince.includes(select.value)) {
-            selectedProvince.push(select.value);
-            renderTags();
-        }
+        if (select.value && !selectedProvince.includes(select.value)) { selectedProvince.push(select.value); renderTags(); }
         select.value = "";
     }
-
-    function removeProvincia(val) {
-        selectedProvince = selectedProvince.filter(p => p !== val);
-        renderTags();
+    function removeProvincia(val) { /* Invariato */
+        selectedProvince = selectedProvince.filter(p => p !== val); renderTags();
     }
-
-    function updateProvinceDropdown() {
+    function updateProvinceDropdown() { /* Invariato */
         const provinciaSelect = document.getElementById('provinciaSelect');
         provinciaSelect.innerHTML = '<option value="">+ Aggiungi Provincia</option>';
-        selectedRegioni.forEach(regione => {
-            regioniProvince[regione].forEach(provincia => {
-                let option = document.createElement('option');
-                option.value = provincia;
-                option.text = provincia;
-                provinciaSelect.add(option);
-            });
-        });
+        selectedRegioni.forEach(regione => { regioniProvince[regione].forEach(provincia => { let option = document.createElement('option'); option.value = provincia; option.text = provincia; provinciaSelect.add(option); }); });
     }
-
-    function renderTags() {
+    function renderTags() { /* Invariato */
         const regioniTagsDiv = document.getElementById('regioniTags');
         const provinceTagsDiv = document.getElementById('provinceTags');
-        regioniTagsDiv.innerHTML = '';
-        provinceTagsDiv.innerHTML = '';
-
-        selectedRegioni.forEach(r => {
-            let tag = document.createElement('div');
-            tag.className = 'tag';
-            tag.innerHTML = `${r} <span class="remove-tag" onclick="removeRegione('${r}')">&times;</span>`;
-            regioniTagsDiv.appendChild(tag);
-        });
-
-        selectedProvince.forEach(p => {
-            let tag = document.createElement('div');
-            tag.className = 'tag';
-            tag.innerHTML = `${p} <span class="remove-tag" onclick="removeProvincia('${p.replace(/'/g, "\\'")}')">&times;</span>`;
-            provinceTagsDiv.appendChild(tag);
-        });
+        regioniTagsDiv.innerHTML = ''; provinceTagsDiv.innerHTML = '';
+        selectedRegioni.forEach(r => { let tag = document.createElement('div'); tag.className = 'tag'; tag.innerHTML = `${r} <span class="remove-tag" onclick="removeRegione('${r}')">&times;</span>`; regioniTagsDiv.appendChild(tag); });
+        selectedProvince.forEach(p => { let tag = document.createElement('div'); tag.className = 'tag'; tag.innerHTML = `${p} <span class="remove-tag" onclick="removeProvincia('${p.replace(/'/g, "\\'")}')">&times;</span>`; provinceTagsDiv.appendChild(tag); });
     }
-
-    function aggiornaClassiVisibili() {
+    function aggiornaClassiVisibili() { /* Invariato */
         const container = document.getElementById('classiContainer');
         const noClassiMsg = document.getElementById('noClassiMsg');
         container.innerHTML = '';
         let ordiniSelezionati = [];
         document.querySelectorAll('input[name="ordineScuola"]:checked').forEach(cb => ordiniSelezionati.push(cb.value));
-
-        if (ordiniSelezionati.length === 0) {
-            noClassiMsg.style.display = 'block';
-            return;
-        }
+        if (ordiniSelezionati.length === 0) { noClassiMsg.style.display = 'block'; return; }
         noClassiMsg.style.display = 'none';
-
         ordiniSelezionati.forEach(ordine => {
             if (classiConcorsoDB[ordine]) {
                 classiConcorsoDB[ordine].forEach(classe => {
-                    let div = document.createElement('div');
-                    div.className = 'classe-item';
-                    let input = document.createElement('input');
-                    input.type = 'checkbox';
-                    input.id = classe.replace(/\s+/g, '-');
-                    input.value = classe;
-                    let label = document.createElement('label');
-                    label.htmlFor = input.id;
-                    label.textContent = classe;
-                    div.appendChild(input);
-                    div.appendChild(label);
-                    container.appendChild(div);
+                    let div = document.createElement('div'); div.className = 'classe-item';
+                    let input = document.createElement('input'); input.type = 'checkbox'; input.id = classe.replace(/\s+/g, '-'); input.value = classe;
+                    let label = document.createElement('label'); label.htmlFor = input.id; label.textContent = classe;
+                    div.appendChild(input); div.appendChild(label); container.appendChild(div);
                 });
             }
         });
         filtraClassi();
     }
-
-    function filtraClassi() {
-        let input = document.getElementById('searchClassi');
-        let filter = input.value.toLowerCase();
+    function filtraClassi() { /* Invariato */
+        let input = document.getElementById('searchClassi'); let filter = input.value.toLowerCase();
         let items = document.getElementsByClassName('classe-item');
         for (let i = 0; i < items.length; i++) {
-            let label = items[i].getElementsByTagName('label')[0];
-            let txtValue = label.textContent || label.innerText;
-            if (txtValue.toLowerCase().indexOf(filter) > -1) {
-                items[i].style.display = "";
-            } else {
-                items[i].style.display = "none";
-            }
+            let label = items[i].getElementsByTagName('label')[0]; let txtValue = label.textContent || label.innerText;
+            if (txtValue.toLowerCase().indexOf(filter) > -1) { items[i].style.display = ""; } else { items[i].style.display = "none"; }
         }
     }
 
@@ -319,6 +233,7 @@
         const statusMsg = document.getElementById('statusMessage');
         const pdfViewerDiv = document.getElementById('pdfViewer');
         const pdfContainer = document.getElementById('pdfViewerContainer');
+        const chartSection = document.getElementById('chartSection');
         const btn = document.getElementById('generaBtn');
         
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
@@ -331,7 +246,6 @@
             return;
         }
 
-        // Disabilita il bottone e mostra il caricamento
         btn.disabled = true;
         btn.innerText = "Generazione in corso...";
         statusMsg.style.color = "blue";
@@ -351,65 +265,92 @@
                 })
             });
 
-            // Se il server restituisce un errore
             if (!response.ok) {
                 let errorMessage = "Errore sconosciuto durante la generazione.";
-                try {
-                    const errorData = await response.json();
-                    if (errorData.error) errorMessage = errorData.error;
-                } catch (e) {}
+                try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {}
                 throw new Error(errorMessage);
             }
 
-            const blob = await response.blob();
-            const arrayBuffer = await blob.arrayBuffer();
-            
-            // Mostra il box e messaggio di caricamento
+            // Riceve il pacchetto JSON con PDF e Stats
+            const data = await response.json();
+
+            // 1. Decodifica il PDF Base64 e mostralo
+            const byteCharacters = atob(data.pdf_base64);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const arrayBuffer = new Uint8Array(byteNumbers).buffer;
+
             pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
             pdfContainer.style.display = 'block';
 
-            try {
-                // Usa PDF.js per leggere il PDF e trasformarlo in immagini
-                const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-                pdfViewerDiv.innerHTML = ''; // Pulisce il messaggio di caricamento
+            const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+            pdfViewerDiv.innerHTML = '';
 
-                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                    const page = await pdf.getPage(pageNum);
-                    const viewport = page.getViewport({ scale: 1.5 });
-
-                    // Crea un canvas (tela) per ogni pagina
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.width = viewport.width;
-                    canvas.height = viewport.height;
-                    
-                    pdfViewerDiv.appendChild(canvas);
-
-                    // Disegna la pagina sul canvas
-                    await page.render({
-                        canvasContext: context,
-                        viewport: viewport
-                    }).promise;
-                }
-
-                statusMsg.style.color = "green";
-                statusMsg.innerText = "PDF generato con successo! Visualizzalo qui sotto.";
-
-            } catch (renderError) {
-                console.error('Errore rendering PDF:', renderError);
-                pdfViewerDiv.innerHTML = '<p style="color:red;">Errore nella visualizzazione del PDF.</p>';
-                statusMsg.style.color = "red";
-                statusMsg.innerText = "Errore di visualizzazione.";
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = viewport.width; canvas.height = viewport.height;
+                pdfViewerDiv.appendChild(canvas);
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
             }
+
+            // 2. Disegna il Grafico a Torta
+            const stats = data.stats;
+            const labels = Object.keys(stats);
+            const values = Object.values(stats);
+
+            if (labels.length > 0) {
+                const ctx = document.getElementById('statsChart').getContext('2d');
+                if (myChart) { myChart.destroy(); } // Distrugge il grafico vecchio se presente
+                
+                // Genera colori casuali per ogni spicco
+                const dynamicColors = () => {
+                    const r = Math.floor(Math.random() * 200);
+                    const g = Math.floor(Math.random() * 200);
+                    const b = Math.floor(Math.random() * 200);
+                    return `rgba(${r}, ${g}, ${b}, 0.7)`;
+                };
+                const bgColors = labels.map(() => dynamicColors());
+
+                myChart = new Chart(ctx, {
+                    type: 'doughnut', // 'pie' o 'doughnut'
+                    data: {
+                        labels: labels.map(l => `${l} (${stats[l]})`),
+                        datasets: [{
+                            label: 'Candidati',
+                            data: values,
+                            backgroundColor: bgColors,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            title: { display: true, text: 'Distribuzione Candidati per Provincia' }
+                        }
+                    }
+                });
+                chartSection.style.display = 'block';
+            } else {
+                chartSection.style.display = 'none';
+            }
+
+            statusMsg.style.color = "green";
+            statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sotto.";
 
         } catch (error) {
             console.error('Errore:', error);
             statusMsg.style.color = "red";
             statusMsg.innerText = "Errore: " + error.message;
         } finally {
-            // Riabilita il bottone a fine operazione
             btn.disabled = false;
-            btn.innerText = "Genera e Visualizza PDF";
+            btn.innerText = "Genera e Visualizza Dati e PDF";
         }
     }
 </script>
