@@ -163,14 +163,18 @@
     <div class="section" id="chartSection" style="display: none;">
         <h2>5. Statistiche Estrazione</h2>
         
+        <!-- NUOVO BLOCCO RIASSUNTIVO IN TESTA -->
+        <div id="statsTableContainer" style="margin-bottom: 20px; overflow-x: auto;"></div>
+
+        <div id="chartContainer">
+            <canvas id="statsChart"></canvas>
+        </div>
+
+        <!-- LEGGENDA SPOSTATA IN FONDO -->
         <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
             <strong>Come leggere il grafico:</strong><br>
             Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
             <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato (più alto è il valore, maggiori sono le probabilità teoriche di assunzione).
-        </div>
-
-        <div id="chartContainer">
-            <canvas id="statsChart"></canvas>
         </div>
     </div>
 </div>
@@ -368,6 +372,43 @@
             const labels = Object.keys(stats);
 
             if (labels.length > 0) {
+                // GENERA TABELLA RIASSUNTIVA IN TESTA
+                let tableHTML = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background-color: #3498db; color: white; text-align: left;">
+                                <th style="border: 1px solid #ddd; padding: 8px;">Regione</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">Provincia</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Totale Candidati</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">Candidato col punteggio più alto</th>
+                                <th style="border: 1px solid #ddd; padding: 8px;">Candidato col punteggio più basso</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Mediana</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                labels.forEach(l => {
+                    const info = stats[l];
+                    const regione = info.regione || 'N/D';
+                    // Formatta la mediana con la virgola
+                    const medianScore = info.median ? info.median.toFixed(2).replace('.', ',') : '-';
+                    
+                    tableHTML += `
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${regione}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${l}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.candidati}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${info.top || 'N/D'}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${info.bottom || 'N/D'}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${medianScore}</td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `</tbody></table>`;
+                document.getElementById('statsTableContainer').innerHTML = tableHTML;
+
                 const ctx = document.getElementById('statsChart').getContext('2d');
                 if (myChart) { myChart.destroy(); }
                 
