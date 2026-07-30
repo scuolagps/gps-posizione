@@ -163,15 +163,10 @@
     <div class="section" id="chartSection" style="display: none;">
         <h2>5. Statistiche Estrazione</h2>
         
-        <div class="formula-box">
-            <p>Indica quante opzioni scolastiche teoriche ha a disposizione ciascun candidato.</p>
-            <p>
-                Scuole per Candidato = 
-                <span class="fraction">
-                    <span class="numerator">Numero Scuole (S)</span>
-                    <span class="denominator">Numero Candidati (C)</span>
-                </span>
-            </p>
+        <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
+            <strong>Come leggere il grafico:</strong><br>
+            Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
+            <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato (più alto è il valore, maggiori sono le probabilità teoriche di assunzione).
         </div>
 
         <div id="chartContainer">
@@ -402,7 +397,7 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        indexAxis: 'y', // Grafico a barre orizzontali per stare nelle province
+                        // Rimosso indexAxis: 'y' per renderlo verticale
                         plugins: {
                             legend: { display: false },
                             title: { display: true, text: 'Rapporto Scuole per Candidato (S/C)', font: { size: 14 } },
@@ -411,8 +406,10 @@
                                     label: function(context) {
                                         const prov = context.label;
                                         const info = stats[prov];
+                                        // Formatta il rapporto con la virgola e max 2 decimali (es: 1,25)
+                                        const rapportoFormattato = info.rapporto.toFixed(2).replace('.', ',');
                                         return [
-                                            `Rapporto S/C: ${info.rapporto}`,
+                                            `Rapporto S/C: ${rapportoFormattato}`,
                                             `Scuole (S): ${info.scuole}`,
                                             `Candidati (C): ${info.candidati}`
                                         ];
@@ -421,14 +418,21 @@
                             }
                         },
                         scales: {
-                            x: {
+                            y: {
                                 beginAtZero: true,
                                 title: { display: true, text: 'Rapporto (Scuole / Candidati)' }
+                            },
+                            x: {
+                                // Inclina le etichette delle province se sono tante, per evitare sovrapposizioni
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
                             }
                         }
                     }
-                });
-                
+                });                
                 chartSection.style.display = 'block';
             } else {
                 chartSection.style.display = 'none';
