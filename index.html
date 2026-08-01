@@ -351,61 +351,20 @@
             const byteCharacters = atob(data.pdf_base64);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
-            const arrayBuffer = new Uint8Array(byteNumbers).buffer;
+            const arrayBuffer = new Uint8Array(byteNumbers);
 
             pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
             pdfContainer.style.display = 'block';
 
-            // isEvalSupported: false RISOLVE L'ERRORE CSP eval()
-            const pdf = await pdfjsLib.getDocument({ 
-                data: arrayBuffer, 
-                isEvalSupported: false 
-            }).promise;
+            // Crea un file PDF virtuale (Blob) dall'array di bytes
+            const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
             
-            pdfViewerDiv.innerHTML = '';
+            // Genera un URL temporaneo per questo file
+            const pdfUrl = URL.createObjectURL(pdfBlob);
 
-            // Calcola la larghezza utile del contenitore
-            const containerWidth = pdfContainer.clientWidth - 30; 
-
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                const page = await pdf.getPage(pageNum);
-                
-                // Adatta la scala alla larghezza dello schermo
-                const baseViewport = page.getViewport({ scale: 1 });
-                const scale = Math.min(2.0, containerWidth / baseViewport.width);
-                const viewport = page.getViewport({ scale: scale });
-
-                // Crea il contenitore con dimensioni fisse per evitare bug visivi
-                const wrapper = document.createElement('div');
-                wrapper.className = 'pageWrapper';
-                wrapper.style.width = `${viewport.width}px`;
-                wrapper.style.height = `${viewport.height}px`;
-
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.width = viewport.width; 
-                canvas.height = viewport.height;
-                wrapper.appendChild(canvas);
-                
-                // Crea il layer di testo trasparente (OCR)
-                const textLayerDiv = document.createElement('div');
-                textLayerDiv.className = 'textLayer';
-                wrapper.appendChild(textLayerDiv);
-
-                pdfViewerDiv.appendChild(wrapper);
-                
-                // Renderizza l'immagine
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-                // Renderizza il testo selezionabile sopra l'immagine
-                const textContent = await page.getTextContent();
-                await pdfjsLib.renderTextLayer({
-                    textContentSource: textContent,
-                    container: textLayerDiv,
-                    viewport: viewport,
-                    textDivs: []
-                }).promise.catch(e => console.error("Errore nel render del testo:", e));
-            }
+            // Inietta il visualizzatore PDF NATIVO del browser tramite iframe.
+            // Il testo sarà 100% selezionabile e ricercabile, senza layer trasparenti.
+            pdfViewerDiv.innerHTML = `<iframe src="${pdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
 
             // 2. Disegna Grafico S/C
             const stats = data.stats;
