@@ -41,7 +41,12 @@
             display: none; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; 
         }
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; box-sizing: border-box; }
-        #pdfViewer canvas { max-width: 100%; height: auto; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; }
+        #pdfViewer canvas { display: block; }
+        
+        /* Nuovi stili per il wrapper e il livello di testo (OCR virtuale) */
+        .pdf-page-wrapper { position: relative; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; display: inline-block; }
+        .textLayer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; line-height: 1; opacity: 0.25; }
+        .textLayer > span { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
 
         #chartContainer { 
             display: block; max-width: 800px; margin: 0 auto 30px auto; padding: 20px; 
@@ -357,14 +362,47 @@
             
             pdfViewerDiv.innerHTML = '';
 
+            // Calcola la larghezza utile del contenitore per adattare il PDF (responsive)
+            const containerWidth = pdfContainer.clientWidth - 30; // -30 per compensare il padding
+
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
-                const viewport = page.getViewport({ scale: 1.5 });
+                
+                // Adatta la scala alla larghezza dello schermo per non tagliare il PDF su mobile
+                const baseViewport = page.getViewport({ scale: 1 });
+                const scale = Math.min(2.0, containerWidth / baseViewport.width);
+                const viewport = page.getViewport({ scale: scale });
+
+                // Crea un contenitore relativo per sovrapporre canvas e testo
+                const wrapper = document.createElement('div');
+                wrapper.className = 'pdf-page-wrapper';
+
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
-                canvas.width = viewport.width; canvas.height = viewport.height;
-                pdfViewerDiv.appendChild(canvas);
+                canvas.width = viewport.width; 
+                canvas.height = viewport.height;
+                wrapper.appendChild(canvas);
+                
+                // Crea il livello di testo invisibile che permetterà di selezionare e cercare il testo (OCR)
+                const textLayerDiv = document.createElement('div');
+                textLayerDiv.className = 'textLayer';
+                textLayerDiv.style.width = `${viewport.width}px`;
+                textLayerDiv.style.height = `${viewport.height}px`;
+                wrapper.appendChild(textLayerDiv);
+
+                pdfViewerDiv.appendChild(wrapper);
+                
+                // 1. Renderizza l'immagine della pagina
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                // 2. Estrai e renderizza il testo selezionabile sopra l'immagine
+                const textContent = await page.getTextContent();
+                await pdfjsLib.renderTextLayer({
+                    textContentSource: textContent,
+                    container: textLayerDiv,
+                    viewport: viewport,
+                    textDivs: []
+                }).promise.catch(e => console.error("Errore nel render del testo:", e));
             }
 
             // 2. Disegna Grafico S/C
