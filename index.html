@@ -43,10 +43,12 @@
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; box-sizing: border-box; }
         #pdfViewer canvas { display: block; }
         
-        /* Nuovi stili per il wrapper e il livello di testo (OCR virtuale) */
-        .pdf-page-wrapper { position: relative; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; display: inline-block; }
-        .textLayer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; line-height: 1; opacity: 0.25; }
-        .textLayer > span { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+        /* Wrapper perfetto che non spezza il layout flex */
+        .pageWrapper { position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; margin-bottom: 15px; }
+        
+        /* Livello di testo invisibile per effetto OCR */
+        .textLayer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; opacity: 0.25; line-height: 1; }
+        .textLayer span { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
 
         #chartContainer { 
             display: block; max-width: 800px; margin: 0 auto 30px auto; padding: 20px; 
