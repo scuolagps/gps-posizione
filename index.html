@@ -362,10 +362,13 @@
             // Genera un URL temporaneo per questo file
             const pdfUrl = URL.createObjectURL(pdfBlob);
 
-            // Inietta il visualizzatore PDF NATIVO del browser tramite iframe.
-            // Il testo sarà 100% selezionabile e ricercabile, senza layer trasparenti.
-            pdfViewerDiv.innerHTML = `<iframe src="${pdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
+            // Aggiungiamo i parametri #toolbar=0 e #navpanes=0 per nascondere 
+            // la barra degli strumenti (download, stampa, zoom) nei browser Chromium e Safari
+            const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
 
+            // Inietta il visualizzatore PDF NATIVO del browser tramite iframe.
+            // Il testo sarà 100% selezionabile e ricercabile, ma senza pulsanti di download.
+            pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
             // 2. Disegna Grafico S/C
             const stats = data.stats;
             const labels = Object.keys(stats);
