@@ -364,20 +364,22 @@
             
             pdfViewerDiv.innerHTML = '';
 
-            // Calcola la larghezza utile del contenitore per adattare il PDF (responsive)
-            const containerWidth = pdfContainer.clientWidth - 30; // -30 per compensare il padding
+            // Calcola la larghezza utile del contenitore
+            const containerWidth = pdfContainer.clientWidth - 30; 
 
             for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
                 const page = await pdf.getPage(pageNum);
                 
-                // Adatta la scala alla larghezza dello schermo per non tagliare il PDF su mobile
+                // Adatta la scala alla larghezza dello schermo
                 const baseViewport = page.getViewport({ scale: 1 });
                 const scale = Math.min(2.0, containerWidth / baseViewport.width);
                 const viewport = page.getViewport({ scale: scale });
 
-                // Crea un contenitore relativo per sovrapporre canvas e testo
+                // Crea il contenitore con dimensioni fisse per evitare bug visivi
                 const wrapper = document.createElement('div');
-                wrapper.className = 'pdf-page-wrapper';
+                wrapper.className = 'pageWrapper';
+                wrapper.style.width = `${viewport.width}px`;
+                wrapper.style.height = `${viewport.height}px`;
 
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
@@ -385,19 +387,17 @@
                 canvas.height = viewport.height;
                 wrapper.appendChild(canvas);
                 
-                // Crea il livello di testo invisibile che permetterà di selezionare e cercare il testo (OCR)
+                // Crea il layer di testo trasparente (OCR)
                 const textLayerDiv = document.createElement('div');
                 textLayerDiv.className = 'textLayer';
-                textLayerDiv.style.width = `${viewport.width}px`;
-                textLayerDiv.style.height = `${viewport.height}px`;
                 wrapper.appendChild(textLayerDiv);
 
                 pdfViewerDiv.appendChild(wrapper);
                 
-                // 1. Renderizza l'immagine della pagina
+                // Renderizza l'immagine
                 await page.render({ canvasContext: context, viewport: viewport }).promise;
 
-                // 2. Estrai e renderizza il testo selezionabile sopra l'immagine
+                // Renderizza il testo selezionabile sopra l'immagine
                 const textContent = await page.getTextContent();
                 await pdfjsLib.renderTextLayer({
                     textContentSource: textContent,
