@@ -507,11 +507,12 @@
             const result = await response.json();
             const data = result.data;
 
-            // Nascondi il visualizzatore PDF, mostriamo solo la tabella
+            // Nascondi il PDF e mostriamo la sezione grafici
             pdfContainer.style.display = 'none';
-            chartContainer.style.display = 'none'; // Nasconde il grafico a barre
+            chartContainer.style.display = 'block';
             
             if (data.length > 0) {
+                // Genera la Tabella
                 let tableHTML = `
                     <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
                         <thead>
@@ -520,6 +521,7 @@
                                 <th style="border: 1px solid #ddd; padding: 10px;">Provincia</th>
                                 <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Fascia</th>
                                 <th style="border: 1px solid #ddd; padding: 10px;">Punteggio Primo Nominato</th>
+                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Fascia</th>
                                 <th style="border: 1px solid #ddd; padding: 10px;">Punteggio Ultimo Nominato</th>
                             </tr>
                         </thead>
@@ -531,8 +533,9 @@
                         <tr>
                             <td style="border: 1px solid #ddd; padding: 8px;">${item.regione || 'N/D'}</td>
                             <td style="border: 1px solid #ddd; padding: 8px;"><strong>${item.provincia}</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.fascia}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.primo_fascia}</td>
                             <td style="border: 1px solid #ddd; padding: 8px; background:#eaf6ff;">${item.primo}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.ultimo_fascia}</td>
                             <td style="border: 1px solid #ddd; padding: 8px; background:#fff5e6;"><strong>${item.ultimo}</strong></td>
                         </tr>
                     `;
@@ -541,7 +544,69 @@
                 tableHTML += `</tbody></table>`;
                 document.getElementById('statsTableContainer').innerHTML = tableHTML;
                 
-                // Mostriamo la sezione 5
+                // Genera il Grafico
+                const labels = data.map(item => item.provincia);
+                const dataPrimo = data.map(item => parseFloat(item.primo.replace(',', '.')));
+                const dataUltimo = data.map(item => parseFloat(item.ultimo.replace(',', '.')));
+
+                const ctx = document.getElementById('statsChart').getContext('2d');
+                if (myChart) { myChart.destroy(); }
+
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Punteggio 1° Nominato',
+                                data: dataPrimo,
+                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Punteggio Ultimo Nominato',
+                                data: dataUltimo,
+                                backgroundColor: 'rgba(255, 159, 64, 0.7)',
+                                borderColor: 'rgba(255, 159, 64, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: { display: true, text: 'Confronto Punteggi Primo e Ultimo Nominato per Provincia', font: { size: 14 } },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y.toFixed(2).replace('.', ',');
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Punteggio' }
+                            },
+                            x: {
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            }
+                        }
+                    }
+                });
+
                 chartSection.style.display = 'block';
             } else {
                 chartSection.style.display = 'none';
