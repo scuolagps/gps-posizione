@@ -44,19 +44,30 @@
         #pdfViewer canvas { display: block; }
         
         .pageWrapper { position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; margin-bottom: 15px; }
-        
         .textLayer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; opacity: 0.25; line-height: 1; }
         .textLayer span { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
 
-        #chartContainer { 
+        .chart-container-generic { 
             display: block; max-width: 800px; margin: 0 auto 30px auto; padding: 20px; 
             border: 1px solid #ddd; border-radius: 8px; background: #fff; height: 450px;
         }
         
-        .formula-box { text-align: center; margin: 30px 0; font-size: 1.2em; color: #333; }
-        .fraction { display: inline-block; vertical-align: middle; text-align: center; margin: 0 5px; }
-        .fraction .numerator { display: block; border-bottom: 2px solid #333; padding: 0 5px 2px 5px; }
-        .fraction .denominator { display: block; padding: 2px 5px 0 5px; }
+        /* STILI PER I TAB */
+        .tab-navigation {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            background: none; border: none; padding: 10px 20px; cursor: pointer;
+            font-size: 16px; color: #777; border-bottom: 3px solid transparent;
+            margin-bottom: -2px; font-weight: normal; width: auto;
+        }
+        .tab-btn.active {
+            color: #2980b9; border-bottom: 3px solid #3498db; font-weight: bold;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -152,25 +163,46 @@
         <div id="statusMessage"></div>
     </div>
 
-    <div class="section">
-        <h2>4. Anteprima Documento</h2>
-        <div id="pdfViewerContainer">
-            <div id="pdfViewer"></div>
+    <!-- NAVIGAZIONE TAB -->
+    <div class="tab-navigation">
+        <button class="tab-btn active" id="tab1Btn" onclick="showTab('pdf')">Vista PDF & Graduatoria</button>
+        <button class="tab-btn" id="tab2Btn" onclick="showTab('bollettino')">Vista Bollettino GPS</button>
+    </div>
+
+    <!-- TAB 1: PDF E GRAFICI GRADUATORIA -->
+    <div id="tab-pdf" class="tab-content active">
+        <div class="section">
+            <h2>4. Anteprima Documento</h2>
+            <div id="pdfViewerContainer">
+                <div id="pdfViewer"></div>
+            </div>
+        </div>
+
+        <div class="section" id="chartSectionPdf" style="display: none;">
+            <h2>5. Statistiche Estrazione</h2>
+            <div id="statsTableContainerPdf" style="margin-bottom: 20px; overflow-x: auto;"></div>
+
+            <div class="chart-container-generic">
+                <canvas id="statsChartPdf"></canvas>
+            </div>
+
+            <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
+                <strong>Come leggere il grafico:</strong><br>
+                Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
+                <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato.
+            </div>
         </div>
     </div>
 
-    <div class="section" id="chartSection" style="display: none;">
-        <h2>5. Statistiche Estrazione</h2>
-        <div id="statsTableContainer" style="margin-bottom: 20px; overflow-x: auto;"></div>
+    <!-- TAB 2: BOLETTINO GPS -->
+    <div id="tab-bollettino" class="tab-content">
+        <div class="section" id="chartSectionBollettino" style="display: none;">
+            <h2>Statistiche Bollettino</h2>
+            <div id="statsTableContainerBollettino" style="margin-bottom: 20px; overflow-x: auto;"></div>
 
-        <div id="chartContainer">
-            <canvas id="statsChart"></canvas>
-        </div>
-
-        <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
-            <strong>Come leggere il grafico:</strong><br>
-            Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
-            <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato (più alto è il valore, maggiori sono le probabilità teoriche di assunzione).
+            <div class="chart-container-generic">
+                <canvas id="statsChartBollettino"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -194,7 +226,24 @@
 
     let selectedRegioni = [];
     let selectedProvince = [];
-    let myChart = null;
+    let myChartPdf = null;
+    let myChartBollettino = null;
+
+    // Funzione per cambiare tab
+    function showTab(tabName) {
+        // Nascondi tutti i contenuti
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        // Mostra quello selezionato
+        if (tabName === 'pdf') {
+            document.getElementById('tab-pdf').classList.add('active');
+            document.getElementById('tab1Btn').classList.add('active');
+        } else {
+            document.getElementById('tab-bollettino').classList.add('active');
+            document.getElementById('tab2Btn').classList.add('active');
+        }
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         const regioneSelect = document.getElementById('regioneSelect');
@@ -294,7 +343,7 @@
         const statusMsg = document.getElementById('statusMessage');
         const pdfViewerDiv = document.getElementById('pdfViewer');
         const pdfContainer = document.getElementById('pdfViewerContainer');
-        const chartSection = document.getElementById('chartSection');
+        const chartSection = document.getElementById('chartSectionPdf');
         const btn = document.getElementById('generaBtn');
         
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
@@ -314,7 +363,6 @@
 
         try {
             const fasciaSelezionata = document.getElementById('fasciaSelect').value;
-
             const annoSelezionato = document.getElementById('annoSelect').value;
 
             const response = await fetch(RENDER_URL, {
@@ -387,13 +435,10 @@
                 });
                 
                 tableHTML += `</tbody></table>`;
-                document.getElementById('statsTableContainer').innerHTML = tableHTML;
-                
-                // Mostra il grafico nel caso fosse stato nascosto dal pulsante Bollettino
-                document.getElementById('chartContainer').style.display = 'block';
+                document.getElementById('statsTableContainerPdf').innerHTML = tableHTML;
 
-                const ctx = document.getElementById('statsChart').getContext('2d');
-                if (myChart) { myChart.destroy(); }
+                const ctx = document.getElementById('statsChartPdf').getContext('2d');
+                if (myChartPdf) { myChartPdf.destroy(); }
                 
                 const dynamicColors = () => {
                     const r = Math.floor(Math.random() * 200);
@@ -405,7 +450,7 @@
                 const chartData = labels.map(l => stats[l].rapporto);
                 const bgColors = labels.map(() => dynamicColors());
 
-                myChart = new Chart(ctx, {
+                myChartPdf = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: labels,
@@ -460,6 +505,7 @@
 
             statusMsg.style.color = "green";
             statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
+            showTab('pdf'); // Mostra automaticamente il tab PDF
 
         } catch (error) {
             console.error('Errore:', error);
@@ -474,9 +520,7 @@
     // --- GESTIONE PULSANTE BOLLETTINO GPS ---
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
-        const pdfContainer = document.getElementById('pdfViewerContainer');
-        const chartSection = document.getElementById('chartSection');
-        const chartContainer = document.getElementById('chartContainer');
+        const chartSection = document.getElementById('chartSectionBollettino');
         const btn = document.getElementById('bollettinoBtn');
         
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
@@ -517,13 +561,8 @@
 
             const result = await response.json();
             const data = result.data;
-
-            // Nascondi il PDF e mostriamo la sezione grafici
-            pdfContainer.style.display = 'none';
-            chartContainer.style.display = 'block';
             
             if (data.length > 0) {
-                // 1. Genera la Tabella Principale
                 let tableHTML = `
                     <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
                         <thead>
@@ -538,10 +577,8 @@
                         <tbody>
                 `;
                 
-                // Preparazione dati per il grafico
                 const labels = data.map(item => item.provincia);
                 const dataNomine = data.map(item => item.nomine_totali);
-                // Per Chart.js i valori nulli devono essere null, non stringhe "N/D"
                 const dataMinF1 = data.map(item => item.min_f1 === "N/D" ? null : parseFloat(item.min_f1.replace(',', '.')));
                 const dataMinF2 = data.map(item => item.min_f2 === "N/D" ? null : parseFloat(item.min_f2.replace(',', '.')));
 
@@ -577,14 +614,12 @@
                 tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
                 
-                // Inietta Tabella e Statistiche Avanzate nel container
-                document.getElementById('statsTableContainer').innerHTML = tableHTML + statsAvanzateHTML;
+                document.getElementById('statsTableContainerBollettino').innerHTML = tableHTML + statsAvanzateHTML;
                 
-                // 2. Genera il Grafico Combinato a Doppio Asse
-                const ctx = document.getElementById('statsChart').getContext('2d');
-                if (myChart) { myChart.destroy(); }
+                const ctx = document.getElementById('statsChartBollettino').getContext('2d');
+                if (myChartBollettino) { myChartBollettino.destroy(); }
 
-                myChart = new Chart(ctx, {
+                myChartBollettino = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: labels,
@@ -596,7 +631,7 @@
                                 borderColor: 'rgba(75, 192, 192, 1)',
                                 borderWidth: 1,
                                 yAxisID: 'y1',
-                                order: 3 // Ordine di disegno (dietro)
+                                order: 3
                             },
                             {
                                 type: 'line',
@@ -607,7 +642,7 @@
                                 yAxisID: 'y2',
                                 tension: 0.1,
                                 pointRadius: 5,
-                                order: 1 // Ordine di disegno (sopra)
+                                order: 1
                             },
                             {
                                 type: 'line',
@@ -667,7 +702,7 @@
                                 display: true,
                                 position: 'right',
                                 title: { display: true, text: 'Punteggio Minimo' },
-                                grid: { drawOnChartArea: false }, // Solo griglia sinistra attiva
+                                grid: { drawOnChartArea: false },
                                 beginAtZero: true
                             }
                         }
@@ -675,6 +710,7 @@
                 });
 
                 chartSection.style.display = 'block';
+                showTab('bollettino'); // Mostra automaticamente il tab Bollettino
             } else {
                 chartSection.style.display = 'none';
                 statusMsg.style.color = "red";
