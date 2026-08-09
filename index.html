@@ -19,9 +19,9 @@
 
     <style>
         :root {
-            --primary-blue: #0066CC; /* Blu istituzionale */
-            --dark-blue: #003C7E;
-            --light-blue: #E6F1FB;
+            --primary-blue: #024a86; /* Blu istituzionale scuro */
+            --dark-blue: #022c4f;
+            --light-blue: #E5EFF8;
             --accent-orange: #F39C12;
             --text-gray: #4A4A4A;
             --border-gray: #D1D9E6;
@@ -681,7 +681,7 @@
                 chartSectionWrapper.style.display = 'none'; chartSec6_1Wrapper.style.display = 'none'; analisiWrapper.style.display = 'none';
                 statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati nel bollettino."; return;
             }
-            statusMsg.style.color = "#06D6A0"; statusMsg.innerText = "Estrazione dal bollettino completata! Visualizza i dati qui sotto.";
+            statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione dal bollettino completata! Visualizza i dati qui sotto.";
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
         } finally { btn.disabled = false; btn.innerText = "Bollettini GPS"; }
