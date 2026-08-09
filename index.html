@@ -3,150 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Posizione</title>
+    <title>Portale Estrazione Dati Scolastici</title>
+    
+    <!-- FONT ISTITUZIONALI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ICONE -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- LIBRERIE GRAFICHE -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; color: #333; padding-top: 70px; /* Spazio per l'header fisso */ }
+        :root {
+            --primary-blue: #0066CC; /* Blu istituzionale */
+            --dark-blue: #003C7E;
+            --light-blue: #E6F1FB;
+            --accent-orange: #F39C12;
+            --text-gray: #4A4A4A;
+            --border-gray: #D1D9E6;
+            --bg-gray: #F4F7F9;
+            --white: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Titillium Web', sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--bg-gray); 
+            color: var(--text-gray); 
+            padding-top: 70px; 
+            line-height: 1.6;
+        }
         
         /* STILI HEADER */
         #siteHeader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background: #2c3e50;
-            color: white;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
-            transition: transform 0.3s ease-in-out;
-            box-sizing: border-box;
+            position: fixed; top: 0; left: 0; width: 100%; height: 60px;
+            background: var(--primary-blue); color: var(--white);
+            display: flex; align-items: center; padding: 0 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000; transition: transform 0.3s ease-in-out;
         }
         #siteHeader.hidden { transform: translateY(-100%); }
-        #siteHeader h1 { margin: 0; font-size: 20px; flex: 1; }
+        #siteHeader h1 { margin: 0; font-size: 22px; font-weight: 700; flex: 1; letter-spacing: 0.5px; }
         .header-btn {
-            background: none; border: 1px solid white; color: white;
-            padding: 6px 15px; cursor: pointer; margin-left: 10px;
-            border-radius: 4px; font-size: 14px; width: auto;
+            background: transparent; border: 1px solid var(--white); color: var(--white);
+            padding: 8px 18px; cursor: pointer; margin-left: 15px;
+            border-radius: 4px; font-size: 14px; font-weight: 600; width: auto;
+            transition: all 0.2s; font-family: inherit;
         }
-        .header-btn:hover { background: rgba(255,255,255,0.2); }
+        .header-btn:hover { background: var(--white); color: var(--primary-blue); }
 
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 40px; }
-        h2 { border-bottom: 2px solid #3498db; padding-bottom: 5px; color: #2980b9; font-size: 18px; }
-        .section { margin-bottom: 30px; }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .container { 
+            max-width: 1000px; margin: 30px auto; background: var(--white); 
+            padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            margin-bottom: 60px;
+            border-top: 5px solid var(--primary-blue);
+        }
         
-        select, input[type="text"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+        h2 { 
+            border-bottom: 2px solid var(--light-blue); 
+            padding-bottom: 10px; color: var(--primary-blue); 
+            font-size: 22px; font-weight: 600; margin-bottom: 20px;
+        }
+        
+        .section { margin-bottom: 40px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--dark-blue); font-size: 15px; }
+        
+        select, input[type="text"] { 
+            padding: 10px; border: 1px solid var(--border-gray); border-radius: 4px; 
+            box-sizing: border-box; font-size: 15px; font-family: inherit; width: 100%;
+            background: var(--white); transition: border-color 0.2s;
+        }
+        select:focus, input:focus { border-color: var(--primary-blue); outline: none; box-shadow: 0 0 0 2px var(--light-blue); }
         
         .multi-select-wrapper { display: flex; gap: 15px; align-items: flex-start; }
-        .select-box { width: 30%; }
-        .tags-container { flex: 1; min-height: 35px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; background: #fafafa; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .select-box { width: 35%; }
+        .tags-container { flex: 1; min-height: 42px; padding: 5px; border: 1px solid var(--border-gray); border-radius: 4px; background: var(--white); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
         
-        .tag { background: #3498db; color: white; padding: 5px 10px; border-radius: 15px; font-size: 13px; display: flex; align-items: center; gap: 8px; }
-        .tag .remove-tag { cursor: pointer; font-weight: bold; background: rgba(0,0,0,0.2); border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1; }
-        .tag .remove-tag:hover { background: rgba(0,0,0,0.4); }
+        .tag { background: var(--light-blue); color: var(--dark-blue); padding: 6px 12px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .tag .remove-tag { cursor: pointer; font-weight: bold; background: var(--primary-blue); color: var(--white); border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1; }
+        .tag .remove-tag:hover { background: var(--dark-blue); }
 
-        .checkbox-group { display: flex; gap: 20px; flex-wrap: wrap; }
-        .checkbox-item { display: flex; align-items: center; }
-        .checkbox-item input { margin-right: 8px; }
-        .classi-container { border: 1px solid #ccc; padding: 10px; height: 250px; overflow-y: scroll; background: #fafafa; border-radius: 4px; }
-        .classe-item { padding: 5px 0; }
-        .classe-item label { font-weight: normal; display: flex; align-items: center; }
+        .checkbox-group { display: flex; gap: 30px; flex-wrap: wrap; }
+        .checkbox-item { display: flex; align-items: center; font-size: 16px; }
+        .checkbox-item input { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--primary-blue); }
+        
+        .classi-container { border: 1px solid var(--border-gray); padding: 15px; height: 250px; overflow-y: auto; background: var(--bg-gray); border-radius: 4px; }
+        .classe-item { padding: 8px 0; }
+        .classe-item label { font-weight: 400; display: flex; align-items: center; font-size: 15px; }
         .classe-item input { margin-right: 10px; }
-        button { background: #27ae60; color: white; border: none; padding: 12px 20px; width: 100%; font-size: 18px; border-radius: 4px; cursor: pointer; transition: background 0.3s; }
-        button:hover { background: #219150; }
-        button:disabled { background: #95a5a6; cursor: not-allowed; }
-        #statusMessage { text-align: center; margin-top: 15px; font-weight: bold; }
-        #noClassiMsg { color: #e74c3c; font-style: italic; display: none; }
+        
+        button { 
+            background: var(--primary-blue); color: var(--white); border: none; 
+            padding: 15px 20px; width: 100%; font-size: 18px; border-radius: 4px; 
+            cursor: pointer; transition: background 0.3s; font-weight: 600; font-family: inherit; letter-spacing: 0.5px;
+        }
+        button:hover { background: var(--dark-blue); }
+        button:disabled { background: #AAB7C4; cursor: not-allowed; }
+        
+        #statusMessage { text-align: center; margin-top: 20px; font-weight: 600; font-size: 16px; }
+        #noClassiMsg { color: #E74C3C; font-style: italic; display: none; }
         
         #pdfViewerContainer { 
-            width: 100%; height: 600px; border: 1px solid #ccc; background: #f0f0f0; 
-            display: none; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; 
+            width: 100%; height: 600px; border: 1px solid var(--border-gray); background: var(--bg-gray); 
+            display: none; overflow-y: auto; overflow-x: hidden; border-radius: 4px;
         }
-        #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; box-sizing: border-box; }
-        #pdfViewer canvas { display: block; }
+        #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
         
-        .pageWrapper { position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; margin-bottom: 15px; }
-        .textLayer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; opacity: 0.25; line-height: 1; }
-        .textLayer span { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
-
         .chart-container-generic { 
-            display: block; max-width: 800px; margin: 0 auto 30px auto; padding: 20px; 
-            border: 1px solid #ddd; border-radius: 8px; background: #fff; height: 450px;
+            display: block; max-width: 800px; margin: 20px auto; padding: 25px; 
+            border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px;
         }
         
-        /* STILI PER I TAB (STICKY) */
+        /* STILI TAB */
         .tab-navigation {
-            display: none; /* Nascosto all'inizio */
-            position: sticky;
-            top: 60px; /* Sotto l'header */
-            background: white;
-            z-index: 900;
-            padding: 10px 0;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 20px;
-            transition: top 0.3s ease-in-out;
+            display: none; position: sticky; top: 60px; background: var(--white);
+            z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray);
+            margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1);
         }
         .tab-btn {
-            background: none; border: none; padding: 10px 20px; cursor: pointer;
-            font-size: 16px; color: #777; border-bottom: 3px solid transparent;
-            margin-bottom: -2px; font-weight: normal; width: auto;
-            display: none; /* I singoli tab sono nascosti finché non viene generato il contenuto */
+            background: none; border: none; padding: 10px 25px; cursor: pointer;
+            font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent;
+            margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit;
         }
-        .tab-btn.active {
-            color: #2980b9; border-bottom: 3px solid #3498db; font-weight: bold;
-        }
+        .tab-btn.active { color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* STILI PER LE SEZIONI COLLAPSABLE (Allineamento a Destra) */
+        /* SEZIONI COLLAPSABLE ALLINEATE A DESTRA */
         .collapsible-header {
-            display: flex; align-items: center; cursor: pointer; padding: 10px 0;
-            border-bottom: 2px solid #3498db; color: #2980b9; margin-bottom: 15px; user-select: none;
-            flex-direction: row-reverse; /* Inverto la direzione per allineare a destra */
+            display: flex; align-items: center; cursor: pointer; padding: 12px 0;
+            border-bottom: 2px solid var(--light-blue); color: var(--primary-blue); 
+            margin-bottom: 20px; user-select: none; flex-direction: row-reverse; justify-content: flex-start;
         }
-        .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 10px; }
-        
+        .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 15px; }
         .sub-collapsible-header {
-            display: flex; align-items: center; cursor: pointer; padding: 8px 0;
-            border-bottom: 1px solid #ddd; color: #555; margin: 20px 0 15px 0; user-select: none;
-            flex-direction: row-reverse; /* Inverto la direzione per allineare a destra */
+            display: flex; align-items: center; cursor: pointer; padding: 10px 0;
+            border-bottom: 1px solid var(--border-gray); color: var(--text-gray); 
+            margin: 25px 0 15px 0; user-select: none; flex-direction: row-reverse; justify-content: flex-start;
         }
-        .sub-collapsible-header h3 { margin: 0; border: none; padding: 0; margin-right: 10px; font-size: 15px; font-weight: bold; }
-        
-        .collapse-arrow {
-            display: inline-block; transition: transform 0.3s ease; font-size: 12px; margin-right: 0;
-        }
-        .collapsible-header.collapsed .collapse-arrow, .sub-collapsible-header.collapsed .collapse-arrow {
-            transform: rotate(-90deg);
-        }
+        .sub-collapsible-header h3 { margin: 0; border: none; padding: 0; margin-right: 15px; font-size: 18px; font-weight: 600; color: var(--dark-blue); }
+        .collapse-arrow { transition: transform 0.3s ease; font-size: 14px; }
+        .collapsible-header.collapsed .collapse-arrow, .sub-collapsible-header.collapsed .collapse-arrow { transform: rotate(-90deg); }
         .collapsible-content { display: block; }
         .collapsible-content.hidden { display: none; }
 
-        /* STILI PER LA GUIDA */
+        /* GUIDA STILE MINIMAL CARTOON */
+        .guide-intro { text-align: center; margin-bottom: 40px; padding: 20px; background: var(--light-blue); border-radius: 8px; border-left: 5px solid var(--primary-blue); }
+        .guide-intro svg { max-width: 150px; height: auto; margin-bottom: 15px; }
         .guide-block {
-            background: #f9f9f9;
-            border-left: 4px solid #2c3e50;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
+            background: var(--white); border: 1px solid var(--border-gray); border-radius: 8px;
+            padding: 25px; margin: 25px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            display: flex; gap: 25px; align-items: flex-start;
         }
-        .guide-img-container {
-            text-align: center;
-            margin: 15px 0;
-        }
-        .guide-img-container img {
-            max-width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        .guide-svg-container { flex-shrink: 0; width: 100px; text-align: center; }
+        .guide-text-container h3 { margin: 0 0 10px 0; color: var(--primary-blue); font-size: 18px; }
+        .guide-text-container p { margin: 0; color: var(--text-gray); font-size: 15px; }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-41SR6TG1JC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -154,23 +174,12 @@
       gtag('js', new Date());
       gtag('config', 'G-41SR6TG1JC');
     </script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estrazione Dati Graduatorie Scolastiche e Scuole Musicali</title>
-    <meta name="description" content="Genera report PDF e grafici sulle graduatorie scolastiche, classi di concorso e scuole musicali. Filtra per regione, provincia e fascia.">
-    <meta name="keywords" content="graduatorie scuole, classi di concorso, estrazione dati, scuole musicali, report PDF, GPS scuole, docenti">
-    <meta name="author" content="Il Tuo Nome">
-    <meta name="robots" content="index, follow">
-    <meta property="og:title" content="Portale Estrazione Dati Scolastici">
-    <meta property="og:description" content="Analisi candidati, scuole e generazione PDF.">
-    <meta property="og:type" content="website">
-    <meta name="google-site-verification" content="usSfUzfla0nHRxOeV2ctcJgbe8qD46i59LLXcjP0rug" />
 </head>
 <body>
 
 <!-- INTESTAZIONE SITO -->
 <header id="siteHeader">
-    <h1>Portale Estrazione PDF</h1>
+    <h1>Portale Estrazione Dati</h1>
     <button class="header-btn" onclick="scrollToTop()">Home</button>
     <button class="header-btn" onclick="toggleGuide()">Come leggere i dati</button>
 </header>
@@ -201,26 +210,26 @@
     <div class="section">
         <h2>2. Ordine di Scuola</h2>
         <div class="checkbox-group" id="ordineScuolaGroup">
-            <div class="checkbox-item"><input type="checkbox" id="ord_inf_prim" name="ordineScuola" value="infanzia_primaria"><label for="ord_inf_prim" style="display:inline;">Infanzia e Primaria</label></div>
-            <div class="checkbox-item"><input type="checkbox" id="ord_sec1" name="ordineScuola" value="secondaria_I"><label for="ord_sec1" style="display:inline;">Sec. I grado</label></div>
-            <div class="checkbox-item"><input type="checkbox" id="ord_sec2" name="ordineScuola" value="secondaria_II"><label for="ord_sec2" style="display:inline;">Sec. II grado</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_inf_prim" name="ordineScuola" value="infanzia_primaria"><label for="ord_inf_prim" style="display:inline; margin-bottom:0;">Infanzia e Primaria</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_sec1" name="ordineScuola" value="secondaria_I"><label for="ord_sec1" style="display:inline; margin-bottom:0;">Sec. I grado</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_sec2" name="ordineScuola" value="secondaria_II"><label for="ord_sec2" style="display:inline; margin-bottom:0;">Sec. II grado</label></div>
         </div>
     </div>
     
     <div class="section">
         <h2>2.5 Fascia e Anno</h2>
         <div style="display: flex; gap: 20px;">
-            <div class="form-group" style="flex: 1;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
                 <label>Seleziona la fascia:</label>
-                <select id="fasciaSelect" style="width: 100%; padding: 8px;">
+                <select id="fasciaSelect">
                     <option value="">Tutte le fasce</option>
                     <option value="I_Fascia">I fascia</option>
                     <option value="II_Fascia">II fascia</option>
                 </select>
             </div>
-            <div class="form-group" style="flex: 1;">
+            <div class="form-group" style="flex: 1; margin-bottom: 0;">
                 <label>Anno:</label>
-                <select id="annoSelect" style="width: 100%; padding: 8px;" disabled>
+                <select id="annoSelect" disabled>
                     <option value="2026/2027" selected>2026/2027</option>
                 </select>
             </div>
@@ -230,7 +239,7 @@
     <div class="section">
         <h2>3. Classi di Concorso</h2>
         <div class="form-group">
-            <input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica)..." style="width: 100%;">
+            <input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica)...">
         </div>
         <div id="classiContainer" class="classi-container"></div>
         <p id="noClassiMsg">Seleziona almeno un Ordine di Scuola per visualizzare le classi.</p>
@@ -239,12 +248,12 @@
     <div class="section">
         <div style="display: flex; gap: 15px; margin-bottom: 15px;">
             <button id="generaBtn" style="flex: 1;">Genera e Visualizza Dati e PDF</button>
-            <button id="bollettinoBtn" style="flex: 1; background: #e67e22;">Bollettini GPS</button>
+            <button id="bollettinoBtn" style="flex: 1; background: var(--accent-orange);">Bollettini GPS</button>
         </div>
         <div id="statusMessage"></div>
     </div>
 
-    <!-- NAVIGAZIONE TAB (Sticky e Nascosta all'inizio) -->
+    <!-- NAVIGAZIONE TAB -->
     <div class="tab-navigation" id="tabNav">
         <button class="tab-btn active" id="tab1Btn" onclick="showTab('pdf')">Vista PDF & Graduatoria</button>
         <button class="tab-btn" id="tab2Btn" onclick="showTab('bollettino')">Vista Bollettino GPS</button>
@@ -252,21 +261,17 @@
 
     <!-- TAB 1: PDF E GRAFICI GRADUATORIA -->
     <div id="tab-pdf" class="tab-content active">
-        <!-- Sezione 4 -->
-        <div class="section" id="sec4-wrapper" style="display: none;">
+        <div class="section" id="sec4-wrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec4-content')">
                 <span class="collapse-arrow">&#9660;</span>
                 <h2>4. Anteprima Documento</h2>
             </div>
             <div id="sec4-content" class="collapsible-content">
-                <div id="pdfViewerContainer">
-                    <div id="pdfViewer"></div>
-                </div>
+                <div id="pdfViewerContainer"><div id="pdfViewer"></div></div>
             </div>
         </div>
 
-        <!-- Sezione 5 -->
-        <div class="section" id="chartSectionPdfWrapper" style="display: none;">
+        <div class="section" id="chartSectionPdfWrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5-content')">
                 <span class="collapse-arrow">&#9660;</span>
                 <h2>5. Statistiche Estrazione</h2>
@@ -276,15 +281,17 @@
             </div>
         </div>
 
-        <!-- Sezione 5.1 -->
-        <div class="section" id="sec5_1-wrapper" style="display: none;">
+        <div class="section" id="sec5_1-wrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5_1-content')">
                 <span class="collapse-arrow">&#9660;</span>
                 <h2>5.1 Grafico Rapporto Scuole/Candidati</h2>
             </div>
             <div id="sec5_1-content" class="collapsible-content">
-                <div class="chart-container-generic">
-                    <canvas id="statsChartPdf"></canvas>
+                <div class="chart-container-generic"><canvas id="statsChartPdf"></canvas></div>
+                <div style="text-align: left; margin-top: 15px; font-size: 14px; color: #666; line-height: 1.5; background: var(--bg-gray); padding: 15px; border-radius: 4px;">
+                    <strong>Come leggere il grafico:</strong><br>
+                    Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
+                    <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato.
                 </div>
             </div>
         </div>
@@ -292,8 +299,7 @@
 
     <!-- TAB 2: BOLETTINO GPS -->
     <div id="tab-bollettino" class="tab-content">
-        <!-- Sezione 6 -->
-        <div class="section" id="chartSectionBollettinoWrapper" style="display: none;">
+        <div class="section" id="chartSectionBollettinoWrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6-content')">
                 <span class="collapse-arrow">&#9660;</span>
                 <h2>6. Statistiche Bollettino</h2>
@@ -303,21 +309,17 @@
             </div>
         </div>
 
-        <!-- Sezione 6.1 -->
-        <div class="section" id="sec6_1-wrapper" style="display: none;">
+        <div class="section" id="sec6_1-wrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6_1-content')">
                 <span class="collapse-arrow">&#9660;</span>
                 <h2>6.1 Grafico Nomine e Punteggi</h2>
             </div>
             <div id="sec6_1-content" class="collapsible-content">
-                <div class="chart-container-generic">
-                    <canvas id="statsChartBollettino"></canvas>
-                </div>
+                <div class="chart-container-generic"><canvas id="statsChartBollettino"></canvas></div>
             </div>
         </div>
 
-        <!-- Sezione 7 -->
-        <div class="section" id="analisiBollettinoWrapper" style="display: none;">
+        <div class="section" id="analisiBollettinoWrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec7-content')">
                 <span class="collapse-arrow">&#9660;</span>
                 <h2>7. Analisi Approfondita per Provincia</h2>
@@ -328,54 +330,91 @@
         </div>
     </div>
 
-    <!-- SEZIONE GUIDA (Nascosta di default) -->
-    <div class="section" id="guida-wrapper" style="display: none;">
-        <div class="collapsible-header" onclick="toggleSection(this, 'guida-content')" style="border-bottom: 2px solid #2c3e50; color: #2c3e50;">
+    <!-- SEZIONE GUIDA -->
+    <div class="section" id="guida-wrapper" style="display: none; margin-bottom: 40px;">
+        <div class="collapsible-header" onclick="toggleSection(this, 'guida-content')" style="border-bottom: 2px solid var(--dark-blue); color: var(--dark-blue);">
             <span class="collapse-arrow">&#9660;</span>
             <h2>8. Come leggere i dati</h2>
         </div>
-        <div id="guida-content" class="collapsible-content">
+        <div id="guida-content" class="collapsible-content hidden">
             
+            <div class="guide-intro">
+                <!-- IMMAGINE MINIMAL SVG: Persona che si interroga -->
+                <svg viewBox="0 0 200 200" width="120" height="120">
+                    <circle cx="100" cy="70" r="35" fill="#FFD166"/>
+                    <path d="M 65 140 Q 100 120 135 140 L 135 190 L 65 190 Z" fill="#118AB2"/>
+                    <circle cx="155" cy="45" r="25" fill="#06D6A0"/>
+                    <text x="155" y="55" font-family="sans-serif" font-size="35" fill="#FFFFFF" text-anchor="middle" font-weight="bold">?</text>
+                </svg>
+                <h3 style="color: var(--dark-blue); margin: 0;">Guida alla consultazione</h3>
+                <p style="margin: 5px 0 0 0; color: var(--text-gray);">Istruzioni semplici per comprendere i risultati delle estrazioni.</p>
+            </div>
+
             <div class="guide-block">
-                <h3>1. Vista PDF & Graduatoria</h3>
-                <p>In questa sezione trovi il documento PDF ufficiale con tutti i candidati estratti. Sotto, nella Sezione 5, hai una tabella riepilogativa con il numero totale di candidati per provincia, i punteggi più alti, più bassi e la mediana.</p>
-                <div class="guide-img-container">
-                    <!-- Sostituisci questo link con lo screenshot reale della tabella -->
-                    <img src="https://via.placeholder.com/600x150?text=Anteprima+Tabella+Graduatoria" alt="Esempio Tabella Graduatoria">
+                <div class="guide-svg-container">
+                    <!-- IMMAGINE MINIMAL SVG: Documento PDF -->
+                    <svg viewBox="0 0 100 100" width="80" height="80">
+                        <rect x="20" y="15" width="50" height="65" rx="5" fill="#FFFFFF" stroke="#0066CC" stroke-width="3"/>
+                        <line x1="30" y1="30" x2="60" y2="30" stroke="#AAB7C4" stroke-width="3"/>
+                        <line x1="30" y1="45" x2="60" y2="45" stroke="#AAB7C4" stroke-width="3"/>
+                        <line x1="30" y1="60" x2="50" y2="60" stroke="#AAB7C4" stroke-width="3"/>
+                        <circle cx="65" cy="65" r="18" fill="#06D6A0"/>
+                        <path d="M 58 65 L 63 70 L 72 58" stroke="#FFFFFF" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="guide-text-container">
+                    <h3>1. Vista PDF & Graduatoria</h3>
+                    <p>Qui trovi il documento PDF con tutti i candidati estratti. La Sezione 5 mostra una tabella con il totale dei candidati per provincia, i punteggi più alti, più bassi e la mediana.</p>
                 </div>
             </div>
 
             <div class="guide-block">
-                <h3>Grafico 5.1 (Rapporto S/C)</h3>
-                <p>Mostra quante scuole ci sono per ogni candidato in una provincia. Più il valore è alto, maggiori sono le probabilità teoriche di assunzione.</p>
-                <div class="guide-img-container">
-                    <!-- Sostituisci questo link con lo screenshot reale del grafico -->
-                    <img src="https://via.placeholder.com/600x300?text=Esempio+Grafico+S/C" alt="Esempio Grafico S/C">
+                <div class="guide-svg-container">
+                    <!-- IMMAGINE MINIMAL SVG: Grafico a barre -->
+                    <svg viewBox="0 0 100 100" width="80" height="80">
+                        <rect x="20" y="50" width="15" height="35" rx="2" fill="#118AB2"/>
+                        <rect x="40" y="30" width="15" height="55" rx="2" fill="#06D6A0"/>
+                        <rect x="60" y="60" width="15" height="25" rx="2" fill="#EF476F"/>
+                        <path d="M 20 40 L 40 20 L 60 50 L 80 10" stroke="#003C7E" stroke-width="3" fill="none" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="guide-text-container">
+                    <h3>Grafico 5.1 (Rapporto S/C)</h3>
+                    <p>Mostra quante scuole ci sono per ogni candidato in una provincia. Più il valore è alto, maggiori sono le probabilità teoriche di assunzione.</p>
                 </div>
             </div>
 
             <div class="guide-block">
-                <h3>2. Vista Bollettino GPS</h3>
-                <p>Analizza le <strong>nomine effettivamente avvenute</strong> (estratte dal bollettino).</p>
-                <p><strong>Sezione 6 (Tabella):</strong> Mostra le Nomine Totali per provincia e il punteggio minimo registrato in Fascia 1 (Min_F1) e Fascia 2 (Min_F2). Questo indica la "soglia reale" di accesso per essere chiamati.</p>
-                <div class="guide-img-container">
-                    <img src="https://via.placeholder.com/600x150?text=Anteprima+Tabella+Bollettino" alt="Esempio Tabella Bollettino">
+                <div class="guide-svg-container">
+                    <!-- IMMAGINE MINIMAL SVG: Tabella e check -->
+                    <svg viewBox="0 0 100 100" width="80" height="80">
+                        <rect x="15" y="20" width="70" height="60" rx="3" fill="#FFFFFF" stroke="#F39C12" stroke-width="3"/>
+                        <line x1="15" y1="35" x2="85" y2="35" stroke="#F39C12" stroke-width="2"/>
+                        <line x1="38" y1="20" x2="38" y2="80" stroke="#F39C12" stroke-width="2"/>
+                        <rect x="45" y="45" width="30" height="6" fill="#AAB7C4"/>
+                        <rect x="45" y="58" width="20" height="6" fill="#AAB7C4"/>
+                    </svg>
+                </div>
+                <div class="guide-text-container">
+                    <h3>2. Vista Bollettino GPS</h3>
+                    <p>Analizza le nomine effettivamente avvenute. La Sezione 6 mostra le Nomine Totali e i punteggi minimi (soglia di accesso) per la Fascia 1 (Min_F1) e la Fascia 2 (Min_F2).</p>
                 </div>
             </div>
 
             <div class="guide-block">
-                <h3>Grafico 6.1</h3>
-                <p>Un grafico combinato che confronta il volume delle nomine totali (barre verdi) con l'andamento dei punteggi minimi di F1 (linea blu) e F2 (linea rossa).</p>
-                <div class="guide-img-container">
-                    <img src="https://via.placeholder.com/600x300?text=Esempio+Grafico+Combinato" alt="Esempio Grafico Combinato">
+                <div class="guide-svg-container">
+                    <!-- IMMAGINE MINIMAL SVG: Grafico combinato -->
+                    <svg viewBox="0 0 100 100" width="80" height="80">
+                        <rect x="20" y="50" width="20" height="35" rx="2" fill="#118AB2"/>
+                        <rect x="50" y="40" width="20" height="45" rx="2" fill="#06D6A0"/>
+                        <circle cx="30" cy="30" r="4" fill="#0066CC"/>
+                        <circle cx="60" cy="20" r="4" fill="#EF476F"/>
+                        <path d="M 30 30 L 60 20" stroke="#0066CC" stroke-width="2" fill="none"/>
+                    </svg>
                 </div>
-            </div>
-
-            <div class="guide-block">
-                <h3>Sezione 7 (Analisi Approfondita)</h3>
-                <p>Calcola il <em>Tasso di Assorbimento F1</em> (quante cattedre su 100 sono state coperte da candidati di I fascia prima di attingere alla II) e la <em>Probabilità di Nomina</em> percentuale divisa per fascia.</p>
-                <div class="guide-img-container">
-                    <img src="https://via.placeholder.com/600x200?text=Esempio+Analisi+Approfondita" alt="Esempio Analisi">
+                <div class="guide-text-container">
+                    <h3>Grafico 6.1 & Sezione 7</h3>
+                    <p>Il Grafico 6.1 confronta il volume delle nomine (barre) con l'andamento dei punteggi minimi F1 (blu) e F2 (rosso). La Sezione 7 calcola il Tasso di Assorbimento (quante cattedre su 100 sono state coperte da I fascia) e la Probabilità di Nomina in percentuale.</p>
                 </div>
             </div>
 
@@ -385,10 +424,7 @@
 
 <script>
     const RENDER_URL = "https://gps-posizione.onrender.com/genera-pdf";
-    
-    if (window.pdfjsLib) {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    }
+    if (window.pdfjsLib) { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }
 
     const regioniProvince = {
         "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"]
@@ -400,64 +436,39 @@
         "secondaria_II": ["AB25 - Sostegno Sec. II grado", "A019 - Italiano, Storia, Geografia (Sec. II)", "A020 - Latino, Storia, Geografia (Sec. II)", "A017 - Filosofia e Storia", "A018 - Lettere", "A050 - Storia, Filosofia e Pedagogia", "A026 - Matematica", "A027 - Matematica e Fisica", "A028 - Informatica", "A029 - Fisica", "A030 - Scienze naturali, chimica e biologia", "A031 - Chimica", "A032 - Scienze e tecnologie chimiche", "A034 - Francese (Sec. II)", "A035 - Inglese (Sec. II)", "A036 - Spagnolo (Sec. II)", "A037 - Tedesco (Sec. II)", "A040 - Disegno e storia dell'arte", "A041 - Costruzioni, tecnica e progettazione", "A043 - Tecnologia della progettazione", "A044 - Elettronica", "A045 - Elettrotecnica e automazione", "A046 - Meccanica e macchine", "A047 - Tecnologia e disegno", "A048 - Informatica (professionale)", "A049 - Discipline geometriche", "A052 - Discipline muscolari e sportive", "A054 - Discipline giuridiche ed economiche", "A055 - Diritto ed economia politica", "A053 - Geografia", "A054 - Scienze umane", "A055 - Storia, filosofia e scienze umane", "A031 - Canto (Liceo Musicale)", "A032 - Composizione (Liceo Musicale)", "A033 - Direzione di coro e composizione corale", "A034 - Strumenti a tastiera (Pianoforte e Organo)", "A035 - Strumenti ad arco (Violino, Viola, Violoncello, Contrabbasso)", "A036 - Strumenti a pizzico (Chitarra, Arpa, Liuto)", "A037 - Strumenti a fiato (Flauto, Clarinetto, Oboe, Fagotto, Sassofoni)", "A038 - Strumenti a percussione", "A039 - Storia della musica (Liceo Musicale)", "A040 - Tecnica del suono e delle riprese audio"]
     };
 
-    let selectedRegioni = [];
-    let selectedProvince = [];
-    let myChartPdf = null;
-    let myChartBollettino = null;
+    let selectedRegioni = []; let selectedProvince = []; let myChartPdf = null; let myChartBollettino = null;
 
-    // --- LOGICA HEADER E GUIDA ---
     let lastScrollTop = 0;
     window.addEventListener('scroll', function() {
         let st = window.pageYOffset || document.documentElement.scrollTop;
         const header = document.getElementById('siteHeader');
         const tabNav = document.getElementById('tabNav');
-        
         if (st > lastScrollTop && st > 60) {
-            // Scrolling DOWN
             header.classList.add('hidden');
-            if (tabNav.style.display === 'flex') {
-                tabNav.style.top = '0px'; // Tab va in cima quando l'header si nasconde
-            }
+            if (tabNav.style.display === 'flex') { tabNav.style.top = '0px'; }
         } else {
-            // Scrolling UP
             header.classList.remove('hidden');
-            if (tabNav.style.display === 'flex') {
-                tabNav.style.top = '60px'; // Tab si abbassa sotto l'header
-            }
+            if (tabNav.style.display === 'flex') { tabNav.style.top = '60px'; }
         }
         lastScrollTop = st <= 0 ? 0 : st;
     }, false);
 
-    function scrollToTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
     function toggleGuide() {
         const guidaWrapper = document.getElementById('guida-wrapper');
         const guidaContent = document.getElementById('guida-content');
         const header = guidaWrapper.querySelector('.collapsible-header');
-
-        // Se la sezione è nascosta, mostrala e aprila
         if (guidaWrapper.style.display === 'none') {
             guidaWrapper.style.display = 'block';
-            if (guidaContent.classList.contains('hidden')) {
-                toggleSection(header, 'guida-content');
-            }
-            // Scorri fino alla sezione guida
-            setTimeout(() => {
-                guidaWrapper.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        } else {
-            // Se è già visibile, chiudila o aprila (toggle)
-            toggleSection(header, 'guida-content');
-        }
+            if (guidaContent.classList.contains('hidden')) { toggleSection(header, 'guida-content'); }
+            setTimeout(() => { guidaWrapper.scrollIntoView({ behavior: 'smooth' }); }, 100);
+        } else { toggleSection(header, 'guida-content'); }
     }
 
-    // --- LOGICA TAB E SEZIONI ---
     function showTab(tabName) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
         if (tabName === 'pdf') {
             document.getElementById('tab-pdf').classList.add('active');
             document.getElementById('tab1Btn').classList.add('active');
@@ -471,7 +482,6 @@
         const content = document.getElementById(contentId);
         headerElement.classList.toggle('collapsed');
         const isHidden = content.classList.toggle('hidden');
-        
         if (!isHidden) {
             const canvas = content.querySelector('canvas');
             if (canvas) {
@@ -495,56 +505,29 @@
         document.getElementById('regioneSelect').addEventListener('change', addRegione);
         document.getElementById('provinciaSelect').addEventListener('change', addProvincia);
         document.getElementById('searchClassi').addEventListener('input', filtraClassi);
-        
-        document.querySelectorAll('input[name="ordineScuola"]').forEach(cb => {
-            cb.addEventListener('change', aggiornaClassiVisibili);
-        });
+        document.querySelectorAll('input[name="ordineScuola"]').forEach(cb => { cb.addEventListener('change', aggiornaClassiVisibili); });
     });
 
-    function addRegione() {
-        const select = document.getElementById('regioneSelect');
-        if (select.value && !selectedRegioni.includes(select.value)) { selectedRegioni.push(select.value); renderTags(); updateProvinceDropdown(); }
-        select.value = "";
-    }
-    function removeRegione(val) {
-        selectedRegioni = selectedRegioni.filter(r => r !== val);
-        selectedProvince = selectedProvince.filter(p => !regioniProvince[val].includes(p));
-        renderTags(); updateProvinceDropdown();
-    }
-    function addProvincia() {
-        const select = document.getElementById('provinciaSelect');
-        if (select.value && !selectedProvince.includes(select.value)) { selectedProvince.push(select.value); renderTags(); }
-        select.value = "";
-    }
-    function removeProvincia(val) {
-        selectedProvince = selectedProvince.filter(p => p !== val); renderTags();
-    }
-    function updateProvinceDropdown() {
-        const provinciaSelect = document.getElementById('provinciaSelect');
-        provinciaSelect.innerHTML = '<option value="">+ Aggiungi Provincia</option>';
-        selectedRegioni.forEach(regione => { regioniProvince[regione].forEach(provincia => { let option = document.createElement('option'); option.value = provincia; option.text = provincia; provinciaSelect.add(option); }); });
-    }
+    function addRegione() { const select = document.getElementById('regioneSelect'); if (select.value && !selectedRegioni.includes(select.value)) { selectedRegioni.push(select.value); renderTags(); updateProvinceDropdown(); } select.value = ""; }
+    function removeRegione(val) { selectedRegioni = selectedRegioni.filter(r => r !== val); selectedProvince = selectedProvince.filter(p => !regioniProvince[val].includes(p)); renderTags(); updateProvinceDropdown(); }
+    function addProvincia() { const select = document.getElementById('provinciaSelect'); if (select.value && !selectedProvince.includes(select.value)) { selectedProvince.push(select.value); renderTags(); } select.value = ""; }
+    function removeProvincia(val) { selectedProvince = selectedProvince.filter(p => p !== val); renderTags(); }
+    function updateProvinceDropdown() { const provinciaSelect = document.getElementById('provinciaSelect'); provinciaSelect.innerHTML = '<option value="">+ Aggiungi Provincia</option>'; selectedRegioni.forEach(regione => { regioniProvince[regione].forEach(provincia => { let option = document.createElement('option'); option.value = provincia; option.text = provincia; provinciaSelect.add(option); }); }); }
     function renderTags() {
         const regioniTagsDiv = document.getElementById('regioniTags');
         const provinceTagsDiv = document.getElementById('provinceTags');
         regioniTagsDiv.innerHTML = ''; provinceTagsDiv.innerHTML = '';
-        
         selectedRegioni.forEach(r => {
             let tag = document.createElement('div'); tag.className = 'tag';
             let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;';
             span.addEventListener('click', function() { removeRegione(r); });
-            tag.appendChild(document.createTextNode(r + " "));
-            tag.appendChild(span);
-            regioniTagsDiv.appendChild(tag);
+            tag.appendChild(document.createTextNode(r + " ")); tag.appendChild(span); regioniTagsDiv.appendChild(tag);
         });
-
         selectedProvince.forEach(p => {
             let tag = document.createElement('div'); tag.className = 'tag';
             let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;';
             span.addEventListener('click', function() { removeProvincia(p); });
-            tag.appendChild(document.createTextNode(p + " "));
-            tag.appendChild(span);
-            provinceTagsDiv.appendChild(tag);
+            tag.appendChild(document.createTextNode(p + " ")); tag.appendChild(span); provinceTagsDiv.appendChild(tag);
         });
     }
     function aggiornaClassiVisibili() {
@@ -584,429 +567,124 @@
         const sec5Wrapper = document.getElementById('chartSectionPdfWrapper');
         const sec5_1Wrapper = document.getElementById('sec5_1-wrapper');
         const btn = document.getElementById('generaBtn');
-        
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
         let classiSelezionate = [];
         checkboxes.forEach(cb => classiSelezionate.push(cb.value));
-
-        if (classiSelezionate.length === 0) {
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso.";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "Generazione in corso...";
-        statusMsg.style.color = "blue";
-        statusMsg.innerText = "Estrazione dati in corso... Attendi. (Il primo avvio può richiedere fino a 1 minuto).";
-
+        if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
+        btn.disabled = true; btn.innerText = "Generazione in corso...";
+        statusMsg.style.color = "#0066CC"; statusMsg.innerText = "Estrazione dati in corso... Attendi.";
         try {
             const fasciaSelezionata = document.getElementById('fasciaSelect').value;
             const annoSelezionato = document.getElementById('annoSelect').value;
-
             const response = await fetch(RENDER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    classi: classiSelezionate,
-                    regioni: selectedRegioni,     
-                    province: selectedProvince,
-                    fascia: fasciaSelezionata,
-                    anno: annoSelezionato
-                })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata, anno: annoSelezionato })
             });
-
-            if (!response.ok) {
-                let errorMessage = "Errore sconosciuto durante la generazione.";
-                try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {}
-                throw new Error(errorMessage);
-            }
-
+            if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
             const data = await response.json();
-
             const byteCharacters = atob(data.pdf_base64);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
             const arrayBuffer = new Uint8Array(byteNumbers);
-
             pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
             pdfContainer.style.display = 'block';
-
             const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
             const pdfUrl = URL.createObjectURL(pdfBlob);
             const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
-            
-            const stats = data.stats;
-            const labels = Object.keys(stats);
-
+            const stats = data.stats; const labels = Object.keys(stats);
             if (labels.length > 0) {
-                let tableHTML = `
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-                        <thead>
-                            <tr style="background-color: #3498db; color: white; text-align: left;">
-                                <th style="border: 1px solid #ddd; padding: 8px;">Regione</th>
-                                <th style="border: 1px solid #ddd; padding: 8px;">Provincia</th>
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Totale Candidati</th>
-                                <th style="border: 1px solid #ddd; padding: 8px;">Punteggio più alto</th>
-                                <th style="border: 1px solid #ddd; padding: 8px;">Punteggio più basso</th>
-                                <th style="border: 1px solid #ddd; padding: 8px; text-align: center;">Mediana</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
+                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0066CC; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
                 labels.forEach(l => {
                     const info = stats[l];
                     const regione = info.regione || 'N/D';
                     const medianScore = info.median ? info.median.toFixed(2).replace('.', ',') : '-';
-                    
-                    tableHTML += `
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${regione}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${l}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${info.candidati}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${info.top || 'N/D'}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${info.bottom || 'N/D'}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${medianScore}</td>
-                        </tr>
-                    `;
+                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${info.top || 'N/D'}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${info.bottom || 'N/D'}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
                 });
-                
                 tableHTML += `</tbody></table>`;
                 document.getElementById('statsTableContainerPdf').innerHTML = tableHTML;
-
                 const ctx = document.getElementById('statsChartPdf').getContext('2d');
                 if (myChartPdf) { myChartPdf.destroy(); }
-                
-                const dynamicColors = () => {
-                    const r = Math.floor(Math.random() * 200);
-                    const g = Math.floor(Math.random() * 200);
-                    const b = Math.floor(Math.random() * 200);
-                    return `rgba(${r}, ${g}, ${b}, 0.7)`;
-                };
-
-                const chartData = labels.map(l => stats[l].rapporto);
-                const bgColors = labels.map(() => dynamicColors());
-
                 myChartPdf = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Scuole per Candidato (S/C)',
-                            data: chartData,
-                            backgroundColor: bgColors,
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            title: { display: true, text: 'Rapporto Scuole per Candidato (S/C)', font: { size: 14 } },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const prov = context.label;
-                                        const info = stats[prov];
-                                        const rapportoFormattato = info.rapporto.toFixed(2).replace('.', ',');
-                                        return [
-                                            `Rapporto S/C: ${rapportoFormattato}`,
-                                            `Scuole (S): ${info.scuole}`,
-                                            `Candidati (C): ${info.candidati}`
-                                        ];
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: { display: true, text: 'Rapporto (Scuole / Candidati)' }
-                            },
-                            x: {
-                                ticks: {
-                                    autoSkip: false,
-                                    maxRotation: 45,
-                                    minRotation: 45
-                                }
-                            }
-                        }
-                    }
+                    type: 'bar', data: { labels: labels, datasets: [{ label: 'Scuole per Candidato (S/C)', data: labels.map(l => stats[l].rapporto), backgroundColor: 'rgba(0, 102, 204, 0.6)', borderColor: 'rgba(0, 102, 204, 1)', borderWidth: 1 }] },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Rapporto Scuole per Candidato (S/C)', font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } } } }
                 });                
-                
-                sec4Wrapper.style.display = 'block';
-                sec5Wrapper.style.display = 'block';
-                sec5_1Wrapper.style.display = 'block';
-                
+                sec4Wrapper.style.display = 'block'; sec5Wrapper.style.display = 'block'; sec5_1Wrapper.style.display = 'block';
                 if(myChartPdf) myChartPdf.resize();
-
-                // Mostra SOLO il tab PDF
                 const tabNav = document.getElementById('tabNav');
-                tabNav.style.display = 'flex';
-                document.getElementById('tab1Btn').style.display = 'block';
-                
-                // Se l'header è nascosto in questo momento, mantieni il tab in cima
-                if (document.getElementById('siteHeader').classList.contains('hidden')) {
-                    tabNav.style.top = '0px';
-                } else {
-                    tabNav.style.top = '60px';
-                }
-            } else {
-                sec5Wrapper.style.display = 'none';
-                sec5_1Wrapper.style.display = 'none';
-            }
-
-            statusMsg.style.color = "green";
-            statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
+                tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
+                if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '60px'; }
+            } else { sec5Wrapper.style.display = 'none'; sec5_1Wrapper.style.display = 'none'; }
+            statusMsg.style.color = "#06D6A0"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
             showTab('pdf');
-
         } catch (error) {
-            console.error('Errore:', error);
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Errore: " + error.message;
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Genera e Visualizza Dati e PDF";
-        }
+            console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
+        } finally { btn.disabled = false; btn.innerText = "Genera e Visualizza Dati e PDF"; }
     }
 
-    // --- GESTIONE PULSANTE BOLETTINO GPS ---
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
         const chartSec6_1Wrapper = document.getElementById('sec6_1-wrapper');
         const analisiWrapper = document.getElementById('analisiBollettinoWrapper');
         const btn = document.getElementById('bollettinoBtn');
-        
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
         let classiSelezionate = [];
         checkboxes.forEach(cb => classiSelezionate.push(cb.value));
-
-        if (classiSelezionate.length === 0) {
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso.";
-            return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "Estrazione in corso...";
-        statusMsg.style.color = "blue";
-        statusMsg.innerText = "Estrazione dati bollettino in corso... Attendi.";
-
+        if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
+        btn.disabled = true; btn.innerText = "Estrazione in corso...";
+        statusMsg.style.color = "#F39C12"; statusMsg.innerText = "Estrazione dati bollettino in corso... Attendi.";
         try {
             const fasciaSelezionata = document.getElementById('fasciaSelect').value;
             const bollettinoURL = RENDER_URL.replace('/genera-pdf', '/genera-bollettino');
-
             const response = await fetch(bollettinoURL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    classi: classiSelezionate,
-                    regioni: selectedRegioni,     
-                    province: selectedProvince,
-                    fascia: fasciaSelezionata
-                })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata })
             });
-
-            if (!response.ok) {
-                let errorMessage = "Errore sconosciuto durante l'estrazione del bollettino.";
-                try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {}
-                throw new Error(errorMessage);
-            }
-
+            if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
             const result = await response.json();
             const data = result.data;
-            
             if (data.length > 0) {
-                let tableHTML = `
-                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
-                        <thead>
-                            <tr style="background-color: #e67e22; color: white; text-align: left;">
-                                <th style="border: 1px solid #ddd; padding: 10px;">Regione</th>
-                                <th style="border: 1px solid #ddd; padding: 10px;">Provincia</th>
-                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Nomine Totali</th>
-                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Min_Punteggio_F1</th>
-                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Min_Punteggio_F2</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
+                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Nomine Totali</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Min Punteggio F1</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Min Punteggio F2</th></tr></thead><tbody>`;
                 const labels = data.map(item => item.provincia);
                 const dataNomine = data.map(item => item.nomine_totali);
                 const dataMinF1 = data.map(item => item.min_f1 === "N/D" ? null : parseFloat(item.min_f1.replace(',', '.')));
                 const dataMinF2 = data.map(item => item.min_f2 === "N/D" ? null : parseFloat(item.min_f2.replace(',', '.')));
-
-                let statsAvanzateHTML = `
-                    <div style="padding: 20px; background: #fdf2e9; border-left: 5px solid #e67e22; border-radius: 4px;">
-                        <p><strong>Tasso di Assorbimento della I Fascia:</strong> La percentuale di cattedre coperte dalla I Fascia prima di dover attingere alla II Fascia.</p>
-                        <p><strong>Probabilità di Nomina per Fascia:</strong> La percentuale di candidati che sono riusciti effettivamente a prendere l'incarico, divisa per fascia.</p>
-                        <ul style="list-style-type: none; padding: 0;">
-                `;
-
+                let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;"><ul style="list-style-type: none; padding: 0; margin: 0;">`;
                 data.forEach(item => {
-                    tableHTML += `
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${item.regione || 'N/D'}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;"><strong>${item.provincia}</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background:#eaf6ff;">${item.nomine_totali}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background:#eaf6ff;">${item.min_f1}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background:#fff5e6;">${item.min_f2}</td>
-                        </tr>
-                    `;
-                    
-                    statsAvanzateHTML += `
-                        <li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
-                            <strong style="font-size: 15px; color: #2c3e50;">${item.provincia}</strong><br>
-                            <span style="color: #2980b9;">Assorbimento F1: <strong>${item.assorbimento_f1}%</strong></span> 
-                            (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali} totali)<br>
-                            <span style="color: #c0392b;">Probabilità di Nomina: <strong>F1 ${item.prob_f1}%</strong> | <strong>F2 ${item.prob_f2}%</strong></span>
-                        </li>
-                    `;
+                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${item.regione || 'N/D'}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.nomine_totali}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.min_f1}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.min_f2}</td></tr>`;
+                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: #003C7E;">${item.provincia}</strong><br><span style="color: #0066CC;">Assorbimento F1: <strong>${item.assorbimento_f1}%</strong></span> (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali})<br><span style="color: #E74C3C;">Probabilità Nomina: <strong>F1 ${item.prob_f1}%</strong> | <strong>F2 ${item.prob_f2}%</strong></span></li>`;
                 });
-                
                 tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
-                
                 document.getElementById('statsTableContainerBollettino').innerHTML = tableHTML;
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
                 
                 const ctx = document.getElementById('statsChartBollettino').getContext('2d');
                 if (myChartBollettino) { myChartBollettino.destroy(); }
-
                 myChartBollettino = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Nomine Totali',
-                                data: dataNomine,
-                                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1,
-                                yAxisID: 'y1',
-                                order: 3
-                            },
-                            {
-                                type: 'line',
-                                label: 'Min Punteggio F1',
-                                data: dataMinF1,
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                backgroundColor: 'rgba(54, 162, 235, 1)',
-                                yAxisID: 'y2',
-                                tension: 0.1,
-                                pointRadius: 5,
-                                order: 1
-                            },
-                            {
-                                type: 'line',
-                                label: 'Min Punteggio F2',
-                                data: dataMinF2,
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                backgroundColor: 'rgba(255, 99, 132, 1)',
-                                yAxisID: 'y2',
-                                tension: 0.1,
-                                pointRadius: 5,
-                                order: 2
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            title: { display: true, text: 'Nomine Totali e Punteggi Minimi per Provincia', font: { size: 14 } },
-                            tooltip: {
-                                mode: 'index',
-                                intersect: false,
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) { label += ': '; }
-                                        if (context.parsed.y !== null) {
-                                            if (context.dataset.yAxisID === 'y2') {
-                                                label += context.parsed.y.toFixed(2).replace('.', ',');
-                                            } else {
-                                                label += context.parsed.y;
-                                            }
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                ticks: {
-                                    autoSkip: false,
-                                    maxRotation: 45,
-                                    minRotation: 45
-                                }
-                            },
-                            y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                title: { display: true, text: 'Numero Nomine Totali' },
-                                grid: { drawOnChartArea: true },
-                                beginAtZero: true
-                            },
-                            y2: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                title: { display: true, text: 'Punteggio Minimo' },
-                                grid: { drawOnChartArea: false },
-                                beginAtZero: true
-                            }
-                        }
-                    }
+                    type: 'bar', data: { labels: labels, datasets: [
+                        { label: 'Nomine Totali', data: dataNomine, backgroundColor: 'rgba(17, 138, 178, 0.5)', borderColor: 'rgba(17, 138, 178, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
+                        { type: 'line', label: 'Min Punteggio F1', data: dataMinF1, borderColor: 'rgba(0, 102, 204, 1)', backgroundColor: 'rgba(0, 102, 204, 1)', yAxisID: 'y2', tension: 0.1, pointRadius: 5, order: 1 },
+                        { type: 'line', label: 'Min Punteggio F2', data: dataMinF2, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 1)', yAxisID: 'y2', tension: 0.1, pointRadius: 5, order: 2 }
+                    ]},
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Nomine Totali e Punteggi Minimi', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { let l = context.dataset.label || ''; if (l) { l += ': '; } if (context.parsed.y !== null) { if (context.dataset.yAxisID === 'y2') { l += context.parsed.y.toFixed(2).replace('.', ','); } else { l += context.parsed.y; } } return l; } } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'N. Nomine' }, grid: { drawOnChartArea: true }, beginAtZero: true }, y2: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Punteggio' }, grid: { drawOnChartArea: false }, beginAtZero: true } } }
                 });
 
-                chartSectionWrapper.style.display = 'block';
-                chartSec6_1Wrapper.style.display = 'block';
-                analisiWrapper.style.display = 'block';
-                
-                // Mostra SOLO il tab Bollettino
+                chartSectionWrapper.style.display = 'block'; chartSec6_1Wrapper.style.display = 'block'; analisiWrapper.style.display = 'block';
                 const tabNav = document.getElementById('tabNav');
-                tabNav.style.display = 'flex';
-                document.getElementById('tab2Btn').style.display = 'block';
-                
-                // Se l'header è nascosto in questo momento, mantieni il tab in cima
-                if (document.getElementById('siteHeader').classList.contains('hidden')) {
-                    tabNav.style.top = '0px';
-                } else {
-                    tabNav.style.top = '60px';
-                }
-                
+                tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
+                if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '60px'; }
                 if(myChartBollettino) myChartBollettino.resize();
-                
                 showTab('bollettino');
             } else {
-                chartSectionWrapper.style.display = 'none';
-                chartSec6_1Wrapper.style.display = 'none';
-                analisiWrapper.style.display = 'none';
-                statusMsg.style.color = "red";
-                statusMsg.innerText = "Nessun dato trovato per i filtri selezionati nel bollettino.";
-                return;
+                chartSectionWrapper.style.display = 'none'; chartSec6_1Wrapper.style.display = 'none'; analisiWrapper.style.display = 'none';
+                statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati nel bollettino."; return;
             }
-
-            statusMsg.style.color = "green";
-            statusMsg.innerText = "Estrazione dal bollettino completata! Visualizza i dati qui sotto.";
-
+            statusMsg.style.color = "#06D6A0"; statusMsg.innerText = "Estrazione dal bollettino completata! Visualizza i dati qui sotto.";
         } catch (error) {
-            console.error('Errore:', error);
-            statusMsg.style.color = "red";
-            statusMsg.innerText = "Errore: " + error.message;
-        } finally {
-            btn.disabled = false;
-            btn.innerText = "Bollettini GPS";
-        }
+            console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
+        } finally { btn.disabled = false; btn.innerText = "Bollettini GPS"; }
     }
 </script>
 </body>
