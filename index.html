@@ -512,43 +512,64 @@
             chartContainer.style.display = 'block';
             
             if (data.length > 0) {
-                // Genera la Tabella
+                // 1. Genera la Tabella Principale
                 let tableHTML = `
                     <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
                         <thead>
                             <tr style="background-color: #e67e22; color: white; text-align: left;">
                                 <th style="border: 1px solid #ddd; padding: 10px;">Regione</th>
                                 <th style="border: 1px solid #ddd; padding: 10px;">Provincia</th>
-                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Fascia</th>
-                                <th style="border: 1px solid #ddd; padding: 10px;">Punteggio Primo Nominato</th>
-                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Fascia</th>
-                                <th style="border: 1px solid #ddd; padding: 10px;">Punteggio Ultimo Nominato</th>
+                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Nomine Totali</th>
+                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Min_Punteggio_F1</th>
+                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Min_Punteggio_F2</th>
                             </tr>
                         </thead>
                         <tbody>
                 `;
                 
+                // Preparazione dati per il grafico
+                const labels = data.map(item => item.provincia);
+                const dataNomine = data.map(item => item.nomine_totali);
+                // Per Chart.js i valori nulli devono essere null, non stringhe "N/D"
+                const dataMinF1 = data.map(item => item.min_f1 === "N/D" ? null : parseFloat(item.min_f1.replace(',', '.')));
+                const dataMinF2 = data.map(item => item.min_f2 === "N/D" ? null : parseFloat(item.min_f2.replace(',', '.')));
+
+                let statsAvanzateHTML = `
+                    <div style="margin-top: 30px; padding: 20px; background: #fdf2e9; border-left: 5px solid #e67e22; border-radius: 4px;">
+                        <h3 style="margin-top:0; color: #d35400;">Analisi Approfondita per Provincia</h3>
+                        <p><strong>Tasso di Assorbimento della I Fascia:</strong> La percentuale di cattedre coperte dalla I Fascia prima di dover attingere alla II Fascia.</p>
+                        <p><strong>Probabilità di Nomina per Fascia:</strong> La percentuale di candidati che sono riusciti effettivamente a prendere l'incarico, divisa per fascia.</p>
+                        <ul style="list-style-type: none; padding: 0;">
+                `;
+
                 data.forEach(item => {
                     tableHTML += `
                         <tr>
                             <td style="border: 1px solid #ddd; padding: 8px;">${item.regione || 'N/D'}</td>
                             <td style="border: 1px solid #ddd; padding: 8px;"><strong>${item.provincia}</strong></td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.primo_fascia}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; background:#eaf6ff;">${item.primo}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.ultimo_fascia}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px; background:#fff5e6;"><strong>${item.ultimo}</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background:#eaf6ff;">${item.nomine_totali}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background:#eaf6ff;">${item.min_f1}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center; background:#fff5e6;">${item.min_f2}</td>
                         </tr>
+                    `;
+                    
+                    statsAvanzateHTML += `
+                        <li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
+                            <strong style="font-size: 15px; color: #2c3e50;">${item.provincia}</strong><br>
+                            <span style="color: #2980b9;">Assorbimento F1: <strong>${item.assorbimento_f1}%</strong></span> 
+                            (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali} totali)<br>
+                            <span style="color: #c0392b;">Probabilità di Nomina: <strong>F1 ${item.prob_f1}%</strong> | <strong>F2 ${item.prob_f2}%</strong></span>
+                        </li>
                     `;
                 });
                 
                 tableHTML += `</tbody></table>`;
-                document.getElementById('statsTableContainer').innerHTML = tableHTML;
+                statsAvanzateHTML += `</ul></div>`;
                 
-                // Genera il Grafico
-                const labels = data.map(item => item.provincia);
-                const dataPrimo = data.map(item => parseFloat(item.primo.replace(',', '.')));
-                const dataUltimo = data.map(item => parseFloat(item.ultimo.replace(',', '.')));
-
+                // Inietta Tabella e Statistiche Avanzate nel container
+                document.getElementById('statsTableContainer').innerHTML = tableHTML + statsAvanzateHTML;
+                
+                // 2. Genera il Grafico Combinato a Doppio Asse
                 const ctx = document.getElementById('statsChart').getContext('2d');
                 if (myChart) { myChart.destroy(); }
 
@@ -558,18 +579,35 @@
                         labels: labels,
                         datasets: [
                             {
-                                label: 'Punteggio 1° Nominato',
-                                data: dataPrimo,
-                                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
+                                label: 'Nomine Totali',
+                                data: dataNomine,
+                                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1,
+                                yAxisID: 'y1',
+                                order: 3 // Ordine di disegno (dietro)
                             },
                             {
-                                label: 'Punteggio Ultimo Nominato',
-                                data: dataUltimo,
-                                backgroundColor: 'rgba(255, 159, 64, 0.7)',
-                                borderColor: 'rgba(255, 159, 64, 1)',
-                                borderWidth: 1
+                                type: 'line',
+                                label: 'Min Punteggio F1',
+                                data: dataMinF1,
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 1)',
+                                yAxisID: 'y2',
+                                tension: 0.1,
+                                pointRadius: 5,
+                                order: 1 // Ordine di disegno (sopra)
+                            },
+                            {
+                                type: 'line',
+                                label: 'Min Punteggio F2',
+                                data: dataMinF2,
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                backgroundColor: 'rgba(255, 99, 132, 1)',
+                                yAxisID: 'y2',
+                                tension: 0.1,
+                                pointRadius: 5,
+                                order: 2
                             }
                         ]
                     },
@@ -577,14 +615,20 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            title: { display: true, text: 'Confronto Punteggi Primo e Ultimo Nominato per Provincia', font: { size: 14 } },
+                            title: { display: true, text: 'Nomine Totali e Punteggi Minimi per Provincia', font: { size: 14 } },
                             tooltip: {
+                                mode: 'index',
+                                intersect: false,
                                 callbacks: {
                                     label: function(context) {
                                         let label = context.dataset.label || '';
                                         if (label) { label += ': '; }
                                         if (context.parsed.y !== null) {
-                                            label += context.parsed.y.toFixed(2).replace('.', ',');
+                                            if (context.dataset.yAxisID === 'y2') {
+                                                label += context.parsed.y.toFixed(2).replace('.', ',');
+                                            } else {
+                                                label += context.parsed.y;
+                                            }
                                         }
                                         return label;
                                     }
@@ -592,16 +636,28 @@
                             }
                         },
                         scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: { display: true, text: 'Punteggio' }
-                            },
                             x: {
                                 ticks: {
                                     autoSkip: false,
                                     maxRotation: 45,
                                     minRotation: 45
                                 }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Numero Nomine Totali' },
+                                grid: { drawOnChartArea: true },
+                                beginAtZero: true
+                            },
+                            y2: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: 'Punteggio Minimo' },
+                                grid: { drawOnChartArea: false }, // Solo griglia sinistra attiva
+                                beginAtZero: true
                             }
                         }
                     }
