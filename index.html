@@ -54,7 +54,7 @@
         
         /* STILI PER I TAB */
         .tab-navigation {
-            display: flex;
+            display: none; /* Nascosto all'inizio */
             border-bottom: 2px solid #ddd;
             margin-bottom: 20px;
         }
@@ -71,36 +71,28 @@
 
         /* STILI PER LE SEZIONI COLLAPSABLE */
         .collapsible-header {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            padding: 10px 0;
-            border-bottom: 2px solid #3498db;
-            color: #2980b9;
-            margin-bottom: 15px;
-            user-select: none;
+            display: flex; align-items: center; cursor: pointer; padding: 10px 0;
+            border-bottom: 2px solid #3498db; color: #2980b9; margin-bottom: 15px; user-select: none;
         }
         .collapsible-header h2 {
-            margin: 0;
-            border: none;
-            padding: 0;
-            flex: 1;
+            margin: 0; border: none; padding: 0; flex: 1;
+        }
+        /* Sottosezione per i grafici */
+        .sub-collapsible-header {
+            display: flex; align-items: center; cursor: pointer; padding: 8px 0;
+            border-bottom: 1px solid #ddd; color: #555; margin: 20px 0 15px 0; user-select: none;
+        }
+        .sub-collapsible-header h3 {
+            margin: 0; border: none; padding: 0; flex: 1; font-size: 15px; font-weight: bold;
         }
         .collapse-arrow {
-            display: inline-block;
-            margin-right: 10px;
-            transition: transform 0.3s ease;
-            font-size: 14px;
+            display: inline-block; margin-right: 10px; transition: transform 0.3s ease; font-size: 12px;
         }
-        .collapsible-header.collapsed .collapse-arrow {
+        .collapsible-header.collapsed .collapse-arrow, .sub-collapsible-header.collapsed .collapse-arrow {
             transform: rotate(-90deg);
         }
-        .collapsible-content {
-            display: block;
-        }
-        .collapsible-content.hidden {
-            display: none;
-        }
+        .collapsible-content { display: block; }
+        .collapsible-content.hidden { display: none; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -196,16 +188,16 @@
         <div id="statusMessage"></div>
     </div>
 
-    <!-- NAVIGAZIONE TAB -->
-    <div class="tab-navigation">
+    <!-- NAVIGAZIONE TAB (Nascosta all'inizio) -->
+    <div class="tab-navigation" id="tabNav">
         <button class="tab-btn active" id="tab1Btn" onclick="showTab('pdf')">Vista PDF & Graduatoria</button>
         <button class="tab-btn" id="tab2Btn" onclick="showTab('bollettino')">Vista Bollettino GPS</button>
     </div>
 
     <!-- TAB 1: PDF E GRAFICI GRADUATORIA -->
     <div id="tab-pdf" class="tab-content active">
-        <!-- Sezione 4 Collapsable -->
-        <div class="section">
+        <!-- Sezione 4 (Nascosta finché non si genera il PDF) -->
+        <div class="section" id="sec4-wrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec4-content')">
                 <span class="collapse-arrow">&#9660;</span>
                 <h2>4. Anteprima Documento</h2>
@@ -217,7 +209,7 @@
             </div>
         </div>
 
-        <!-- Sezione 5 Collapsable -->
+        <!-- Sezione 5 (Nascosta finché non si genera il PDF) -->
         <div class="section" id="chartSectionPdfWrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -225,13 +217,21 @@
             </div>
             <div id="sec5-content" class="collapsible-content">
                 <div id="statsTableContainerPdf" style="margin-bottom: 20px; overflow-x: auto;"></div>
-                <div class="chart-container-generic">
-                    <canvas id="statsChartPdf"></canvas>
+                
+                <!-- Sottosezione Grafico richiudibile -->
+                <div class="sub-collapsible-header" onclick="toggleSection(this, 'sec5-chart-content')">
+                    <span class="collapse-arrow">&#9660;</span>
+                    <h3>Grafico Rapporto Scuole/Candidati</h3>
                 </div>
-                <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
-                    <strong>Come leggere il grafico:</strong><br>
-                    Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
-                    <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato.
+                <div id="sec5-chart-content" class="collapsible-content">
+                    <div class="chart-container-generic">
+                        <canvas id="statsChartPdf"></canvas>
+                    </div>
+                    <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
+                        <strong>Come leggere il grafico:</strong><br>
+                        Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
+                        <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato.
+                    </div>
                 </div>
             </div>
         </div>
@@ -239,7 +239,7 @@
 
     <!-- TAB 2: BOLETTINO GPS -->
     <div id="tab-bollettino" class="tab-content">
-        <!-- Sezione 6 Collapsable -->
+        <!-- Sezione 6 (Nascosta finché non si genera il Bollettino) -->
         <div class="section" id="chartSectionBollettinoWrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -247,13 +247,21 @@
             </div>
             <div id="sec6-content" class="collapsible-content">
                 <div id="statsTableContainerBollettino" style="margin-bottom: 20px; overflow-x: auto;"></div>
-                <div class="chart-container-generic">
-                    <canvas id="statsChartBollettino"></canvas>
+                
+                <!-- Sottosezione Grafico richiudibile -->
+                <div class="sub-collapsible-header" onclick="toggleSection(this, 'sec6-chart-content')">
+                    <span class="collapse-arrow">&#9660;</span>
+                    <h3>Grafico Nomine e Punteggi</h3>
+                </div>
+                <div id="sec6-chart-content" class="collapsible-content">
+                    <div class="chart-container-generic">
+                        <canvas id="statsChartBollettino"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Sezione 7 Collapsable (Analisi Approfondita) -->
+        <!-- Sezione 7 (Nascosta finché non si genera il Bollettino) -->
         <div class="section" id="analisiBollettinoWrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec7-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -302,11 +310,21 @@
         }
     }
 
-    // Funzione per aprire/chiudere le sezioni
+    // Funzione per aprire/chiudere le sezioni con fix per i grafici
     function toggleSection(headerElement, contentId) {
         const content = document.getElementById(contentId);
         headerElement.classList.toggle('collapsed');
-        content.classList.toggle('hidden');
+        const isHidden = content.classList.toggle('hidden');
+        
+        // Se stiamo aprendo una sezione che contiene un grafico, ridimensioniamolo correttamente
+        if (!isHidden) {
+            const canvas = content.querySelector('canvas');
+            if (canvas) {
+                const chartId = canvas.id;
+                if (chartId === 'statsChartPdf' && myChartPdf) myChartPdf.resize();
+                if (chartId === 'statsChartBollettino' && myChartBollettino) myChartBollettino.resize();
+            }
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -407,6 +425,7 @@
         const statusMsg = document.getElementById('statusMessage');
         const pdfViewerDiv = document.getElementById('pdfViewer');
         const pdfContainer = document.getElementById('pdfViewerContainer');
+        const sec4Wrapper = document.getElementById('sec4-wrapper');
         const chartSectionWrapper = document.getElementById('chartSectionPdfWrapper');
         const btn = document.getElementById('generaBtn');
         
@@ -563,9 +582,15 @@
                     }
                 });                
                 chartSectionWrapper.style.display = 'block';
+                // Ridimensiona il grafico nel caso fosse stato inizializzato nascosto
+                if(myChartPdf) myChartPdf.resize();
             } else {
                 chartSectionWrapper.style.display = 'none';
             }
+
+            // Mostra la sezione 4 e i Tab
+            sec4Wrapper.style.display = 'block';
+            document.getElementById('tabNav').style.display = 'flex';
 
             statusMsg.style.color = "green";
             statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
@@ -581,7 +606,7 @@
         }
     }
 
-    // --- GESTIONE PULSANTE BOLLETTINO GPS ---
+    // --- GESTIONE PULSANTE BOLETTINO GPS ---
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
@@ -776,9 +801,14 @@
                     }
                 });
 
-                // Mostra le sezioni 6 e 7
+                // Mostra le sezioni 6 e 7 e i Tab
                 chartSectionWrapper.style.display = 'block';
                 analisiWrapper.style.display = 'block';
+                document.getElementById('tabNav').style.display = 'flex';
+                
+                // Ridimensiona il grafico nel caso fosse stato inizializzato nascosto
+                if(myChartBollettino) myChartBollettino.resize();
+                
                 showTab('bollettino'); // Mostra automaticamente il tab Bollettino
             } else {
                 chartSectionWrapper.style.display = 'none';
