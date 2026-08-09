@@ -5,9 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPS Posizione</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f7f6; color: #333; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #2c3e50; margin-top: 0; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f7f6; color: #333; padding-top: 70px; /* Spazio per l'header fisso */ }
+        
+        /* STILI HEADER */
+        #siteHeader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #2c3e50;
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
+        #siteHeader.hidden { transform: translateY(-100%); }
+        #siteHeader h1 { margin: 0; font-size: 20px; flex: 1; }
+        .header-btn {
+            background: none; border: 1px solid white; color: white;
+            padding: 6px 15px; cursor: pointer; margin-left: 10px;
+            border-radius: 4px; font-size: 14px; width: auto;
+        }
+        .header-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* STILI MODAL GUIDA */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 8px; max-width: 600px; width: 90%;
+            max-height: 80vh; overflow-y: auto; position: relative;
+        }
+        .modal-close {
+            position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #888;
+        }
+
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 40px; }
         h2 { border-bottom: 2px solid #3498db; padding-bottom: 5px; color: #2980b9; font-size: 18px; }
         .section { margin-bottom: 30px; }
         .form-group { margin-bottom: 15px; }
@@ -52,11 +92,17 @@
             border: 1px solid #ddd; border-radius: 8px; background: #fff; height: 450px;
         }
         
-        /* STILI PER I TAB */
+        /* STILI PER I TAB (STICKY) */
         .tab-navigation {
             display: none; /* Nascosto all'inizio */
+            position: sticky;
+            top: 60px; /* Sotto l'header */
+            background: white;
+            z-index: 900;
+            padding: 10px 0;
             border-bottom: 2px solid #ddd;
             margin-bottom: 20px;
+            transition: top 0.3s ease-in-out;
         }
         .tab-btn {
             background: none; border: none; padding: 10px 20px; cursor: pointer;
@@ -75,17 +121,12 @@
             display: flex; align-items: center; cursor: pointer; padding: 10px 0;
             border-bottom: 2px solid #3498db; color: #2980b9; margin-bottom: 15px; user-select: none;
         }
-        .collapsible-header h2 {
-            margin: 0; border: none; padding: 0; flex: 1;
-        }
-        /* Sottosezione per i grafici */
+        .collapsible-header h2 { margin: 0; border: none; padding: 0; flex: 1; }
         .sub-collapsible-header {
             display: flex; align-items: center; cursor: pointer; padding: 8px 0;
             border-bottom: 1px solid #ddd; color: #555; margin: 20px 0 15px 0; user-select: none;
         }
-        .sub-collapsible-header h3 {
-            margin: 0; border: none; padding: 0; flex: 1; font-size: 15px; font-weight: bold;
-        }
+        .sub-collapsible-header h3 { margin: 0; border: none; padding: 0; flex: 1; font-size: 15px; font-weight: bold; }
         .collapse-arrow {
             display: inline-block; margin-right: 10px; transition: transform 0.3s ease; font-size: 12px;
         }
@@ -118,9 +159,31 @@
 </head>
 <body>
 
-<div class="container">
+<!-- INTESTAZIONE SITO -->
+<header id="siteHeader">
     <h1>Portale Estrazione PDF</h1>
+    <button class="header-btn" onclick="scrollToTop()">Home</button>
+    <button class="header-btn" onclick="openGuide()">Come leggere i dati</button>
+</header>
 
+<!-- MODAL GUIDA -->
+<div id="guideModal" class="modal-overlay" onclick="closeGuide(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="modal-close" onclick="closeGuide()">&times;</span>
+        <h2 style="margin-top:0;">Come leggere i dati</h2>
+        <p><strong>1. Vista PDF & Graduatoria</strong><br>
+        In questa sezione trovi il documento PDF ufficiale con tutti i candidati estratti. Sotto, nella Sezione 5, hai una tabella riepilogativa con il numero totale di candidati per provincia, i puntegchi più alti, più bassi e la mediana.</p>
+        <p><strong>Grafico 5.1 (Rapporto S/C):</strong> Mostra quante scuole ci sono per ogni candidato in una provincia. Più il valore è alto, maggiori sono le probabilità teoriche di assunzione.</p>
+        <hr style="margin: 20px 0;">
+        <p><strong>2. Vista Bollettino GPS</strong><br>
+        Analizza le <strong>nomine effettivamente avvenute</strong> (estratte dal bollettino).</p>
+        <p><strong>Sezione 6 (Tabella):</strong> Mostra le Nomine Totali per provincia e il punteggio minimo registrato in Fascia 1 (Min_F1) e Fascia 2 (Min_F2). Questo indica la "soglia reale" di accesso per essere chiamati.</p>
+        <p><strong>Grafico 6.1:</strong> Un grafico combinato che confronta il volume delle nomine totali (barre verdi) con l'andamento dei punteggi minimi di F1 (linea blu) e F2 (linea rossa).</p>
+        <p><strong>Sezione 7 (Analisi Approfondita):</strong> Calcola il <em>Tasso di Assorbimento F1</em> (quante cattedre su 100 sono state coperte da candidati di I fascia prima di attingere alla II) e la <em>Probabilità di Nomina</em> percentuale divisa per fascia.</p>
+    </div>
+</div>
+
+<div class="container">
     <div class="section">
         <h2>1. Luogo</h2>
         <div class="form-group">
@@ -189,7 +252,7 @@
         <div id="statusMessage"></div>
     </div>
 
-    <!-- NAVIGAZIONE TAB (Nascosta all'inizio) -->
+    <!-- NAVIGAZIONE TAB (Sticky e Nascosta all'inizio) -->
     <div class="tab-navigation" id="tabNav">
         <button class="tab-btn active" id="tab1Btn" onclick="showTab('pdf')">Vista PDF & Graduatoria</button>
         <button class="tab-btn" id="tab2Btn" onclick="showTab('bollettino')">Vista Bollettino GPS</button>
@@ -197,7 +260,7 @@
 
     <!-- TAB 1: PDF E GRAFICI GRADUATORIA -->
     <div id="tab-pdf" class="tab-content active">
-        <!-- Sezione 4 (Nascosta finché non si genera il PDF) -->
+        <!-- Sezione 4 -->
         <div class="section" id="sec4-wrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec4-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -210,7 +273,7 @@
             </div>
         </div>
 
-        <!-- Sezione 5 (Nascosta finché non si genera il PDF) -->
+        <!-- Sezione 5 -->
         <div class="section" id="chartSectionPdfWrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -221,7 +284,7 @@
             </div>
         </div>
 
-        <!-- Sezione 5.1 - Grafico Indipendente (Nascosta finché non si genera il PDF) -->
+        <!-- Sezione 5.1 -->
         <div class="section" id="sec5_1-wrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5_1-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -242,7 +305,7 @@
 
     <!-- TAB 2: BOLETTINO GPS -->
     <div id="tab-bollettino" class="tab-content">
-        <!-- Sezione 6 (Nascosta finché non si genera il Bollettino) -->
+        <!-- Sezione 6 -->
         <div class="section" id="chartSectionBollettinoWrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -253,7 +316,7 @@
             </div>
         </div>
 
-        <!-- Sezione 6.1 - Grafico Indipendente (Nascosta finché non si genera il Bollettino) -->
+        <!-- Sezione 6.1 -->
         <div class="section" id="sec6_1-wrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6_1-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -266,7 +329,7 @@
             </div>
         </div>
 
-        <!-- Sezione 7 (Nascosta finché non si genera il Bollettino) -->
+        <!-- Sezione 7 -->
         <div class="section" id="analisiBollettinoWrapper" style="display: none;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec7-content')">
                 <span class="collapse-arrow">&#9660;</span>
@@ -301,7 +364,42 @@
     let myChartPdf = null;
     let myChartBollettino = null;
 
-    // Funzione per cambiare tab
+    // --- LOGICA HEADER E MODAL ---
+    let lastScrollTop = 0;
+    window.addEventListener('scroll', function() {
+        let st = window.pageYOffset || document.documentElement.scrollTop;
+        const header = document.getElementById('siteHeader');
+        const tabNav = document.getElementById('tabNav');
+        
+        if (st > lastScrollTop && st > 60) {
+            // Scrolling DOWN
+            header.classList.add('hidden');
+            if (tabNav.style.display === 'flex') {
+                tabNav.style.top = '0px'; // Tab va in cima quando l'header si nasconde
+            }
+        } else {
+            // Scrolling UP
+            header.classList.remove('hidden');
+            if (tabNav.style.display === 'flex') {
+                tabNav.style.top = '60px'; // Tab si abbassa sotto l'header
+            }
+        }
+        lastScrollTop = st <= 0 ? 0 : st;
+    }, false);
+
+    function scrollToTop() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function openGuide() {
+        document.getElementById('guideModal').classList.add('active');
+    }
+    function closeGuide(event) {
+        if (!event || event.target.classList.contains('modal-overlay')) {
+            document.getElementById('guideModal').classList.remove('active');
+        }
+    }
+
+    // --- LOGICA TAB E SEZIONI ---
     function showTab(tabName) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -315,13 +413,11 @@
         }
     }
 
-    // Funzione per aprire/chiudere le sezioni con fix per i grafici
     function toggleSection(headerElement, contentId) {
         const content = document.getElementById(contentId);
         headerElement.classList.toggle('collapsed');
         const isHidden = content.classList.toggle('hidden');
         
-        // Se stiamo aprendo una sezione che contiene un grafico, ridimensioniamolo correttamente
         if (!isHidden) {
             const canvas = content.querySelector('canvas');
             if (canvas) {
@@ -588,17 +684,23 @@
                     }
                 });                
                 
-                // Mostra le sezioni 4, 5 e 5.1
                 sec4Wrapper.style.display = 'block';
                 sec5Wrapper.style.display = 'block';
                 sec5_1Wrapper.style.display = 'block';
                 
-                // Ridimensiona il grafico nel caso fosse stato inizializzato nascosto
                 if(myChartPdf) myChartPdf.resize();
 
-                // Gestione Tab: mostra SOLO il tab PDF
-                document.getElementById('tabNav').style.display = 'flex';
+                // Mostra SOLO il tab PDF
+                const tabNav = document.getElementById('tabNav');
+                tabNav.style.display = 'flex';
                 document.getElementById('tab1Btn').style.display = 'block';
+                
+                // Se l'header è nascosto in questo momento, mantieni il tab in cima
+                if (document.getElementById('siteHeader').classList.contains('hidden')) {
+                    tabNav.style.top = '0px';
+                } else {
+                    tabNav.style.top = '60px';
+                }
             } else {
                 sec5Wrapper.style.display = 'none';
                 sec5_1Wrapper.style.display = 'none';
@@ -606,7 +708,7 @@
 
             statusMsg.style.color = "green";
             statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
-            showTab('pdf'); // Mostra automaticamente il tab PDF
+            showTab('pdf');
 
         } catch (error) {
             console.error('Errore:', error);
@@ -716,11 +818,9 @@
                 tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
                 
-                // Inietta Tabella nel Sec 6 e Analisi nel Sec 7
                 document.getElementById('statsTableContainerBollettino').innerHTML = tableHTML;
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
                 
-                // Genera Grafico nel Sec 6.1
                 const ctx = document.getElementById('statsChartBollettino').getContext('2d');
                 if (myChartBollettino) { myChartBollettino.destroy(); }
 
@@ -814,19 +914,25 @@
                     }
                 });
 
-                // Mostra le sezioni 6, 6.1 e 7
                 chartSectionWrapper.style.display = 'block';
                 chartSec6_1Wrapper.style.display = 'block';
                 analisiWrapper.style.display = 'block';
                 
-                // Gestione Tab: mostra SOLO il tab Bollettino
-                document.getElementById('tabNav').style.display = 'flex';
+                // Mostra SOLO il tab Bollettino
+                const tabNav = document.getElementById('tabNav');
+                tabNav.style.display = 'flex';
                 document.getElementById('tab2Btn').style.display = 'block';
                 
-                // Ridimensiona il grafico nel caso fosse stato inizializzato nascosto
+                // Se l'header è nascosto in questo momento, mantieni il tab in cima
+                if (document.getElementById('siteHeader').classList.contains('hidden')) {
+                    tabNav.style.top = '0px';
+                } else {
+                    tabNav.style.top = '60px';
+                }
+                
                 if(myChartBollettino) myChartBollettino.resize();
                 
-                showTab('bollettino'); // Mostra automaticamente il tab Bollettino
+                showTab('bollettino');
             } else {
                 chartSectionWrapper.style.display = 'none';
                 chartSec6_1Wrapper.style.display = 'none';
