@@ -10,18 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- ICONE -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <!-- LIBRERIE GRAFICHE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
-            --primary-blue: #024a86; /* Blu istituzionale scuro */
-            --dark-blue: #022c4f;
-            --light-blue: #E5EFF8;
+            --primary-blue: #0055A5; /* Blu medio istituzionale */
+            --dark-blue: #003B73;
+            --light-blue: #E6F1FB;
             --accent-orange: #F39C12;
             --text-gray: #4A4A4A;
             --border-gray: #D1D9E6;
@@ -46,7 +43,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 60px;
             background: var(--primary-blue); color: var(--white);
             display: flex; align-items: center; padding: 0 40px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; transition: transform 0.3s ease-in-out;
         }
         #siteHeader.hidden { transform: translateY(-100%); }
@@ -108,7 +105,7 @@
         button:hover { background: var(--dark-blue); }
         button:disabled { background: #AAB7C4; cursor: not-allowed; }
         
-        #statusMessage { text-align: center; margin-top: 20px; font-weight: 600; font-size: 16px; }
+        #statusMessage { text-align: center; margin-top: 20px; font-weight: 600; font-size: 16px; color: #333333; /* Grigio scuro di default per success PDF */ }
         #noClassiMsg { color: #E74C3C; font-style: italic; display: none; }
         
         #pdfViewerContainer { 
@@ -132,8 +129,14 @@
             background: none; border: none; padding: 10px 25px; cursor: pointer;
             font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent;
             margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit;
+            transition: all 0.2s;
         }
-        .tab-btn.active { color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); }
+        .tab-btn:hover {
+            background: var(--light-blue); color: var(--dark-blue);
+        }
+        .tab-btn.active {
+            color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); background: var(--white);
+        }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
@@ -155,7 +158,7 @@
         .collapsible-content { display: block; }
         .collapsible-content.hidden { display: none; }
 
-        /* GUIDA STILE MINIMAL CARTOON */
+        /* GUIDA */
         .guide-intro { text-align: center; margin-bottom: 40px; padding: 20px; background: var(--light-blue); border-radius: 8px; border-left: 5px solid var(--primary-blue); }
         .guide-intro svg { max-width: 150px; height: auto; margin-bottom: 15px; }
         .guide-block {
@@ -339,7 +342,6 @@
         <div id="guida-content" class="collapsible-content hidden">
             
             <div class="guide-intro">
-                <!-- IMMAGINE MINIMAL SVG: Persona che si interroga -->
                 <svg viewBox="0 0 200 200" width="120" height="120">
                     <circle cx="100" cy="70" r="35" fill="#FFD166"/>
                     <path d="M 65 140 Q 100 120 135 140 L 135 190 L 65 190 Z" fill="#118AB2"/>
@@ -352,9 +354,8 @@
 
             <div class="guide-block">
                 <div class="guide-svg-container">
-                    <!-- IMMAGINE MINIMAL SVG: Documento PDF -->
                     <svg viewBox="0 0 100 100" width="80" height="80">
-                        <rect x="20" y="15" width="50" height="65" rx="5" fill="#FFFFFF" stroke="#0066CC" stroke-width="3"/>
+                        <rect x="20" y="15" width="50" height="65" rx="5" fill="#FFFFFF" stroke="#0055A5" stroke-width="3"/>
                         <line x1="30" y1="30" x2="60" y2="30" stroke="#AAB7C4" stroke-width="3"/>
                         <line x1="30" y1="45" x2="60" y2="45" stroke="#AAB7C4" stroke-width="3"/>
                         <line x1="30" y1="60" x2="50" y2="60" stroke="#AAB7C4" stroke-width="3"/>
@@ -370,12 +371,11 @@
 
             <div class="guide-block">
                 <div class="guide-svg-container">
-                    <!-- IMMAGINE MINIMAL SVG: Grafico a barre -->
                     <svg viewBox="0 0 100 100" width="80" height="80">
                         <rect x="20" y="50" width="15" height="35" rx="2" fill="#118AB2"/>
                         <rect x="40" y="30" width="15" height="55" rx="2" fill="#06D6A0"/>
                         <rect x="60" y="60" width="15" height="25" rx="2" fill="#EF476F"/>
-                        <path d="M 20 40 L 40 20 L 60 50 L 80 10" stroke="#003C7E" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <path d="M 20 40 L 40 20 L 60 50 L 80 10" stroke="#003B73" stroke-width="3" fill="none" stroke-linecap="round"/>
                     </svg>
                 </div>
                 <div class="guide-text-container">
@@ -386,7 +386,6 @@
 
             <div class="guide-block">
                 <div class="guide-svg-container">
-                    <!-- IMMAGINE MINIMAL SVG: Tabella e check -->
                     <svg viewBox="0 0 100 100" width="80" height="80">
                         <rect x="15" y="20" width="70" height="60" rx="3" fill="#FFFFFF" stroke="#F39C12" stroke-width="3"/>
                         <line x1="15" y1="35" x2="85" y2="35" stroke="#F39C12" stroke-width="2"/>
@@ -403,13 +402,12 @@
 
             <div class="guide-block">
                 <div class="guide-svg-container">
-                    <!-- IMMAGINE MINIMAL SVG: Grafico combinato -->
                     <svg viewBox="0 0 100 100" width="80" height="80">
                         <rect x="20" y="50" width="20" height="35" rx="2" fill="#118AB2"/>
                         <rect x="50" y="40" width="20" height="45" rx="2" fill="#06D6A0"/>
-                        <circle cx="30" cy="30" r="4" fill="#0066CC"/>
+                        <circle cx="30" cy="30" r="4" fill="#0055A5"/>
                         <circle cx="60" cy="20" r="4" fill="#EF476F"/>
-                        <path d="M 30 30 L 60 20" stroke="#0066CC" stroke-width="2" fill="none"/>
+                        <path d="M 30 30 L 60 20" stroke="#0055A5" stroke-width="2" fill="none"/>
                     </svg>
                 </div>
                 <div class="guide-text-container">
@@ -572,7 +570,7 @@
         checkboxes.forEach(cb => classiSelezionate.push(cb.value));
         if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
         btn.disabled = true; btn.innerText = "Generazione in corso...";
-        statusMsg.style.color = "#0066CC"; statusMsg.innerText = "Estrazione dati in corso... Attendi.";
+        statusMsg.style.color = "#0055A5"; statusMsg.innerText = "Estrazione dati in corso... Attendi.";
         try {
             const fasciaSelezionata = document.getElementById('fasciaSelect').value;
             const annoSelezionato = document.getElementById('annoSelect').value;
@@ -594,7 +592,7 @@
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
             const stats = data.stats; const labels = Object.keys(stats);
             if (labels.length > 0) {
-                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0066CC; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
+                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
                 labels.forEach(l => {
                     const info = stats[l];
                     const regione = info.regione || 'N/D';
@@ -606,7 +604,7 @@
                 const ctx = document.getElementById('statsChartPdf').getContext('2d');
                 if (myChartPdf) { myChartPdf.destroy(); }
                 myChartPdf = new Chart(ctx, {
-                    type: 'bar', data: { labels: labels, datasets: [{ label: 'Scuole per Candidato (S/C)', data: labels.map(l => stats[l].rapporto), backgroundColor: 'rgba(0, 102, 204, 0.6)', borderColor: 'rgba(0, 102, 204, 1)', borderWidth: 1 }] },
+                    type: 'bar', data: { labels: labels, datasets: [{ label: 'Scuole per Candidato (S/C)', data: labels.map(l => stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Rapporto Scuole per Candidato (S/C)', font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } } } }
                 });                
                 sec4Wrapper.style.display = 'block'; sec5Wrapper.style.display = 'block'; sec5_1Wrapper.style.display = 'block';
@@ -615,7 +613,7 @@
                 tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
                 if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '60px'; }
             } else { sec5Wrapper.style.display = 'none'; sec5_1Wrapper.style.display = 'none'; }
-            statusMsg.style.color = "#06D6A0"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
+            statusMsg.style.color = "#333333"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
             showTab('pdf');
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
@@ -653,7 +651,7 @@
                 let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;"><ul style="list-style-type: none; padding: 0; margin: 0;">`;
                 data.forEach(item => {
                     tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${item.regione || 'N/D'}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.nomine_totali}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.min_f1}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.min_f2}</td></tr>`;
-                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: #003C7E;">${item.provincia}</strong><br><span style="color: #0066CC;">Assorbimento F1: <strong>${item.assorbimento_f1}%</strong></span> (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali})<br><span style="color: #E74C3C;">Probabilità Nomina: <strong>F1 ${item.prob_f1}%</strong> | <strong>F2 ${item.prob_f2}%</strong></span></li>`;
+                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: #003B73;">${item.provincia}</strong><br><span style="color: #0055A5;">Assorbimento F1: <strong>${item.assorbimento_f1}%</strong></span> (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali})<br><span style="color: #E74C3C;">Probabilità Nomina: <strong>F1 ${item.prob_f1}%</strong> | <strong>F2 ${item.prob_f2}%</strong></span></li>`;
                 });
                 tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
@@ -665,7 +663,7 @@
                 myChartBollettino = new Chart(ctx, {
                     type: 'bar', data: { labels: labels, datasets: [
                         { label: 'Nomine Totali', data: dataNomine, backgroundColor: 'rgba(17, 138, 178, 0.5)', borderColor: 'rgba(17, 138, 178, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
-                        { type: 'line', label: 'Min Punteggio F1', data: dataMinF1, borderColor: 'rgba(0, 102, 204, 1)', backgroundColor: 'rgba(0, 102, 204, 1)', yAxisID: 'y2', tension: 0.1, pointRadius: 5, order: 1 },
+                        { type: 'line', label: 'Min Punteggio F1', data: dataMinF1, borderColor: 'rgba(0, 85, 165, 1)', backgroundColor: 'rgba(0, 85, 165, 1)', yAxisID: 'y2', tension: 0.1, pointRadius: 5, order: 1 },
                         { type: 'line', label: 'Min Punteggio F2', data: dataMinF2, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 1)', yAxisID: 'y2', tension: 0.1, pointRadius: 5, order: 2 }
                     ]},
                     options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Nomine Totali e Punteggi Minimi', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { let l = context.dataset.label || ''; if (l) { l += ': '; } if (context.parsed.y !== null) { if (context.dataset.yAxisID === 'y2') { l += context.parsed.y.toFixed(2).replace('.', ','); } else { l += context.parsed.y; } } return l; } } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'N. Nomine' }, grid: { drawOnChartArea: true }, beginAtZero: true }, y2: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Punteggio' }, grid: { drawOnChartArea: false }, beginAtZero: true } } }
@@ -681,6 +679,7 @@
                 chartSectionWrapper.style.display = 'none'; chartSec6_1Wrapper.style.display = 'none'; analisiWrapper.style.display = 'none';
                 statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati nel bollettino."; return;
             }
+            // Colore blu istituzionale per il messaggio di successo del bollettino
             statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione dal bollettino completata! Visualizza i dati qui sotto.";
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
