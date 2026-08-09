@@ -62,6 +62,7 @@
             background: none; border: none; padding: 10px 20px; cursor: pointer;
             font-size: 16px; color: #777; border-bottom: 3px solid transparent;
             margin-bottom: -2px; font-weight: normal; width: auto;
+            display: none; /* I singoli tab sono nascosti finché non viene generato il contenuto */
         }
         .tab-btn.active {
             color: #2980b9; border-bottom: 3px solid #3498db; font-weight: bold;
@@ -217,21 +218,23 @@
             </div>
             <div id="sec5-content" class="collapsible-content">
                 <div id="statsTableContainerPdf" style="margin-bottom: 20px; overflow-x: auto;"></div>
-                
-                <!-- Sottosezione Grafico richiudibile -->
-                <div class="sub-collapsible-header" onclick="toggleSection(this, 'sec5-chart-content')">
-                    <span class="collapse-arrow">&#9660;</span>
-                    <h3>Grafico Rapporto Scuole/Candidati</h3>
+            </div>
+        </div>
+
+        <!-- Sezione 5.1 - Grafico Indipendente (Nascosta finché non si genera il PDF) -->
+        <div class="section" id="sec5_1-wrapper" style="display: none;">
+            <div class="collapsible-header" onclick="toggleSection(this, 'sec5_1-content')">
+                <span class="collapse-arrow">&#9660;</span>
+                <h2>5.1 Grafico Rapporto Scuole/Candidati</h2>
+            </div>
+            <div id="sec5_1-content" class="collapsible-content">
+                <div class="chart-container-generic">
+                    <canvas id="statsChartPdf"></canvas>
                 </div>
-                <div id="sec5-chart-content" class="collapsible-content">
-                    <div class="chart-container-generic">
-                        <canvas id="statsChartPdf"></canvas>
-                    </div>
-                    <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
-                        <strong>Come leggere il grafico:</strong><br>
-                        Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
-                        <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato.
-                    </div>
+                <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
+                    <strong>Come leggere il grafico:</strong><br>
+                    Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
+                    <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato.
                 </div>
             </div>
         </div>
@@ -247,16 +250,18 @@
             </div>
             <div id="sec6-content" class="collapsible-content">
                 <div id="statsTableContainerBollettino" style="margin-bottom: 20px; overflow-x: auto;"></div>
-                
-                <!-- Sottosezione Grafico richiudibile -->
-                <div class="sub-collapsible-header" onclick="toggleSection(this, 'sec6-chart-content')">
-                    <span class="collapse-arrow">&#9660;</span>
-                    <h3>Grafico Nomine e Punteggi</h3>
-                </div>
-                <div id="sec6-chart-content" class="collapsible-content">
-                    <div class="chart-container-generic">
-                        <canvas id="statsChartBollettino"></canvas>
-                    </div>
+            </div>
+        </div>
+
+        <!-- Sezione 6.1 - Grafico Indipendente (Nascosta finché non si genera il Bollettino) -->
+        <div class="section" id="sec6_1-wrapper" style="display: none;">
+            <div class="collapsible-header" onclick="toggleSection(this, 'sec6_1-content')">
+                <span class="collapse-arrow">&#9660;</span>
+                <h2>6.1 Grafico Nomine e Punteggi</h2>
+            </div>
+            <div id="sec6_1-content" class="collapsible-content">
+                <div class="chart-container-generic">
+                    <canvas id="statsChartBollettino"></canvas>
                 </div>
             </div>
         </div>
@@ -426,7 +431,8 @@
         const pdfViewerDiv = document.getElementById('pdfViewer');
         const pdfContainer = document.getElementById('pdfViewerContainer');
         const sec4Wrapper = document.getElementById('sec4-wrapper');
-        const chartSectionWrapper = document.getElementById('chartSectionPdfWrapper');
+        const sec5Wrapper = document.getElementById('chartSectionPdfWrapper');
+        const sec5_1Wrapper = document.getElementById('sec5_1-wrapper');
         const btn = document.getElementById('generaBtn');
         
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
@@ -581,16 +587,22 @@
                         }
                     }
                 });                
-                chartSectionWrapper.style.display = 'block';
+                
+                // Mostra le sezioni 4, 5 e 5.1
+                sec4Wrapper.style.display = 'block';
+                sec5Wrapper.style.display = 'block';
+                sec5_1Wrapper.style.display = 'block';
+                
                 // Ridimensiona il grafico nel caso fosse stato inizializzato nascosto
                 if(myChartPdf) myChartPdf.resize();
-            } else {
-                chartSectionWrapper.style.display = 'none';
-            }
 
-            // Mostra la sezione 4 e i Tab
-            sec4Wrapper.style.display = 'block';
-            document.getElementById('tabNav').style.display = 'flex';
+                // Gestione Tab: mostra SOLO il tab PDF
+                document.getElementById('tabNav').style.display = 'flex';
+                document.getElementById('tab1Btn').style.display = 'block';
+            } else {
+                sec5Wrapper.style.display = 'none';
+                sec5_1Wrapper.style.display = 'none';
+            }
 
             statusMsg.style.color = "green";
             statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
@@ -610,6 +622,7 @@
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
+        const chartSec6_1Wrapper = document.getElementById('sec6_1-wrapper');
         const analisiWrapper = document.getElementById('analisiBollettinoWrapper');
         const btn = document.getElementById('bollettinoBtn');
         
@@ -707,7 +720,7 @@
                 document.getElementById('statsTableContainerBollettino').innerHTML = tableHTML;
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
                 
-                // Genera Grafico nel Sec 6
+                // Genera Grafico nel Sec 6.1
                 const ctx = document.getElementById('statsChartBollettino').getContext('2d');
                 if (myChartBollettino) { myChartBollettino.destroy(); }
 
@@ -801,10 +814,14 @@
                     }
                 });
 
-                // Mostra le sezioni 6 e 7 e i Tab
+                // Mostra le sezioni 6, 6.1 e 7
                 chartSectionWrapper.style.display = 'block';
+                chartSec6_1Wrapper.style.display = 'block';
                 analisiWrapper.style.display = 'block';
+                
+                // Gestione Tab: mostra SOLO il tab Bollettino
                 document.getElementById('tabNav').style.display = 'flex';
+                document.getElementById('tab2Btn').style.display = 'block';
                 
                 // Ridimensiona il grafico nel caso fosse stato inizializzato nascosto
                 if(myChartBollettino) myChartBollettino.resize();
@@ -812,6 +829,7 @@
                 showTab('bollettino'); // Mostra automaticamente il tab Bollettino
             } else {
                 chartSectionWrapper.style.display = 'none';
+                chartSec6_1Wrapper.style.display = 'none';
                 analisiWrapper.style.display = 'none';
                 statusMsg.style.color = "red";
                 statusMsg.innerText = "Nessun dato trovato per i filtri selezionati nel bollettino.";
