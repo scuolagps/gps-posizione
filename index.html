@@ -189,7 +189,7 @@
 
 <div class="container">
     <div class="section">
-        <h2>1. Luogo</h2>
+        <h2>Luogo</h2>
         <div class="form-group">
             <label>Regioni:</label>
             <div class="multi-select-wrapper">
@@ -211,7 +211,7 @@
     </div>
 
     <div class="section">
-        <h2>2. Ordine di Scuola</h2>
+        <h2>Ordine di Scuola</h2>
         <div class="checkbox-group" id="ordineScuolaGroup">
             <div class="checkbox-item"><input type="checkbox" id="ord_inf_prim" name="ordineScuola" value="infanzia_primaria"><label for="ord_inf_prim" style="display:inline; margin-bottom:0;">Infanzia e Primaria</label></div>
             <div class="checkbox-item"><input type="checkbox" id="ord_sec1" name="ordineScuola" value="secondaria_I"><label for="ord_sec1" style="display:inline; margin-bottom:0;">Sec. I grado</label></div>
@@ -220,7 +220,7 @@
     </div>
     
     <div class="section">
-        <h2>2.5 Fascia e Anno</h2>
+        <h2>Fascia e Anno</h2>
         <div style="display: flex; gap: 20px;">
             <div class="form-group" style="flex: 1; margin-bottom: 0;">
                 <label>Seleziona la fascia:</label>
@@ -240,7 +240,7 @@
     </div>
 
     <div class="section">
-        <h2>3. Classi di Concorso</h2>
+        <h2>Classi di Concorso</h2>
         <div class="form-group">
             <input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica)...">
         </div>
@@ -267,7 +267,7 @@
         <div class="section" id="sec4-wrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec4-content')">
                 <span class="collapse-arrow">&#9660;</span>
-                <h2>4. Anteprima Documento</h2>
+                <h2>Anteprima Documento</h2>
             </div>
             <div id="sec4-content" class="collapsible-content">
                 <div id="pdfViewerContainer"><div id="pdfViewer"></div></div>
@@ -277,7 +277,7 @@
         <div class="section" id="chartSectionPdfWrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5-content')">
                 <span class="collapse-arrow">&#9660;</span>
-                <h2>5. Statistiche Estrazione</h2>
+                <h2>Statistiche Estrazione</h2>
             </div>
             <div id="sec5-content" class="collapsible-content">
                 <div id="statsTableContainerPdf" style="margin-bottom: 20px; overflow-x: auto;"></div>
@@ -287,7 +287,7 @@
         <div class="section" id="sec5_1-wrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5_1-content')">
                 <span class="collapse-arrow">&#9660;</span>
-                <h2>5.1 Grafico Rapporto Scuole/Candidati</h2>
+                <h2>Grafico Rapporto Scuole/Candidati</h2>
             </div>
             <div id="sec5_1-content" class="collapsible-content">
                 <div class="chart-container-generic"><canvas id="statsChartPdf"></canvas></div>
@@ -305,7 +305,7 @@
         <div class="section" id="chartSectionBollettinoWrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6-content')">
                 <span class="collapse-arrow">&#9660;</span>
-                <h2>6. Statistiche Bollettino</h2>
+                <h2>Statistiche Bollettino</h2>
             </div>
             <div id="sec6-content" class="collapsible-content">
                 <div id="statsTableContainerBollettino" style="margin-bottom: 20px; overflow-x: auto;"></div>
@@ -315,17 +315,22 @@
         <div class="section" id="sec6_1-wrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6_1-content')">
                 <span class="collapse-arrow">&#9660;</span>
-                <h2>6.1 Grafico Nomine e Punteggi</h2>
+                <h2>Grafico Nomine e Punteggi</h2>
             </div>
             <div id="sec6_1-content" class="collapsible-content">
                 <div class="chart-container-generic"><canvas id="statsChartBollettino"></canvas></div>
+                <div style="text-align: left; margin-top: 15px; font-size: 14px; color: #666; line-height: 1.5; background: var(--bg-gray); padding: 15px; border-radius: 4px;">
+                    <strong>Come leggere il grafico:</strong><br>
+                    Il grafico mostra il volume delle nomine totali (barre verdi) affiancato dai punteggi minimi di nomina. I punti blu rappresentano la soglia di accesso per la Fascia 1, mentre i punti rossi indicano la soglia per la Fascia 2.<br>
+                    <em>Esempio:</em> Se una provincia ha 10 nomine e il punto blu è a 50, significa che sono stati chiamati 10 candidati e l'ultimo assunto in Fascia 1 aveva un punteggio di 50.
+                </div>
             </div>
         </div>
 
         <div class="section" id="analisiBollettinoWrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec7-content')">
                 <span class="collapse-arrow">&#9660;</span>
-                <h2>7. Analisi Approfondita per Provincia</h2>
+                <h2>Analisi Approfondita per Provincia</h2>
             </div>
             <div id="sec7-content" class="collapsible-content">
                 <div id="statsAvanzateContainer"></div>
@@ -337,7 +342,7 @@
     <div class="section" id="guida-wrapper" style="display: none; margin-bottom: 40px;">
         <div class="collapsible-header" onclick="toggleSection(this, 'guida-content')" style="border-bottom: 2px solid var(--dark-blue); color: var(--dark-blue);">
             <span class="collapse-arrow">&#9660;</span>
-            <h2>8. Come leggere i dati</h2>
+            <h2>Come leggere i dati</h2>
         </div>
         <div id="guida-content" class="collapsible-content hidden">
             
@@ -364,8 +369,8 @@
                     </svg>
                 </div>
                 <div class="guide-text-container">
-                    <h3>1. Vista PDF & Graduatoria</h3>
-                    <p>Qui trovi il documento PDF con tutti i candidati estratti. La Sezione 5 mostra una tabella con il totale dei candidati per provincia, i punteggi più alti, più bassi e la mediana.</p>
+                    <h3>Vista PDF & Graduatoria</h3>
+                    <p>Qui trovi il documento PDF con tutti i candidati estratti. La sezione Statistiche Estrazione mostra una tabella con il totale dei candidati per provincia, i punteggi più alti, più bassi e la mediana.</p>
                 </div>
             </div>
 
@@ -379,7 +384,7 @@
                     </svg>
                 </div>
                 <div class="guide-text-container">
-                    <h3>Grafico 5.1 (Rapporto S/C)</h3>
+                    <h3>Grafico Rapporto S/C</h3>
                     <p>Mostra quante scuole ci sono per ogni candidato in una provincia. Più il valore è alto, maggiori sono le probabilità teoriche di assunzione.</p>
                 </div>
             </div>
@@ -395,8 +400,8 @@
                     </svg>
                 </div>
                 <div class="guide-text-container">
-                    <h3>2. Vista Bollettino GPS</h3>
-                    <p>Analizza le nomine effettivamente avvenute. La Sezione 6 mostra le Nomine Totali e i punteggi minimi (soglia di accesso) per la Fascia 1 (Min_F1) e la Fascia 2 (Min_F2).</p>
+                    <h3>Vista Bollettino GPS</h3>
+                    <p>Analizza le nomine effettivamente avvenute. La sezione Statistiche Bollettino mostra le Nomine Totali e i punteggi minimi (soglia di accesso) per la Fascia 1 (Min_F1) e la Fascia 2 (Min_F2).</p>
                 </div>
             </div>
 
@@ -411,8 +416,8 @@
                     </svg>
                 </div>
                 <div class="guide-text-container">
-                    <h3>Grafico 6.1 & Sezione 7</h3>
-                    <p>Il Grafico 6.1 confronta il volume delle nomine (barre) con l'andamento dei punteggi minimi F1 (blu) e F2 (rosso). La Sezione 7 calcola il Tasso di Assorbimento (quante cattedre su 100 sono state coperte da I fascia) e la Probabilità di Nomina in percentuale.</p>
+                    <h3>Grafico Nomine e Punteggi</h3>
+                    <p>Il grafico confronta il volume delle nomine (barre) con i punteggi minimi F1 (blu) e F2 (rosso). L'Analisi Approfondita calcola il Tasso di Assorbimento (quante cattedre su 100 sono state coperte da I fascia) e la Probabilità di Nomina in percentuale.</p>
                 </div>
             </div>
 
@@ -595,9 +600,11 @@
                 let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
                 labels.forEach(l => {
                     const info = stats[l];
-                    const regione = info.regione || 'N/D';
+                    const regione = info.regione === 'N/D' ? '-' : info.regione;
                     const medianScore = info.median ? info.median.toFixed(2).replace('.', ',') : '-';
-                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${info.top || 'N/D'}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${info.bottom || 'N/D'}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
+                    const topScore = info.top ? info.top.replace('N/D', '-') : '-';
+                    const bottomScore = info.bottom ? info.bottom.replace('N/D', '-') : '-';
+                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${topScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${bottomScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
                 });
                 tableHTML += `</tbody></table>`;
                 document.getElementById('statsTableContainerPdf').innerHTML = tableHTML;
@@ -613,7 +620,7 @@
                 tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
                 if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '60px'; }
             } else { sec5Wrapper.style.display = 'none'; sec5_1Wrapper.style.display = 'none'; }
-            statusMsg.style.color = "#333333"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
+            statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
             showTab('pdf');
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
@@ -650,8 +657,18 @@
                 const dataMinF2 = data.map(item => item.min_f2 === "N/D" ? null : parseFloat(item.min_f2.replace(',', '.')));
                 let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;"><ul style="list-style-type: none; padding: 0; margin: 0;">`;
                 data.forEach(item => {
-                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${item.regione || 'N/D'}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.nomine_totali}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.min_f1}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.min_f2}</td></tr>`;
-                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: #003B73;">${item.provincia}</strong><br><span style="color: #0055A5;">Assorbimento F1: <strong>${item.assorbimento_f1}%</strong></span> (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali})<br><span style="color: #E74C3C;">Probabilità Nomina: <strong>F1 ${item.prob_f1}%</strong> | <strong>F2 ${item.prob_f2}%</strong></span></li>`;
+                    const regione = item.regione === 'N/D' ? '-' : item.regione;
+                    const minF1 = item.min_f1 === 'N/D' ? '-' : item.min_f1;
+                    const minF2 = item.min_f2 === 'N/D' ? '-' : item.min_f2;
+                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.nomine_totali}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${minF1}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${minF2}</td></tr>`;
+                    
+                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia}</strong><br><span style="color: #333;">Assorbimento F1: <strong style="color: var(--primary-blue);">${item.assorbimento_f1}%</strong></span> (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali})`;
+                    
+                    // Mostra la Probabilità di Nomina solo se sono selezionate entrambe le fasce
+                    if (fasciaSelezionata === "") {
+                        statsAvanzateHTML += `<br><span style="color: #333;">Probabilità Nomina: <strong style="color: var(--primary-blue);">F1 ${item.prob_f1}%</strong> | <strong style="color: var(--primary-blue);">F2 ${item.prob_f2}%</strong></span>`;
+                    }
+                    statsAvanzateHTML += `</li>`;
                 });
                 tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
@@ -663,8 +680,8 @@
                 myChartBollettino = new Chart(ctx, {
                     type: 'bar', data: { labels: labels, datasets: [
                         { label: 'Nomine Totali', data: dataNomine, backgroundColor: 'rgba(17, 138, 178, 0.5)', borderColor: 'rgba(17, 138, 178, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
-                        { type: 'line', label: 'Min Punteggio F1', data: dataMinF1, borderColor: 'rgba(0, 85, 165, 1)', backgroundColor: 'rgba(0, 85, 165, 1)', yAxisID: 'y2', tension: 0.1, pointRadius: 5, order: 1 },
-                        { type: 'line', label: 'Min Punteggio F2', data: dataMinF2, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 1)', yAxisID: 'y2', tension: 0.1, pointRadius: 5, order: 2 }
+                        { type: 'line', label: 'Min Punteggio F1', data: dataMinF1, borderColor: 'rgba(0, 85, 165, 1)', backgroundColor: 'rgba(0, 85, 165, 1)', yAxisID: 'y2', tension: 0, pointRadius: 5, showLine: false, order: 1 },
+                        { type: 'line', label: 'Min Punteggio F2', data: dataMinF2, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 1)', yAxisID: 'y2', tension: 0, pointRadius: 5, showLine: false, order: 2 }
                     ]},
                     options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Nomine Totali e Punteggi Minimi', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { let l = context.dataset.label || ''; if (l) { l += ': '; } if (context.parsed.y !== null) { if (context.dataset.yAxisID === 'y2') { l += context.parsed.y.toFixed(2).replace('.', ','); } else { l += context.parsed.y; } } return l; } } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'N. Nomine' }, grid: { drawOnChartArea: true }, beginAtZero: true }, y2: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Punteggio' }, grid: { drawOnChartArea: false }, beginAtZero: true } } }
                 });
@@ -679,7 +696,6 @@
                 chartSectionWrapper.style.display = 'none'; chartSec6_1Wrapper.style.display = 'none'; analisiWrapper.style.display = 'none';
                 statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati nel bollettino."; return;
             }
-            // Colore blu istituzionale per il messaggio di successo del bollettino
             statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione dal bollettino completata! Visualizza i dati qui sotto.";
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
