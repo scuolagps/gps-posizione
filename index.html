@@ -33,20 +33,6 @@
         }
         .header-btn:hover { background: rgba(255,255,255,0.2); }
 
-        /* STILI MODAL GUIDA */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-content {
-            background: white; padding: 30px; border-radius: 8px; max-width: 600px; width: 90%;
-            max-height: 80vh; overflow-y: auto; position: relative;
-        }
-        .modal-close {
-            position: absolute; top: 10px; right: 15px; font-size: 24px; cursor: pointer; color: #888;
-        }
-
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 40px; }
         h2 { border-bottom: 2px solid #3498db; padding-bottom: 5px; color: #2980b9; font-size: 18px; }
         .section { margin-bottom: 30px; }
@@ -116,25 +102,48 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* STILI PER LE SEZIONI COLLAPSABLE */
+        /* STILI PER LE SEZIONI COLLAPSABLE (Allineamento a Destra) */
         .collapsible-header {
             display: flex; align-items: center; cursor: pointer; padding: 10px 0;
             border-bottom: 2px solid #3498db; color: #2980b9; margin-bottom: 15px; user-select: none;
+            flex-direction: row-reverse; /* Inverto la direzione per allineare a destra */
         }
-        .collapsible-header h2 { margin: 0; border: none; padding: 0; flex: 1; }
+        .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 10px; }
+        
         .sub-collapsible-header {
             display: flex; align-items: center; cursor: pointer; padding: 8px 0;
             border-bottom: 1px solid #ddd; color: #555; margin: 20px 0 15px 0; user-select: none;
+            flex-direction: row-reverse; /* Inverto la direzione per allineare a destra */
         }
-        .sub-collapsible-header h3 { margin: 0; border: none; padding: 0; flex: 1; font-size: 15px; font-weight: bold; }
+        .sub-collapsible-header h3 { margin: 0; border: none; padding: 0; margin-right: 10px; font-size: 15px; font-weight: bold; }
+        
         .collapse-arrow {
-            display: inline-block; margin-right: 10px; transition: transform 0.3s ease; font-size: 12px;
+            display: inline-block; transition: transform 0.3s ease; font-size: 12px; margin-right: 0;
         }
         .collapsible-header.collapsed .collapse-arrow, .sub-collapsible-header.collapsed .collapse-arrow {
             transform: rotate(-90deg);
         }
         .collapsible-content { display: block; }
         .collapsible-content.hidden { display: none; }
+
+        /* STILI PER LA GUIDA */
+        .guide-block {
+            background: #f9f9f9;
+            border-left: 4px solid #2c3e50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .guide-img-container {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .guide-img-container img {
+            max-width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -163,25 +172,8 @@
 <header id="siteHeader">
     <h1>Portale Estrazione PDF</h1>
     <button class="header-btn" onclick="scrollToTop()">Home</button>
-    <button class="header-btn" onclick="openGuide()">Come leggere i dati</button>
+    <button class="header-btn" onclick="toggleGuide()">Come leggere i dati</button>
 </header>
-
-<!-- MODAL GUIDA -->
-<div id="guideModal" class="modal-overlay" onclick="closeGuide(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <span class="modal-close" onclick="closeGuide()">&times;</span>
-        <h2 style="margin-top:0;">Come leggere i dati</h2>
-        <p><strong>1. Vista PDF & Graduatoria</strong><br>
-        In questa sezione trovi il documento PDF ufficiale con tutti i candidati estratti. Sotto, nella Sezione 5, hai una tabella riepilogativa con il numero totale di candidati per provincia, i puntegchi più alti, più bassi e la mediana.</p>
-        <p><strong>Grafico 5.1 (Rapporto S/C):</strong> Mostra quante scuole ci sono per ogni candidato in una provincia. Più il valore è alto, maggiori sono le probabilità teoriche di assunzione.</p>
-        <hr style="margin: 20px 0;">
-        <p><strong>2. Vista Bollettino GPS</strong><br>
-        Analizza le <strong>nomine effettivamente avvenute</strong> (estratte dal bollettino).</p>
-        <p><strong>Sezione 6 (Tabella):</strong> Mostra le Nomine Totali per provincia e il punteggio minimo registrato in Fascia 1 (Min_F1) e Fascia 2 (Min_F2). Questo indica la "soglia reale" di accesso per essere chiamati.</p>
-        <p><strong>Grafico 6.1:</strong> Un grafico combinato che confronta il volume delle nomine totali (barre verdi) con l'andamento dei punteggi minimi di F1 (linea blu) e F2 (linea rossa).</p>
-        <p><strong>Sezione 7 (Analisi Approfondita):</strong> Calcola il <em>Tasso di Assorbimento F1</em> (quante cattedre su 100 sono state coperte da candidati di I fascia prima di attingere alla II) e la <em>Probabilità di Nomina</em> percentuale divisa per fascia.</p>
-    </div>
-</div>
 
 <div class="container">
     <div class="section">
@@ -294,11 +286,6 @@
                 <div class="chart-container-generic">
                     <canvas id="statsChartPdf"></canvas>
                 </div>
-                <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
-                    <strong>Come leggere il grafico:</strong><br>
-                    Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
-                    <em>Esempio:</em> Un valore di 1,5 significa che ci sono 1,5 scuole disponibili per ogni candidato.
-                </div>
             </div>
         </div>
     </div>
@@ -340,6 +327,60 @@
             </div>
         </div>
     </div>
+
+    <!-- SEZIONE GUIDA (Nascosta di default) -->
+    <div class="section" id="guida-wrapper" style="display: none;">
+        <div class="collapsible-header" onclick="toggleSection(this, 'guida-content')" style="border-bottom: 2px solid #2c3e50; color: #2c3e50;">
+            <span class="collapse-arrow">&#9660;</span>
+            <h2>8. Come leggere i dati</h2>
+        </div>
+        <div id="guida-content" class="collapsible-content">
+            
+            <div class="guide-block">
+                <h3>1. Vista PDF & Graduatoria</h3>
+                <p>In questa sezione trovi il documento PDF ufficiale con tutti i candidati estratti. Sotto, nella Sezione 5, hai una tabella riepilogativa con il numero totale di candidati per provincia, i punteggi più alti, più bassi e la mediana.</p>
+                <div class="guide-img-container">
+                    <!-- Sostituisci questo link con lo screenshot reale della tabella -->
+                    <img src="https://via.placeholder.com/600x150?text=Anteprima+Tabella+Graduatoria" alt="Esempio Tabella Graduatoria">
+                </div>
+            </div>
+
+            <div class="guide-block">
+                <h3>Grafico 5.1 (Rapporto S/C)</h3>
+                <p>Mostra quante scuole ci sono per ogni candidato in una provincia. Più il valore è alto, maggiori sono le probabilità teoriche di assunzione.</p>
+                <div class="guide-img-container">
+                    <!-- Sostituisci questo link con lo screenshot reale del grafico -->
+                    <img src="https://via.placeholder.com/600x300?text=Esempio+Grafico+S/C" alt="Esempio Grafico S/C">
+                </div>
+            </div>
+
+            <div class="guide-block">
+                <h3>2. Vista Bollettino GPS</h3>
+                <p>Analizza le <strong>nomine effettivamente avvenute</strong> (estratte dal bollettino).</p>
+                <p><strong>Sezione 6 (Tabella):</strong> Mostra le Nomine Totali per provincia e il punteggio minimo registrato in Fascia 1 (Min_F1) e Fascia 2 (Min_F2). Questo indica la "soglia reale" di accesso per essere chiamati.</p>
+                <div class="guide-img-container">
+                    <img src="https://via.placeholder.com/600x150?text=Anteprima+Tabella+Bollettino" alt="Esempio Tabella Bollettino">
+                </div>
+            </div>
+
+            <div class="guide-block">
+                <h3>Grafico 6.1</h3>
+                <p>Un grafico combinato che confronta il volume delle nomine totali (barre verdi) con l'andamento dei punteggi minimi di F1 (linea blu) e F2 (linea rossa).</p>
+                <div class="guide-img-container">
+                    <img src="https://via.placeholder.com/600x300?text=Esempio+Grafico+Combinato" alt="Esempio Grafico Combinato">
+                </div>
+            </div>
+
+            <div class="guide-block">
+                <h3>Sezione 7 (Analisi Approfondita)</h3>
+                <p>Calcola il <em>Tasso di Assorbimento F1</em> (quante cattedre su 100 sono state coperte da candidati di I fascia prima di attingere alla II) e la <em>Probabilità di Nomina</em> percentuale divisa per fascia.</p>
+                <div class="guide-img-container">
+                    <img src="https://via.placeholder.com/600x200?text=Esempio+Analisi+Approfondita" alt="Esempio Analisi">
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 <script>
@@ -364,7 +405,7 @@
     let myChartPdf = null;
     let myChartBollettino = null;
 
-    // --- LOGICA HEADER E MODAL ---
+    // --- LOGICA HEADER E GUIDA ---
     let lastScrollTop = 0;
     window.addEventListener('scroll', function() {
         let st = window.pageYOffset || document.documentElement.scrollTop;
@@ -390,12 +431,25 @@
     function scrollToTop() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    function openGuide() {
-        document.getElementById('guideModal').classList.add('active');
-    }
-    function closeGuide(event) {
-        if (!event || event.target.classList.contains('modal-overlay')) {
-            document.getElementById('guideModal').classList.remove('active');
+
+    function toggleGuide() {
+        const guidaWrapper = document.getElementById('guida-wrapper');
+        const guidaContent = document.getElementById('guida-content');
+        const header = guidaWrapper.querySelector('.collapsible-header');
+
+        // Se la sezione è nascosta, mostrala e aprila
+        if (guidaWrapper.style.display === 'none') {
+            guidaWrapper.style.display = 'block';
+            if (guidaContent.classList.contains('hidden')) {
+                toggleSection(header, 'guida-content');
+            }
+            // Scorri fino alla sezione guida
+            setTimeout(() => {
+                guidaWrapper.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        } else {
+            // Se è già visibile, chiudila o aprila (toggle)
+            toggleSection(header, 'guida-content');
         }
     }
 
