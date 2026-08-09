@@ -43,10 +43,8 @@
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; box-sizing: border-box; }
         #pdfViewer canvas { display: block; }
         
-        /* Wrapper perfetto che non spezza il layout flex */
         .pageWrapper { position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.2); background: white; margin-bottom: 15px; }
         
-        /* Livello di testo invisibile per effetto OCR */
         .textLayer { position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; opacity: 0.25; line-height: 1; }
         .textLayer span { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
 
@@ -55,7 +53,6 @@
             border: 1px solid #ddd; border-radius: 8px; background: #fff; height: 450px;
         }
         
-        /* Stile per la frazione matematica in puro CSS */
         .formula-box { text-align: center; margin: 30px 0; font-size: 1.2em; color: #333; }
         .fraction { display: inline-block; vertical-align: middle; text-align: center; margin: 0 5px; }
         .fraction .numerator { display: block; border-bottom: 2px solid #333; padding: 0 5px 2px 5px; }
@@ -63,39 +60,23 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-41SR6TG1JC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-41SR6TG1JC');
-</script>
-<meta charset="UTF-8">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-41SR6TG1JC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-41SR6TG1JC');
+    </script>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- TITOLO SEO (Max 60 caratteri, molto importante per Google) -->
     <title>Estrazione Dati Graduatorie Scolastiche e Scuole Musicali</title>
-    
-    <!-- DESCRIZIONE SEO (Max 160 caratteri, appare sotto il titolo su Google) -->
     <meta name="description" content="Genera report PDF e grafici sulle graduatorie scolastiche, classi di concorso e scuole musicali. Filtra per regione, provincia e fascia.">
-    
-    <!-- PAROLE CHIAVE (Ottimizzazione SEO) -->
     <meta name="keywords" content="graduatorie scuole, classi di concorso, estrazione dati, scuole musicali, report PDF, GPS scuole, docenti">
-    
-    <!-- AUTORE -->
     <meta name="author" content="Il Tuo Nome">
-    
-    <!-- ROBOTS: Dice a Google di indicizzare la pagina e seguire i link -->
     <meta name="robots" content="index, follow">
-    
-    <!-- OPEN GRAPH (Per una bella condivisione su Facebook/WhatsApp/Telegram) -->
     <meta property="og:title" content="Portale Estrazione Dati Scolastici">
     <meta property="og:description" content="Analisi candidati, scuole e generazione PDF.">
     <meta property="og:type" content="website">
-    <!-- Se hai un'immagine logo, inseriscila qui (altrimenti ignora questo tag) -->
-    <!-- <meta property="og:image" content="URL_DEL_TUO_LOGO.png"> -->
     <meta name="google-site-verification" content="usSfUzfla0nHRxOeV2ctcJgbe8qD46i59LLXcjP0rug" />
 </head>
 <body>
@@ -156,7 +137,10 @@
     </div>
 
     <div class="section">
-        <button id="generaBtn">Genera e Visualizza Dati e PDF</button>
+        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+            <button id="generaBtn" style="flex: 1;">Genera e Visualizza Dati e PDF</button>
+            <button id="bollettinoBtn" style="flex: 1; background: #e67e22;">Bollettini GPS</button>
+        </div>
         <div id="statusMessage"></div>
     </div>
 
@@ -169,15 +153,12 @@
 
     <div class="section" id="chartSection" style="display: none;">
         <h2>5. Statistiche Estrazione</h2>
-        
-        <!-- NUOVO BLOCCO RIASSUNTIVO IN TESTA -->
         <div id="statsTableContainer" style="margin-bottom: 20px; overflow-x: auto;"></div>
 
         <div id="chartContainer">
             <canvas id="statsChart"></canvas>
         </div>
 
-        <!-- LEGGENDA SPOSTATA IN FONDO -->
         <div class="chart-legend" style="text-align: left; margin-top: 15px; font-size: 12px; color: #555; line-height: 1.5;">
             <strong>Come leggere il grafico:</strong><br>
             Il grafico mostra il rapporto tra il numero di scuole (S) e il numero di candidati (C) per ogni provincia selezionata.<br>
@@ -189,7 +170,6 @@
 <script>
     const RENDER_URL = "https://gps-posizione.onrender.com/genera-pdf";
     
-    // Configurazione worker PDF.js spostata qui per evitare script inline e rispettare la CSP
     if (window.pdfjsLib) {
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
@@ -208,7 +188,6 @@
     let selectedProvince = [];
     let myChart = null;
 
-    // --- EVENT LISTENERS (Prevengono l'errore CSP) ---
     document.addEventListener('DOMContentLoaded', function() {
         const regioneSelect = document.getElementById('regioneSelect');
         for (let regione in regioniProvince) {
@@ -218,11 +197,11 @@
         aggiornaClassiVisibili();
 
         document.getElementById('generaBtn').addEventListener('click', generaPDF);
+        document.getElementById('bollettinoBtn').addEventListener('click', generaBollettino);
         document.getElementById('regioneSelect').addEventListener('change', addRegione);
         document.getElementById('provinciaSelect').addEventListener('change', addProvincia);
         document.getElementById('searchClassi').addEventListener('input', filtraClassi);
         
-        // Listeners per i checkbox dell'ordine di scuola
         document.querySelectorAll('input[name="ordineScuola"]').forEach(cb => {
             cb.addEventListener('change', aggiornaClassiVisibili);
         });
@@ -347,7 +326,6 @@
 
             const data = await response.json();
 
-            // 1. Decodifica PDF
             const byteCharacters = atob(data.pdf_base64);
             const byteNumbers = new Array(byteCharacters.length);
             for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
@@ -356,25 +334,15 @@
             pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
             pdfContainer.style.display = 'block';
 
-            // Crea un file PDF virtuale (Blob) dall'array di bytes
             const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
-            
-            // Genera un URL temporaneo per questo file
             const pdfUrl = URL.createObjectURL(pdfBlob);
-
-            // Aggiungiamo i parametri #toolbar=0 e #navpanes=0 per nascondere 
-            // la barra degli strumenti (download, stampa, zoom) nei browser Chromium e Safari
             const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
-
-            // Inietta il visualizzatore PDF NATIVO del browser tramite iframe.
-            // Il testo sarà 100% selezionabile e ricercabile, ma senza pulsanti di download.
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
-            // 2. Disegna Grafico S/C
+            
             const stats = data.stats;
             const labels = Object.keys(stats);
 
             if (labels.length > 0) {
-                // GENERA TABELLA RIASSUNTIVA IN TESTA
                 let tableHTML = `
                     <table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
                         <thead>
@@ -393,7 +361,6 @@
                 labels.forEach(l => {
                     const info = stats[l];
                     const regione = info.regione || 'N/D';
-                    // Formatta la mediana con la virgola
                     const medianScore = info.median ? info.median.toFixed(2).replace('.', ',') : '-';
                     
                     tableHTML += `
@@ -410,6 +377,9 @@
                 
                 tableHTML += `</tbody></table>`;
                 document.getElementById('statsTableContainer').innerHTML = tableHTML;
+                
+                // Mostra il grafico nel caso fosse stato nascosto dal pulsante Bollettino
+                document.getElementById('chartContainer').style.display = 'block';
 
                 const ctx = document.getElementById('statsChart').getContext('2d');
                 if (myChart) { myChart.destroy(); }
@@ -421,7 +391,6 @@
                     return `rgba(${r}, ${g}, ${b}, 0.7)`;
                 };
 
-                // Mappo i dati per il grafico a barre (rapporto S/C)
                 const chartData = labels.map(l => stats[l].rapporto);
                 const bgColors = labels.map(() => dynamicColors());
 
@@ -440,7 +409,6 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        // Rimosso indexAxis: 'y' per renderlo verticale
                         plugins: {
                             legend: { display: false },
                             title: { display: true, text: 'Rapporto Scuole per Candidato (S/C)', font: { size: 14 } },
@@ -449,7 +417,6 @@
                                     label: function(context) {
                                         const prov = context.label;
                                         const info = stats[prov];
-                                        // Formatta il rapporto con la virgola e max 2 decimali (es: 1,25)
                                         const rapportoFormattato = info.rapporto.toFixed(2).replace('.', ',');
                                         return [
                                             `Rapporto S/C: ${rapportoFormattato}`,
@@ -466,7 +433,6 @@
                                 title: { display: true, text: 'Rapporto (Scuole / Candidati)' }
                             },
                             x: {
-                                // Inclina le etichette delle province se sono tante, per evitare sovrapposizioni
                                 ticks: {
                                     autoSkip: false,
                                     maxRotation: 45,
@@ -491,6 +457,109 @@
         } finally {
             btn.disabled = false;
             btn.innerText = "Genera e Visualizza Dati e PDF";
+        }
+    }
+
+    // --- GESTIONE PULSANTE BOLLETTINO GPS ---
+    async function generaBollettino() {
+        const statusMsg = document.getElementById('statusMessage');
+        const pdfContainer = document.getElementById('pdfViewerContainer');
+        const chartSection = document.getElementById('chartSection');
+        const chartContainer = document.getElementById('chartContainer');
+        const btn = document.getElementById('bollettinoBtn');
+        
+        const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
+        let classiSelezionate = [];
+        checkboxes.forEach(cb => classiSelezionate.push(cb.value));
+
+        if (classiSelezionate.length === 0) {
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso.";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerText = "Estrazione in corso...";
+        statusMsg.style.color = "blue";
+        statusMsg.innerText = "Estrazione dati bollettino in corso... Attendi.";
+
+        try {
+            const fasciaSelezionata = document.getElementById('fasciaSelect').value;
+            const bollettinoURL = RENDER_URL.replace('/genera-pdf', '/genera-bollettino');
+
+            const response = await fetch(bollettinoURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    classi: classiSelezionate,
+                    regioni: selectedRegioni,     
+                    province: selectedProvince,
+                    fascia: fasciaSelezionata
+                })
+            });
+
+            if (!response.ok) {
+                let errorMessage = "Errore sconosciuto durante l'estrazione del bollettino.";
+                try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {}
+                throw new Error(errorMessage);
+            }
+
+            const result = await response.json();
+            const data = result.data;
+
+            // Nascondi il visualizzatore PDF, mostriamo solo la tabella
+            pdfContainer.style.display = 'none';
+            chartContainer.style.display = 'none'; // Nasconde il grafico a barre
+            
+            if (data.length > 0) {
+                let tableHTML = `
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px;">
+                        <thead>
+                            <tr style="background-color: #e67e22; color: white; text-align: left;">
+                                <th style="border: 1px solid #ddd; padding: 10px;">Regione</th>
+                                <th style="border: 1px solid #ddd; padding: 10px;">Provincia</th>
+                                <th style="border: 1px solid #ddd; padding: 10px; text-align: center;">Fascia</th>
+                                <th style="border: 1px solid #ddd; padding: 10px;">Punteggio Primo Nominato</th>
+                                <th style="border: 1px solid #ddd; padding: 10px;">Punteggio Ultimo Nominato</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                data.forEach(item => {
+                    tableHTML += `
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${item.regione || 'N/D'}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><strong>${item.provincia}</strong></td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${item.fascia}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; background:#eaf6ff;">${item.primo}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px; background:#fff5e6;"><strong>${item.ultimo}</strong></td>
+                        </tr>
+                    `;
+                });
+                
+                tableHTML += `</tbody></table>`;
+                document.getElementById('statsTableContainer').innerHTML = tableHTML;
+                
+                // Mostriamo la sezione 5
+                chartSection.style.display = 'block';
+            } else {
+                chartSection.style.display = 'none';
+                statusMsg.style.color = "red";
+                statusMsg.innerText = "Nessun dato trovato per i filtri selezionati nel bollettino.";
+                return;
+            }
+
+            statusMsg.style.color = "green";
+            statusMsg.innerText = "Estrazione dal bollettino completata! Visualizza i dati qui sotto.";
+
+        } catch (error) {
+            console.error('Errore:', error);
+            statusMsg.style.color = "red";
+            statusMsg.innerText = "Errore: " + error.message;
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Bollettini GPS";
         }
     }
 </script>
