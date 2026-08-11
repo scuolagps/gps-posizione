@@ -11,7 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
     
     <!-- LIBRERIE GRAFICHE -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -42,14 +41,15 @@
             display: flex; align-items: center; padding: 0 40px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             z-index: 1000; transition: transform 0.3s ease-in-out;
+            overflow: hidden; /* Previene che il testo esca dalla barra blu */
         }
         #siteHeader.hidden { transform: translateY(-100%); }
-        #siteHeader h1 { margin: 0; font-size: 22px; font-weight: 700; flex: 1; letter-spacing: 0.5px; }
+        #siteHeader h1 { margin: 0; font-size: 22px; font-weight: 700; flex: 1; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-btn {
             background: transparent; border: 1px solid var(--white); color: var(--white);
             padding: 8px 18px; cursor: pointer; margin-left: 15px;
             border-radius: 4px; font-size: 14px; font-weight: 600; width: auto;
-            transition: all 0.2s; font-family: inherit;
+            transition: all 0.2s; font-family: inherit; flex-shrink: 0;
         }
         .header-btn:hover { background: var(--white); color: var(--primary-blue); }
 
@@ -102,8 +102,19 @@
         
         #pdfViewerContainer { width: 100%; height: 600px; border: 1px solid var(--border-gray); background: var(--bg-gray); display: none; overflow-y: auto; overflow-x: hidden; border-radius: 4px; }
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
+        #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         
-        .chart-container-generic { display: block; max-width: 800px; margin: 20px auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
+        /* FIX GRAFICI: wrapper scrollabile orizzontalmente su mobile */
+        .chart-outer-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 20px 0;
+        }
+        .chart-container-generic { 
+            display: block; width: 100%; min-width: 600px; max-width: 800px; 
+            margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); 
+            border-radius: 8px; background: var(--white); height: 450px; 
+        }
         
         /* STILI TAB */
         .tab-navigation {
@@ -151,6 +162,65 @@
         .guide-svg-container { flex-shrink: 0; width: 100px; text-align: center; }
         .guide-text-container h3 { margin: 0 0 10px 0; color: var(--primary-blue); font-size: 18px; }
         .guide-text-container p { margin: 0; color: var(--text-gray); font-size: 15px; }
+
+        /* BOTTONE APRI PDF MOBILE (visibile solo su smartphone) */
+        .pdf-mobile-actions {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            background: var(--light-blue);
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .pdf-mobile-actions a {
+            display: inline-block;
+            background: var(--primary-blue);
+            color: white !important;
+            padding: 12px 25px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Tabelle Scroll su Mobile */
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table-scroll table { min-width: 500px; }
+
+        /* ===== MEDIA QUERY MOBILE ===== */
+        @media (max-width: 768px) {
+            /* Compatta header su mobile per evitare overflow del testo */
+            #siteHeader { padding: 0 15px; }
+            #siteHeader h1 { font-size: 15px; letter-spacing: 0; }
+            .header-btn { padding: 6px 12px; font-size: 12px; margin-left: 10px; }
+
+            .container { padding: 20px 15px; margin: 15px auto; }
+            h2 { font-size: 18px; }
+            
+            .multi-select-wrapper { flex-direction: column; gap: 10px; }
+            .select-box { width: 100%; }
+            
+            .checkbox-group { gap: 15px; }
+            .checkbox-item { font-size: 14px; }
+            
+            /* La tab si attacca in cima quando si scorre */
+            .tab-navigation { top: 0 !important; padding: 10px 0; }
+            .tab-btn { padding: 8px 15px; font-size: 14px; }
+            
+            /* I grafici su mobile hanno larghezza minima e scroll orizzontale */
+            .chart-container-generic { min-width: 600px; height: 400px; padding: 15px; }
+            
+            #pdfViewerContainer { height: 500px; }
+            #pdfViewer iframe { height: 480px; }
+
+            /* Mostra il bottone Apri PDF su mobile come fallback all'iframe */
+            .pdf-mobile-actions { display: block; }
+            
+            .guide-block { flex-direction: column; gap: 15px; padding: 20px; }
+            .guide-svg-container { width: 100%; }
+            
+            button { font-size: 16px; padding: 12px 15px; }
+        }
     </style>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-41SR6TG1JC"></script>
     <script>
@@ -203,8 +273,8 @@
     
     <div class="section">
         <h2>Fascia e Anno</h2>
-        <div style="display: flex; gap: 20px;">
-            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div class="form-group" style="flex: 1 1 200px; margin-bottom: 0;">
                 <label>Seleziona la fascia:</label>
                 <select id="fasciaSelect">
                     <option value="">Tutte le fasce</option>
@@ -212,7 +282,7 @@
                     <option value="II_Fascia">II fascia</option>
                 </select>
             </div>
-            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <div class="form-group" style="flex: 1 1 200px; margin-bottom: 0;">
                 <label>Anno:</label>
                 <select id="annoSelect" disabled>
                     <option value="2026/2027" selected>2026/2027</option>
@@ -231,9 +301,9 @@
     </div>
 
     <div class="section">
-        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-            <button id="generaBtn" style="flex: 1;">Genera PDF e Grafici</button>
-            <button id="bollettinoBtn" style="flex: 1; background: var(--accent-orange);">Vedi Nomine Reali</button>
+        <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+            <button id="generaBtn" style="flex: 1 1 250px;">Genera PDF e Grafici</button>
+            <button id="bollettinoBtn" style="flex: 1 1 250px; background: var(--accent-orange);">Vedi Nomine Reali</button>
         </div>
         <div id="statusMessage"></div>
     </div>
@@ -252,6 +322,10 @@
                 <h2>Documento PDF</h2>
             </div>
             <div id="sec4-content" class="collapsible-content">
+                <!-- BOTTONE APRI PDF MOBILE (aiuta se l'iframe su Chrome Android è bloccato) -->
+                <div class="pdf-mobile-actions" id="pdfMobileActions">
+                    <a id="pdfDownloadLink" href="#" download="graduatoria.pdf" target="_blank" rel="noopener">Apri PDF in una nuova scheda</a>
+                </div>
                 <div id="pdfViewerContainer"><div id="pdfViewer"></div></div>
             </div>
         </div>
@@ -262,7 +336,7 @@
                 <h2>Riepilogo Candidati</h2>
             </div>
             <div id="sec5-content" class="collapsible-content">
-                <div id="statsTableContainerPdf" style="margin-bottom: 20px; overflow-x: auto;"></div>
+                <div id="statsTableContainerPdf" class="table-scroll" style="margin-bottom: 20px;"></div>
             </div>
         </div>
 
@@ -272,7 +346,9 @@
                 <h2>Grafico Scuole vs Candidati</h2>
             </div>
             <div id="sec5_1-content" class="collapsible-content">
-                <div class="chart-container-generic"><canvas id="statsChartPdf"></canvas></div>
+                <div class="chart-outer-scroll">
+                    <div class="chart-container-generic"><canvas id="statsChartPdf"></canvas></div>
+                </div>
                 <div style="text-align: left; margin-top: 15px; font-size: 15px; color: #555; line-height: 1.6; background: var(--bg-gray); padding: 15px; border-radius: 4px;">
                     <strong>Come leggere il grafico:</strong><br>
                     Il grafico mostra quante scuole ci sono per ogni candidato in una provincia.<br>
@@ -290,7 +366,7 @@
                 <h2>Riepilogo Nomine</h2>
             </div>
             <div id="sec6-content" class="collapsible-content">
-                <div id="statsTableContainerBollettino" style="margin-bottom: 20px; overflow-x: auto;"></div>
+                <div id="statsTableContainerBollettino" class="table-scroll" style="margin-bottom: 20px;"></div>
             </div>
         </div>
 
@@ -300,7 +376,9 @@
                 <h2>Grafico Punteggi Minimi</h2>
             </div>
             <div id="sec6_1-content" class="collapsible-content">
-                <div class="chart-container-generic"><canvas id="statsChartBollettino"></canvas></div>
+                <div class="chart-outer-scroll">
+                    <div class="chart-container-generic"><canvas id="statsChartBollettino"></canvas></div>
+                </div>
                 <div style="text-align: left; margin-top: 15px; font-size: 15px; color: #555; line-height: 1.6; background: var(--bg-gray); padding: 15px; border-radius: 4px;">
                     <strong>Come leggere il grafico:</strong><br>
                     Le barre azzurre mostrano quante persone sono state chiamate in totale.<br>
@@ -410,7 +488,6 @@
 
 <script>
     const RENDER_URL = "https://gps-posizione.onrender.com/genera-pdf";
-    if (window.pdfjsLib) { pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; }
 
     const regioniProvince = {
         "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"]
@@ -549,6 +626,7 @@
         const statusMsg = document.getElementById('statusMessage');
         const pdfViewerDiv = document.getElementById('pdfViewer');
         const pdfContainer = document.getElementById('pdfViewerContainer');
+        const pdfDownloadLink = document.getElementById('pdfDownloadLink');
         const sec4Wrapper = document.getElementById('sec4-wrapper');
         const sec5Wrapper = document.getElementById('chartSectionPdfWrapper');
         const sec5_1Wrapper = document.getElementById('sec5_1-wrapper');
@@ -576,8 +654,14 @@
             pdfContainer.style.display = 'block';
             const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
             const pdfUrl = URL.createObjectURL(pdfBlob);
+            
+            // Aggiorno link per aprirlo in nuova scheda se da mobile l'iframe non parte
+            pdfDownloadLink.href = pdfUrl;
+            
             const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
+            // MANTIENO IFRAME ESATTAMENTE COME SU PC
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
+            
             const stats = data.stats; const labels = Object.keys(stats);
             if (labels.length > 0) {
                 let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
@@ -648,7 +732,6 @@
                     
                     statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia}</strong><br><span style="color: #333;">Copertura I Fascia: <strong style="color: var(--primary-blue);">${item.assorbimento_f1}%</strong></span> (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali})`;
                     
-                    // Mostra le percentuali solo se ci sono nomine in entrambe le fasce e non è stata filtrata una sola fascia
                     if (fasciaSelezionata === "" && item.nomine_f1 > 0 && item.nomine_f2 > 0) {
                         statsAvanzateHTML += `<br><span style="color: #333;">Riparto nomine: <strong style="color: var(--primary-blue);">F1 ${item.prob_f1}%</strong> | <strong style="color: var(--primary-blue);">F2 ${item.prob_f2}%</strong></span>`;
                     }
@@ -683,7 +766,7 @@
             statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i dati qui sotto.";
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
-        } finally { btn.disabled = false; btn.innerText = "Vedi Nomine RealI"; }
+        } finally { btn.disabled = false; btn.innerText = "Vedi Nomine Reali"; }
     }
 </script>
 </body>
