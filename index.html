@@ -134,7 +134,13 @@
 
     <div class="section">
         <h2>Classi di Concorso</h2>
-        <div class="form-group"><input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica)..."></div>
+        
+        <!-- NUOVO CONTENITORE PER I TAG DELLE CLASSI SELEZIONATE -->
+        <div class="form-group">
+            <div id="classiTagsContainer" class="tags-container" style="margin-bottom: 15px; min-height: 0; border: none; background: none; padding: 0; display: none;"></div>
+            <input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica)...">
+        </div>
+        
         <div id="classiContainer" class="classi-container"></div>
         <p id="noClassiMsg">Seleziona almeno un Ordine di Scuola per visualizzare le classi.</p>
     </div>
@@ -260,6 +266,7 @@
         selectedRegioni.forEach(r => { let tag = document.createElement('div'); tag.className = 'tag'; let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;'; span.addEventListener('click', function() { removeRegione(r); }); tag.appendChild(document.createTextNode(r + " ")); tag.appendChild(span); regioniTagsDiv.appendChild(tag); });
         selectedProvince.forEach(p => { let tag = document.createElement('div'); tag.className = 'tag'; let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;'; span.addEventListener('click', function() { removeProvincia(p); }); tag.appendChild(document.createTextNode(p + " ")); tag.appendChild(span); provinceTagsDiv.appendChild(tag); });
     }
+    
     function aggiornaClassiVisibili() {
         const container = document.getElementById('classiContainer'); const noClassiMsg = document.getElementById('noClassiMsg'); container.innerHTML = '';
         let ordiniSelezionati = [];
@@ -271,13 +278,45 @@
                 classiConcorsoDB[ordine].forEach(classe => {
                     let div = document.createElement('div'); div.className = 'classe-item';
                     let input = document.createElement('input'); input.type = 'checkbox'; input.id = classe.replace(/\s+/g, '-'); input.value = classe;
+                    // Aggiungo l'event listener per il cambiamento di stato
+                    input.addEventListener('change', renderClassiTags);
                     let label = document.createElement('label'); label.htmlFor = input.id; label.textContent = classe;
                     div.appendChild(input); div.appendChild(label); container.appendChild(div);
                 });
             }
         });
         filtraClassi();
+        renderClassiTags(); // Aggiorno i tag quando cambio ordine di scuola
     }
+
+    // NUOVA FUNZIONE PER I TAG DELLE CLASSI SELEZIONATE
+    function renderClassiTags() {
+        const tagsDiv = document.getElementById('classiTagsContainer');
+        tagsDiv.innerHTML = '';
+        const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
+        
+        if (checkboxes.length === 0) {
+            tagsDiv.style.display = 'none';
+            return;
+        }
+        
+        tagsDiv.style.display = 'flex';
+        checkboxes.forEach(cb => {
+            let tag = document.createElement('div'); 
+            tag.className = 'tag';
+            let span = document.createElement('span'); 
+            span.className = 'remove-tag'; 
+            span.innerHTML = '&times;';
+            span.addEventListener('click', function() {
+                cb.checked = false;
+                renderClassiTags();
+            });
+            tag.appendChild(document.createTextNode(cb.value + " ")); 
+            tag.appendChild(span); 
+            tagsDiv.appendChild(tag);
+        });
+    }
+
     function filtraClassi() {
         let input = document.getElementById('searchClassi'); let filter = input.value.toLowerCase();
         let items = document.getElementsByClassName('classe-item');
@@ -324,7 +363,7 @@
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
             
             const stats = data.stats; const labels = Object.keys(stats);
-            sec4Wrapper.style.display = 'block';
+            sec4Wrapper.style.display = 'block'; // Mostriamo sempre il PDF
             
             if (labels.length > 0) {
                 let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
