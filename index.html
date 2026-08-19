@@ -348,6 +348,14 @@
         }
     }
 
+    // Funzione di utilità per formattare i punteggi
+    function formatScore(val) {
+        if (val === "N/D" || val === null || val === undefined) return '-';
+        let s = String(val).replace('.', ',');
+        if (s.endsWith(',0')) s = s.replace(',0', '');
+        return s;
+    }
+
     async function generaPDF() {
         const statusMsg = document.getElementById('statusMessage');
         const pdfViewerDiv = document.getElementById('pdfViewer');
@@ -392,9 +400,10 @@
                 labels.forEach(l => {
                     const info = stats[l];
                     const regione = info.regione === 'N/D' ? '-' : info.regione;
-                    const medianScore = info.median ? info.median.toFixed(2).replace('.', ',') : '-';
-                    const topScore = info.top ? info.top.replace('N/D', '-') : '-';
-                    const bottomScore = info.bottom ? info.bottom.replace('N/D', '-') : '-';
+                    // Utilizza formatScore per mantenere i decimali inviati dal backend senza forzarli
+                    const medianScore = formatScore(info.median);
+                    const topScore = formatScore(info.top);
+                    const bottomScore = formatScore(info.bottom);
                     tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${topScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${bottomScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
                 });
                 tableHTML += `</tbody></table>`;
@@ -472,7 +481,7 @@
                         { type: 'line', label: 'Ultimo Punteggio F1', data: dataMinF1, borderColor: 'rgba(0, 85, 165, 1)', backgroundColor: 'rgba(0, 85, 165, 1)', yAxisID: 'y2', tension: 0, pointRadius: 6, pointBorderColor: '#fff', pointBorderWidth: 2, showLine: false, order: 1 },
                         { type: 'line', label: 'Ultimo Punteggio F2', data: dataMinF2, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 1)', yAxisID: 'y2', tension: 0, pointRadius: 6, pointBorderColor: '#fff', pointBorderWidth: 2, showLine: false, order: 2 }
                     ]},
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Nomine Totali e Punteggi Minimi', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { let l = context.dataset.label || ''; if (l) { l += ': '; } if (context.parsed.y !== null) { if (context.dataset.yAxisID === 'y2') { l += context.parsed.y.toFixed(2).replace('.', ','); } else { l += context.parsed.y; } } return l; } } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'N. Nomine' }, grid: { drawOnChartArea: true }, beginAtZero: true }, y2: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Punteggio' }, grid: { drawOnChartArea: false }, beginAtZero: true } } }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Nomine Totali e Punteggi Minimi', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { let l = context.dataset.label || ''; if (l) { l += ': '; } if (context.parsed.y !== null) { if (context.dataset.yAxisID === 'y2') { let val = String(context.parsed.y).replace('.', ','); if (val.endsWith(',0')) val = val.replace(',0', ''); l += val; } else { l += context.parsed.y; } } return l; } } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'N. Nomine' }, grid: { drawOnChartArea: true }, beginAtZero: true }, y2: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Punteggio' }, grid: { drawOnChartArea: false }, beginAtZero: true } } }
                 });
                 chartSectionWrapper.style.display = 'block'; chartSec6_1Wrapper.style.display = 'block'; analisiWrapper.style.display = 'block';
                 const tabNav = document.getElementById('tabNav');
