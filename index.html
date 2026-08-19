@@ -221,14 +221,103 @@
 <script>
     const RENDER_URL = "https://scanner-scolastico.onrender.com/genera-pdf";
     const regioniProvince = { "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"] };
-    const classiConcorsoDB = {
-        "infanzia_primaria": ["AA01 - Sostegno Infanzia", "AA02 - Sostegno Primaria", "AE01 - Educatore dei servizi per l'infanzia", "AB1 - Scuola dell'infanzia e primaria"],
-        "secondaria_I": [
-            "AB24 - Sostegno Sec. I grado", "A011 - Arte e immagine", "A012 - Diritto ed economia", "A013 - Educazione musicale", "A014 - Educazione tecnica", "A015 - Educazione fisica", "A016 - Francese", "A017 - Geografia", "A018 - Inglese", "A019 - Italiano, storia, geografia", "A020 - Latino e storia", "A021 - Matematica e scienze", "A022 - Scienze integrate", "A023 - Spagnolo", "A024 - Tedesco", "A076 - Strumento musicale (Scuola Sec. I grado)", "A077 - Musica d'insieme (Scuola Sec. I grado)", "AM56 - Scuola Secondaria I grado (MM)",
-            "A002 - Classe A002", "A003 - Classe A003", "A005 - Classe A005", "A007 - Classe A007", "A008 - Classe A008", "A009 - Classe A009", "A010 - Classe A010", "A026 - Classe A026", "A027 - Classe A027", "A028 - Classe A028", "A031 - Classe A031", "A032 - Classe A032", "A034 - Classe A034", "A036 - Classe A036", "A037 - Classe A037", "A038 - Classe A038", "A040 - Classe A040", "A041 - Classe A041", "A042 - Classe A042", "A044 - Classe A044", "A045 - Classe A045", "A046 - Classe A046", "A047 - Classe A047", "A050 - Classe A050", "A051 - Classe A051", "A052 - Classe A052", "A053 - Classe A053", "A054 - Classe A054", "A057 - Classe A057", "A058 - Classe A058", "A059 - Classe A059", "A060 - Classe A060", "A061 - Classe A061", "A062 - Classe A062", "A063 - Classe A063", "A064 - Classe A064", "A065 - Classe A065", "A066 - Classe A066", "A078 - Classe A078", "A084 - Classe A084", "A085 - Classe A085", "AA55 - Classe AA55", "AA56 - Classe AA56", "AB55 - Classe AB55", "AB56 - Classe AB56", "AC55 - Classe AC55", "AC56 - Classe AC56", "AD55 - Classe AD55", "AD56 - Classe AD56", "ADMM - Classe ADMM", "AE55 - Classe AE55", "AE56 - Classe AE56", "AF55 - Classe AF55", "AF56 - Classe AF56", "AG56 - Classe AG56", "AH55 - Classe AH55", "AH56 - Classe AH56", "AI55 - Classe AI55", "AI56 - Classe AI56", "AJ55 - Classe AJ55", "AJ56 - Classe AJ56", "AK55 - Classe AK55", "AK56 - Classe AK56", "AL55 - Classe AL55", "AL56 - Classe AL56", "AM01 - Classe AM01", "AM2A - Classe AM2A", "AM2B - Classe AM2B", "AM2C - Classe AM2C", "AM2D - Classe AM2D", "AM2E - Classe AM2E", "AM2F - Classe AM2F", "AM12 - Classe AM12", "AM30 - Classe AM30", "AM48 - Classe AM48", "AM55 - Classe AM55", "AN55 - Classe AN55", "AN56 - Classe AN56", "AO55 - Classe AO55", "AP55 - Classe AP55", "AQ55 - Classe AQ55", "AR55 - Classe AR55", "AS01 - Classe AS01", "AS2A - Classe AS2A", "AS2B - Classe AS2B", "AS2C - Classe AS2C", "AS2D - Classe AS2D", "AS2E - Classe AS2E", "AS2I - Classe AS2I", "AS2L - Classe AS2L", "AS2N - Classe AS2N", "AS12 - Classe AS12", "AS30 - Classe AS30", "AS48 - Classe AS48", "AS55 - Classe AS55", "AT55 - Classe AT55", "AU55 - Classe AU55", "AW55 - Classe AW55"
-        ],
-        "secondaria_II": ["AB25 - Sostegno Sec. II grado", "A019 - Italiano, Storia, Geografia (Sec. II)", "A020 - Latino, Storia, Geografia (Sec. II)", "A017 - Filosofia e Storia", "A018 - Lettere", "A050 - Storia, Filosofia e Pedagogia", "A026 - Matematica", "A027 - Matematica e Fisica", "A028 - Informatica", "A029 - Fisica", "A030 - Scienze naturali, chimica e biologia", "A031 - Chimica", "A032 - Scienze e tecnologie chimiche", "A034 - Francese (Sec. II)", "A035 - Inglese (Sec. II)", "A036 - Spagnolo (Sec. II)", "A037 - Tedesco (Sec. II)", "A040 - Disegno e storia dell'arte", "A041 - Costruzioni, tecnica e progettazione", "A043 - Tecnologia della progettazione", "A044 - Elettronica", "A045 - Elettrotecnica e automazione", "A046 - Meccanica e macchine", "A047 - Tecnologia e disegno", "A048 - Informatica (professionale)", "A049 - Discipline geometriche", "A052 - Discipline muscolari e sportive", "A054 - Discipline giuridiche ed economiche", "A055 - Diritto ed economia politica", "A053 - Geografia", "A054 - Scienze umane", "A055 - Storia, filosofia e scienze umane", "A031 - Canto (Liceo Musicale)", "A032 - Composizione (Liceo Musicale)", "A033 - Direzione di coro e composizione corale", "A034 - Strumenti a tastiera (Pianoforte e Organo)", "A035 - Strumenti ad arco (Violino, Viola, Violoncello, Contrabbasso)", "A036 - Strumenti a pizzico (Chitarra, Arpa, Liuto)", "A037 - Strumenti a fiato (Flauto, Clarinetto, Oboe, Fagotto, Sassofoni)", "A038 - Strumenti a percussione", "A039 - Storia della musica (Liceo Musicale)", "A040 - Tecnica del suono e delle riprese audio"]
-    };
+const classiConcorsoDB = {
+    "infanzia_primaria": ["AA01 - Sostegno Infanzia", "AA02 - Sostegno Primaria", "AE01 - Educatore dei servizi per l'infanzia", "AB1 - Scuola dell'infanzia e primaria"],
+    "secondaria_I": [
+        // Sostegno
+        "AB24 - Sostegno Sec. I grado",
+        // Classi vecchio codice (solo Sec. I grado)
+        "A011 - Arte e immagine",
+        "A012 - Diritto ed economia",
+        "A013 - Educazione musicale",
+        "A014 - Educazione tecnica",
+        "A015 - Educazione fisica",
+        "A016 - Francese",
+        "A018 - Inglese",
+        "A021 - Matematica e scienze",
+        "A023 - Spagnolo",
+        "A024 - Tedesco",
+        "A076 - Strumento musicale (Scuola Sec. I grado)",
+        "A077 - Musica d'insieme (Scuola Sec. I grado)",
+        // Classi nuovo codice (A-XX)
+        "A-01 - Arte e immagine",
+        "A-12 - Lettere (Italiano, storia, geografia)",
+        "A-23 - Italiano L2",
+        "A-28 - Matematica e Scienze",
+        "A-30 - Musica",
+        "A-48 - Scienze Motorie",
+        "A-60 - Tecnologia",
+        "AA22 - Francese (A-22)",
+        "AB22 - Inglese (A-22)",
+        "AC22 - Spagnolo (A-22)",
+        "AD22 - Tedesco (A-22)",
+        "AE22 - Sloveno (A-22)",
+        // Speciali
+        "AM56 - Scuola Secondaria I grado (MM)",
+        "ADMM - Classe ADMM",
+        "IRC - Religione Cattolica",
+        // Classi musicali II fascia
+        "AA56 - Classe AA56 (Musica)",
+        "AB56 - Classe AB56 (Musica)",
+        "AC56 - Classe AC56 (Musica)",
+        "AD56 - Classe AD56 (Musica)",
+        "AE56 - Classe AE56 (Musica)",
+        "AF56 - Classe AF56 (Musica)",
+        "AG56 - Classe AG56 (Musica)",
+        "AH56 - Classe AH56 (Musica)",
+        "AI56 - Classe AI56 (Musica)",
+        "AJ56 - Classe AJ56 (Musica)",
+        "AK56 - Classe AK56 (Musica)",
+        "AL56 - Classe AL56 (Musica)",
+        "AN56 - Classe AN56 (Musica)",
+        // Classi musicali I fascia
+        "AA55 - Classe AA55",
+        "AB55 - Classe AB55",
+        "AC55 - Classe AC55",
+        "AD55 - Classe AD55",
+        "AE55 - Classe AE55",
+        "AF55 - Classe AF55",
+        "AH55 - Classe AH55",
+        "AI55 - Classe AI55",
+        "AJ55 - Classe AJ55",
+        "AK55 - Classe AK55",
+        "AL55 - Classe AL55",
+        "AM55 - Classe AM55",
+        "AN55 - Classe AN55",
+        // Altre classi specifiche Sec. I
+        "AM01 - Classe AM01",
+        "AM2A - Classe AM2A",
+        "AM2B - Classe AM2B",
+        "AM2C - Classe AM2C",
+        "AM2D - Classe AM2D",
+        "AM2E - Classe AM2E",
+        "AM2F - Classe AM2F",
+        "AM12 - Classe AM12",
+        "AM30 - Classe AM30",
+        "AM48 - Classe AM48",
+        "AO55 - Classe AO55",
+        "AP55 - Classe AP55",
+        "AQ55 - Classe AQ55",
+        "AR55 - Classe AR55",
+        "AS01 - Classe AS01",
+        "AS2A - Classe AS2A",
+        "AS2B - Classe AS2B",
+        "AS2C - Classe AS2C",
+        "AS2D - Classe AS2D",
+        "AS2E - Classe AS2E",
+        "AS2I - Classe AS2I",
+        "AS2L - Classe AS2L",
+        "AS2N - Classe AS2N",
+        "AS12 - Classe AS12",
+        "AS30 - Classe AS30",
+        "AS48 - Classe AS48",
+        "AS55 - Classe AS55",
+        "AT55 - Classe AT55",
+        "AU55 - Classe AU55",
+        "AW55 - Classe AW55"
+    ],
+    "secondaria_II": ["AB25 - Sostegno Sec. II grado", "A019 - Italiano, Storia, Geografia (Sec. II)", "A020 - Latino, Storia, Geografia (Sec. II)", "A017 - Filosofia e Storia", "A018 - Lettere", "A050 - Storia, Filosofia e Pedagogia", "A026 - Matematica", "A027 - Matematica e Fisica", "A028 - Informatica", "A029 - Fisica", "A030 - Scienze naturali, chimica e biologia", "A031 - Chimica", "A032 - Scienze e tecnologie chimiche", "A034 - Francese (Sec. II)", "A035 - Inglese (Sec. II)", "A036 - Spagnolo (Sec. II)", "A037 - Tedesco (Sec. II)", "A040 - Disegno e storia dell'arte", "A041 - Costruzioni, tecnica e progettazione", "A043 - Tecnologia della progettazione", "A044 - Elettronica", "A045 - Elettrotecnica e automazione", "A046 - Meccanica e macchine", "A047 - Tecnologia e disegno", "A048 - Informatica (professionale)", "A049 - Discipline geometriche", "A052 - Discipline muscolari e sportive", "A054 - Discipline giuridiche ed economiche", "A055 - Diritto ed economia politica", "A053 - Geografia", "A054 - Scienze umane", "A055 - Storia, filosofia e scienze umane", "A031 - Canto (Liceo Musicale)", "A032 - Composizione (Liceo Musicale)", "A033 - Direzione di coro e composizione corale", "A034 - Strumenti a tastiera (Pianoforte e Organo)", "A035 - Strumenti ad arco (Violino, Viola, Violoncello, Contrabbasso)", "A036 - Strumenti a pizzico (Chitarra, Arpa, Liuto)", "A037 - Strumenti a fiato (Flauto, Clarinetto, Oboe, Fagotto, Sassofoni)", "A038 - Strumenti a percussione", "A039 - Storia della musica (Liceo Musicale)", "A040 - Tecnica del suono e delle riprese audio"]
+};
 
     let selectedRegioni = []; let selectedProvince = []; let myChartPdf = null; let myChartBollettino = null;
     let lastScrollTop = 0;
