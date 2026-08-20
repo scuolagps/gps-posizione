@@ -29,7 +29,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-BMBFNGFED2');
     </script>
 
@@ -157,10 +156,9 @@
     <div class="section">
         <h2>Classi di Concorso</h2>
         
-        <!-- NUOVO CONTENITORE PER I TAG DELLE CLASSI SELEZIONATE -->
         <div class="form-group">
             <div id="classiTagsContainer" class="tags-container" style="margin-bottom: 15px; min-height: 0; border: none; background: none; padding: 0; display: none;"></div>
-            <input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica)...">
+            <input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica, Clarinetto)...">
         </div>
         
         <div id="classiContainer" class="classi-container"></div>
@@ -221,6 +219,7 @@
 <script>
     const RENDER_URL = "https://scanner-scolastico.onrender.com/genera-pdf";
     const regioniProvince = { "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"] };
+
 const classiConcorsoDB = {
     "infanzia_primaria": ["AA01 - Sostegno Infanzia", "AA02 - Sostegno Primaria", "AE01 - Educatore dei servizi per l'infanzia", "AB1 - Scuola dell'infanzia e primaria"],
     "secondaria_I": [
@@ -239,6 +238,7 @@ const classiConcorsoDB = {
         "A024 - Tedesco",
         "A076 - Strumento musicale (Scuola Sec. I grado)",
         "A077 - Musica d'insieme (Scuola Sec. I grado)",
+        "A078 - Teoria, lettura ed esecuzione musicale",
         // Classi nuovo codice (A-XX)
         "A-01 - Arte e immagine",
         "A-12 - Lettere (Italiano, storia, geografia)",
@@ -253,38 +253,24 @@ const classiConcorsoDB = {
         "AD22 - Tedesco (A-22)",
         "AE22 - Sloveno (A-22)",
         // Speciali
-        "AM56 - Scuola Secondaria I grado (MM)",
         "ADMM - Classe ADMM",
         "IRC - Religione Cattolica",
-        // Classi musicali II fascia
-        "AA56 - Classe AA56 (Musica)",
-        "AB56 - Classe AB56 (Musica)",
-        "AC56 - Classe AC56 (Musica)",
-        "AD56 - Classe AD56 (Musica)",
-        "AE56 - Classe AE56 (Musica)",
-        "AF56 - Classe AF56 (Musica)",
-        "AG56 - Classe AG56 (Musica)",
-        "AH56 - Classe AH56 (Musica)",
-        "AI56 - Classe AI56 (Musica)",
-        "AJ56 - Classe AJ56 (Musica)",
-        "AK56 - Classe AK56 (Musica)",
-        "AL56 - Classe AL56 (Musica)",
-        "AN56 - Classe AN56 (Musica)",
-        // Classi musicali I fascia
-        "AA55 - Classe AA55",
-        "AB55 - Classe AB55",
-        "AC55 - Classe AC55",
-        "AD55 - Classe AD55",
-        "AE55 - Classe AE55",
-        "AF55 - Classe AF55",
-        "AH55 - Classe AH55",
-        "AI55 - Classe AI55",
-        "AJ55 - Classe AJ55",
-        "AK55 - Classe AK55",
-        "AL55 - Classe AL55",
-        "AM55 - Classe AM55",
-        "AN55 - Classe AN55",
-        // Altre classi specifiche Sec. I
+        // Classi musicali (valgono sia per I che II Fascia - codici 56)
+        "AA56 - Arpa",
+        "AB56 - Chitarra",
+        "AC56 - Clarinetto",
+        "AD56 - Contrabbasso",
+        "AE56 - Fagotto",
+        "AF56 - Flauto",
+        "AG56 - Oboe",
+        "AH56 - Pianoforte",
+        "AI56 - Sassofono",
+        "AJ56 - Tromba",
+        "AK56 - Trombone",
+        "AL56 - Viola",
+        "AM56 - Violino",
+        "AN56 - Violoncello",
+        // Altre classi specifiche Sec. I (formato AM/GPS)
         "AM01 - Classe AM01",
         "AM2A - Classe AM2A",
         "AM2B - Classe AM2B",
@@ -295,6 +281,8 @@ const classiConcorsoDB = {
         "AM12 - Classe AM12",
         "AM30 - Classe AM30",
         "AM48 - Classe AM48",
+        "AM70 - Classe AM70",
+        "AM71 - Classe AM71",
         "AO55 - Classe AO55",
         "AP55 - Classe AP55",
         "AQ55 - Classe AQ55",
@@ -316,7 +304,7 @@ const classiConcorsoDB = {
         "AU55 - Classe AU55",
         "AW55 - Classe AW55"
     ],
-    "secondaria_II": ["AB25 - Sostegno Sec. II grado", "A019 - Italiano, Storia, Geografia (Sec. II)", "A020 - Latino, Storia, Geografia (Sec. II)", "A017 - Filosofia e Storia", "A018 - Lettere", "A050 - Storia, Filosofia e Pedagogia", "A026 - Matematica", "A027 - Matematica e Fisica", "A028 - Informatica", "A029 - Fisica", "A030 - Scienze naturali, chimica e biologia", "A031 - Chimica", "A032 - Scienze e tecnologie chimiche", "A034 - Francese (Sec. II)", "A035 - Inglese (Sec. II)", "A036 - Spagnolo (Sec. II)", "A037 - Tedesco (Sec. II)", "A040 - Disegno e storia dell'arte", "A041 - Costruzioni, tecnica e progettazione", "A043 - Tecnologia della progettazione", "A044 - Elettronica", "A045 - Elettrotecnica e automazione", "A046 - Meccanica e macchine", "A047 - Tecnologia e disegno", "A048 - Informatica (professionale)", "A049 - Discipline geometriche", "A052 - Discipline muscolari e sportive", "A054 - Discipline giuridiche ed economiche", "A055 - Diritto ed economia politica", "A053 - Geografia", "A054 - Scienze umane", "A055 - Storia, filosofia e scienze umane", "A031 - Canto (Liceo Musicale)", "A032 - Composizione (Liceo Musicale)", "A033 - Direzione di coro e composizione corale", "A034 - Strumenti a tastiera (Pianoforte e Organo)", "A035 - Strumenti ad arco (Violino, Viola, Violoncello, Contrabbasso)", "A036 - Strumenti a pizzico (Chitarra, Arpa, Liuto)", "A037 - Strumenti a fiato (Flauto, Clarinetto, Oboe, Fagotto, Sassofoni)", "A038 - Strumenti a percussione", "A039 - Storia della musica (Liceo Musicale)", "A040 - Tecnica del suono e delle riprese audio"]
+    "secondaria_II": ["AB25 - Sostegno Sec. II grado", "A019 - Italiano, Storia, Geografia (Sec. II)", "A020 - Latino, Storia, Geografia (Sec. II)", "A017 - Filosofia e Storia", "A018 - Lettere", "A050 - Storia, Filosofia e Pedagogia", "A026 - Matematica", "A027 - Matematica e Fisica", "A028 - Informatica", "A029 - Fisica", "A030 - Scienze naturali, chimica e biologia", "A031 - Chimica", "A032 - Scienze e tecnologie chimiche", "A034 - Francese (Sec. II)", "A035 - Inglese (Sec. II)", "A036 - Spagnolo (Sec. II)", "A037 - Tedesco (Sec. II)", "A040 - Disegno e storia dell'arte", "A041 - Costruzioni, tecnica e progettazione", "A043 - Tecnologia della progettazione", "A044 - Elettronica", "A045 - Elettrotecnica e automazione", "A046 - Meccanica e macchine", "A047 - Tecnologia e disegno", "A048 - Informatica (professionale)", "A049 - Discipline geometriche", "A052 - Discipline muscolari e sportive", "A054 - Discipline giuridiche ed economiche", "A055 - Diritto ed economia politica", "A053 - Geografia", "A031 - Canto (Liceo Musicale)", "A032 - Composizione (Liceo Musicale)", "A033 - Direzione di coro e composizione corale", "A034 - Strumenti a tastiera (Pianoforte e Organo)", "A035 - Strumenti ad arco (Violino, Viola, Violoncello, Contrabbasso)", "A036 - Strumenti a pizzico (Chitarra, Arpa, Liuto)", "A037 - Strumenti a fiato (Flauto, Clarinetto, Oboe, Fagotto, Sassofoni)", "A038 - Strumenti a percussione", "A039 - Storia della musica (Liceo Musicale)", "A040 - Tecnica del suono e delle riprese audio"]
 };
 
     let selectedRegioni = []; let selectedProvince = []; let myChartPdf = null; let myChartBollettino = null;
@@ -389,7 +377,6 @@ const classiConcorsoDB = {
                 classiConcorsoDB[ordine].forEach(classe => {
                     let div = document.createElement('div'); div.className = 'classe-item';
                     let input = document.createElement('input'); input.type = 'checkbox'; input.id = classe.replace(/\s+/g, '-'); input.value = classe;
-                    // Aggiungo l'event listener per il cambiamento di stato
                     input.addEventListener('change', renderClassiTags);
                     let label = document.createElement('label'); label.htmlFor = input.id; label.textContent = classe;
                     div.appendChild(input); div.appendChild(label); container.appendChild(div);
@@ -397,10 +384,9 @@ const classiConcorsoDB = {
             }
         });
         filtraClassi();
-        renderClassiTags(); // Aggiorno i tag quando cambio ordine di scuola
+        renderClassiTags();
     }
 
-    // NUOVA FUNZIONE PER I TAG DELLE CLASSI SELEZIONATE
     function renderClassiTags() {
         const tagsDiv = document.getElementById('classiTagsContainer');
         tagsDiv.innerHTML = '';
@@ -437,7 +423,6 @@ const classiConcorsoDB = {
         }
     }
 
-    // Funzione di utilità per formattare i punteggi
     function formatScore(val) {
         if (val === "N/D" || val === null || val === undefined) return '-';
         let s = String(val).replace('.', ',');
@@ -482,14 +467,13 @@ const classiConcorsoDB = {
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
             
             const stats = data.stats; const labels = Object.keys(stats);
-            sec4Wrapper.style.display = 'block'; // Mostriamo sempre il PDF
+            sec4Wrapper.style.display = 'block';
             
             if (labels.length > 0) {
                 let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
                 labels.forEach(l => {
                     const info = stats[l];
                     const regione = info.regione === 'N/D' ? '-' : info.regione;
-                    // Utilizza formatScore per mantenere i decimali inviati dal backend senza forzarli
                     const medianScore = formatScore(info.median);
                     const topScore = formatScore(info.top);
                     const bottomScore = formatScore(info.bottom);
