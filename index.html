@@ -500,7 +500,10 @@ const classiConcorsoDB = {
         const btn = document.getElementById('generaBtn');
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
         let classiSelezionate = [];
-        checkboxes.forEach(cb => classiSelezionate.push(cb.value));
+        checkboxes.forEach(cb => {
+            const ord = cb.dataset.ordine || '';
+            classiSelezionate.push(ord + '|' + cb.value);
+        });
         if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
         btn.disabled = true; btn.innerText = "Generazione in corso...";
         statusMsg.style.color = "#0055A5"; statusMsg.innerText = "Estrazione dati in corso... Attendi.";
@@ -569,7 +572,10 @@ const classiConcorsoDB = {
         const btn = document.getElementById('bollettinoBtn');
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
         let classiSelezionate = [];
-        checkboxes.forEach(cb => classiSelezionate.push(cb.value));
+        checkboxes.forEach(cb => {
+            const ord = cb.dataset.ordine || '';
+            classiSelezionate.push(ord + '|' + cb.value);
+        });
         if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
         btn.disabled = true; btn.innerText = "Estrazione in corso...";
         statusMsg.style.color = "#F39C12"; statusMsg.innerText = "Estrazione nomine in corso... Attendi.";
