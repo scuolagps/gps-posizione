@@ -435,7 +435,7 @@ const classiConcorsoDB = {
             if (classiConcorsoDB[ordine]) {
                 classiConcorsoDB[ordine].forEach(classe => {
                     let div = document.createElement('div'); div.className = 'classe-item';
-                    let input = document.createElement('input'); input.type = 'checkbox'; input.id = classe.replace(/\s+/g, '-'); input.value = classe;
+                    let input = document.createElement('input'); input.type = 'checkbox'; input.id = classe.replace(/\s+/g, '-'); input.value = classe; input.dataset.ordine = ordine;
                     input.addEventListener('change', renderClassiTags);
                     let label = document.createElement('label'); label.htmlFor = input.id; label.textContent = classe;
                     div.appendChild(input); div.appendChild(label); container.appendChild(div);
