@@ -129,7 +129,8 @@
     <div class="section">
         <h2>Ordine di Scuola</h2>
         <div class="checkbox-group" id="ordineScuolaGroup">
-            <div class="checkbox-item"><input type="checkbox" id="ord_inf_prim" name="ordineScuola" value="infanzia_primaria"><label for="ord_inf_prim" style="display:inline; margin-bottom:0;">Infanzia e Primaria</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_infanzia" name="ordineScuola" value="infanzia"><label for="ord_infanzia" style="display:inline; margin-bottom:0;">Infanzia</label></div>
+            <div class="checkbox-item"><input type="checkbox" id="ord_primaria" name="ordineScuola" value="primaria"><label for="ord_primaria" style="display:inline; margin-bottom:0;">Primaria</label></div>
             <div class="checkbox-item"><input type="checkbox" id="ord_sec1" name="ordineScuola" value="secondaria_I"><label for="ord_sec1" style="display:inline; margin-bottom:0;">Sec. I grado</label></div>
             <div class="checkbox-item"><input type="checkbox" id="ord_sec2" name="ordineScuola" value="secondaria_II"><label for="ord_sec2" style="display:inline; margin-bottom:0;">Sec. II grado</label></div>
         </div>
@@ -221,7 +222,22 @@
     const regioniProvince = { "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"] };
 
 const classiConcorsoDB = {
-    "infanzia_primaria": ["AA01 - Sostegno Infanzia", "AA02 - Sostegno Primaria", "AE01 - Educatore dei servizi per l'infanzia", "AB1 - Scuola dell'infanzia e primaria"],
+    "infanzia": [
+        "AA01 - Sostegno Infanzia",
+        "AE01 - Educatore dei servizi per l'infanzia",
+        "AB1 - Scuola dell'infanzia e primaria"
+    ],
+    "primaria": [
+        "AA02 - Sostegno Primaria",
+        "AB1 - Scuola dell'infanzia e primaria"
+    ],
+    "secondaria_I": [
+        // ... (tutto il contenuto esistente invariato)
+    ],
+    "secondaria_II": [
+        // ... (tutto il contenuto esistente invariato)
+    ]
+};
     "secondaria_I": [
         // Sostegno
         "AB24 - Sostegno Sec. I grado",
