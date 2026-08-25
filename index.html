@@ -104,8 +104,8 @@
 
 <header id="siteHeader">
     <h1>Estrazione Dati Scolastici</h1>
-    <button class="header-btn" id="guidaBtn" onclick="toggleGuida(true)">Guida ai Dati</button>
-    <button class="header-btn" id="homeBtn" onclick="toggleGuida(false)" style="display: none; background: var(--accent-orange);">Torna al Tool</button>
+    <button class="header-btn" onclick="toggleGuida(false)">Home</button>
+    <button class="header-btn" onclick="toggleGuida(true)" style="background: var(--accent-orange);">Guida ai Dati</button>
 </header>
 <div id="guidaContainer" style="display: none; max-width: 800px; margin: 80px auto 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 40px;">
     <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e6f1fb; padding-bottom: 20px;">
@@ -832,25 +832,19 @@
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
         } finally { btn.disabled = false; btn.innerText = "Vedi Nomine Reali"; }
     }
-        function toggleGuida(show) {
+    function toggleGuida(showGuida) {
         const main = document.querySelector('.container');
         const guida = document.getElementById('guidaContainer');
-        const guidaBtn = document.getElementById('guidaBtn');
-        const homeBtn = document.getElementById('homeBtn');
         
-        if (show) {
-            main.style.display = 'none';
-            guida.style.display = 'block';
-            guidaBtn.style.display = 'none';
-            homeBtn.style.display = 'inline-block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (showGuida) {
+            main.style.display = 'none';    // Nasconde il tool
+            guida.style.display = 'block';  // Mostra la guida
         } else {
-            main.style.display = 'block';
-            guida.style.display = 'none';
-            guidaBtn.style.display = 'inline-block';
-            homeBtn.style.display = 'none';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            main.style.display = 'block';   // Mostra il tool
+            guida.style.display = 'none';  // Nasconde la guida
         }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     }
     
 </script>
