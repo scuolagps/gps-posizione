@@ -151,8 +151,8 @@
 
 <div class="container">
     <div style="text-align: center; margin-bottom: 40px; padding: 10px 20px;">
-        <h1 style="font-family: 'Spectral', serif; font-weight: 500; font-size: 32px; color: var(--dark-blue); margin: 0 0 15px 0; line-height: 1.3;">Scopri in tempo reale le dinamiche delle graduatorie</h1>
-        <p style="font-family: 'Spectral', serif; font-size: 18px; font-style: italic; color: var(--text-gray); max-width: 800px; margin: 0 auto; line-height: 1.6;">Confronta assunzioni, punteggi di chiamata e scorrimento per individuare la provincia dove hai più probabilità di ottenere la nomina.</p>
+        <h1 style="font-family: 'Spectral', serif; font-weight: 500; font-size: 32px; color: var(--dark-blue); margin: 0 0 15px 0; line-height: 1.3;">Graduatorie Provinciali per le Supplenze</h1>
+        <p style="font-family: 'Spectral', serif; font-size: 18px; font-style: italic; color: var(--text-gray); max-width: 800px; margin: 0 auto; line-height: 1.6;">Analizza i dati aggiornati di chiamate, assunzioni e scorrimento delle graduatorie. Calcola le reali probabilità di nomina per ogni provincia e individua le opportunità migliori in base al tuo punteggio.</p>
     </div>
 
     <div class="section">
@@ -261,8 +261,8 @@
 <footer class="site-footer">
     <div class="footer-contact">
         <div class="footer-contact-title">
-            <h4>Contatti e Info</h4>
-            <a href="#" target="_blank" style="color: #1877F2; display: flex; align-items: center;">
+            <h4>Contatti</h4>
+            <a href="https://www.facebook.com/profile.php?id=61593853497750" target="_blank" rel="noopener noreferrer" style="color: #1877F2; display: flex; align-items: center;">
                 <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
             </a>
         </div>
@@ -291,42 +291,63 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="#0055A5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 5-5"/></svg>
                     1. Percentuale di Assunzione
                 </h4>
-                <p><strong>Cosa significa?</strong> Indica la percentuale di candidati che ha effettivamente ottenuto un incarico. Non conta le "segnalazioni", ma le persone reali che sono state chiamate.</p>
+                <p><strong>Cosa indica:</strong> La percentuale reale di candidati che ha ottenuto un incarico. Il calcolo esclude le doppie nomine: se una persona riceve più contratti nel corso dell'anno (es. un annuale a settembre e uno breve a novembre), viene contata come <strong>una sola persona nominata</strong>.</p>
                 <div class="info-box">
-                    <strong>Perché il nostro calcolo è preciso?</strong><br>
-                    Abbiamo depurato il dato dalle doppie nomine. Se il "Signor Rossi" riceve un contratto a settembre e poi un'altro a novembre (contratto breve), viene contato come <strong>1 sola persona nominata</strong>. Molti altri strumenti sbagliano contandolo due volte, gonfiando falsamente le speranze!
+                    <strong>Perché è importante?</strong><br>
+                    Mostra quante persone fisiche sono state assorbite dalla graduatoria, fornendo un dato reale e non gonfiato dai rinnovi di contratto.
                 </div>
-                <div class="example-box">
-                    ESEMPIO: Assunzione 30% a Roma = Se sei in graduatoria a Roma, hai circa 3 possibilità su 10 di essere chiamato.
+                <div style="display:flex; gap:10px; margin-top:15px; align-items:center; background:#f8fbff; padding:10px; border-radius:8px; border:1px solid #cbd5e0;">
+                    <div style="text-align:center; flex:1;">
+                        <div style="font-size:24px; font-weight:bold; color:#0055A5;">30%</div>
+                        <div style="font-size:12px; color:#666;">Assunzione</div>
+                    </div>
+                    <div style="font-size:20px; color:#999;">=</div>
+                    <div style="text-align:center; flex:1;">
+                        <div style="font-size:24px; font-weight:bold; color:#333;">3 su 10</div>
+                        <div style="font-size:12px; color:#666;">Candidati chiamati</div>
+                    </div>
                 </div>
             </div>
 
             <div style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
                 <h4>
                     <svg viewBox="0 0 24 24" fill="none" stroke="#F39C12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    2. Punteggio Minimo di Chiamata
+                    2. Punteggio Minimo di Chiamata (Cut-off)
                 </h4>
-                <p><strong>Cosa significa?</strong> È il punteggio esatto dell'ultimo candidato che è stato chiamato. Ti dice esattamente fin dove è arrivata la graduatoria per le assunzioni.</p>
+                <p><strong>Cosa indica:</strong> Il punteggio esatto dell'ultimo candidato che è stato chiamato per una specifica tipologia di contratto.</p>
                 <div class="info-box">
-                    <strong>I tre tipi di contratto:</strong><br>
-                    1. <strong>Fino al 31/08 (Annuale):</strong> Il contratto più ambito. Il punteggio richiesto è il più ALTO.<br>
+                    <strong>Le tre tipologie di contratto:</strong><br>
+                    1. <strong>Fino al 31/08 (Annuale):</strong> Il contratto più ambito. Punteggio richiesto più ALTO.<br>
                     2. <strong>Fino al 30/06 (Fine Lezioni):</strong> Contratto lungo ma non annuale. Punteggio richiesto MEDIO.<br>
-                    3. <strong>Brevi (Spezzoni):</strong> Contratti di poche ore o mesi (es. sostituzioni maternità). Punteggio richiesto BASSO.
+                    3. <strong>Brevi (Spezzoni):</strong> Contratti di poche ore o mesi. Punteggio richiesto BASSO.
                 </div>
-                <div class="example-box">
-                    ESEMPIO: Se il punteggio minimo per i contratti brevi è 40 e il tuo punteggio è 42, probabilmente riceverai una chiamata per un contratto breve!
-                </div>
+                <table style="width:100%; border-collapse:collapse; margin-top:15px; font-size:13px; text-align:center;">
+                    <tr style="background:#F39C12; color:white;">
+                        <th style="padding:8px; border:1px solid #eee;">Contratto</th>
+                        <th style="padding:8px; border:1px solid #eee;">Punteggio Richiesto</th>
+                    </tr>
+                    <tr><td style="padding:8px; border:1px solid #eee;">Fino al 31/08</td><td style="padding:8px; border:1px solid #eee; font-weight:bold; color:#0055A5;">55,50</td></tr>
+                    <tr><td style="padding:8px; border:1px solid #eee;">Fino al 30/06</td><td style="padding:8px; border:1px solid #eee; font-weight:bold; color:#003B73;">42,00</td></tr>
+                    <tr><td style="padding:8px; border:1px solid #eee;">Spezzoni</td><td style="padding:8px; border:1px solid #eee; font-weight:bold; color:#E74C3C;">28,00</td></tr>
+                </table>
             </div>
 
-            <div>
+            <div style="margin-bottom: 20px;">
                 <h4>
                     <svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                    3. Scorrimento della Graduatoria
+                    3. Scorrimento della Graduatoria (Rifiuti)
                 </h4>
-                <p><strong>Cosa significa?</strong> Ti dice quante persone hanno detto "no" alla nomina prima che arrivassero a chiamare te. Più è alto, più la graduatoria è "scesa" in basso.</p>
+                <p><strong>Cosa indica:</strong> Quante persone hanno rinunciato alla nomina prima che venisse raggiunta l'ultima posizione chiamata.</p>
                 <div class="info-box" style="background: #fffdf5; border-left-color: #F39C12;">
                     <strong>Utilità strategica:</strong><br>
-                    Se hai un punteggio basso, devi cercare le province con un <strong>alto tasso di rifiuto</strong> (es. 60-70%). Significa che in quella provincia molti docenti rifiutano il posto (magari perché pendolari, o perché hanno già un'altra supplenza), permettendo alla graduatoria di scendere fino al tuo punteggio!
+                    Un alto tasso di rifiuto (es. 60-70%) indica che molti docenti rifiutano il posto in quella provincia. Questo permette alla graduatoria di scendere rapidamente, aumentando le probabilità di chiamata per chi ha un punteggio più basso.
+                </div>
+                <div style="background:#fff5f5; border:1px dashed #E74C3C; padding:15px; border-radius:8px; margin-top:15px;">
+                    <strong style="color:#E74C3C;">Esempio Pratico:</strong><br>
+                    Posizione massima raggiunta: <strong>120</strong><br>
+                    Persone effettivamente nominate: <strong>42</strong><br>
+                    Rifiuti: <strong>78 (65%)</strong><br>
+                    <span style="font-size:12px; color:#666;">La graduatoria è scesa fino alla posizione 120 nonostante solo 42 persone abbiano accettato.</span>
                 </div>
             </div>
         </div>
@@ -530,7 +551,6 @@
                 classiPresenti.forEach(classe => {
                     const classStats = stats[classe];
                     const labels = Object.keys(classStats);
-                    // Creiamo la tabella se ci sono candidati > 0 (non importa se mancano le scuole)
                     const validLabels = labels.filter(l => classStats[l].candidati > 0);
                     
                     if (validLabels.length > 0) {
@@ -547,7 +567,6 @@
                         });
                         htmlOutput += `</tbody></table>`;
                         
-                        // Aggiungiamo il grafico solo se ci sono anche le scuole > 0
                         const validForChart = validLabels.filter(l => classStats[l].scuole > 0);
                         if (validForChart.length > 0) {
                             htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
@@ -645,7 +664,6 @@
                         });
                         htmlOutput += `</tbody></table>`;
                         
-                        // Aggiungi il grafico solo se ci sono etichette valide
                         if (labels.length > 0) {
                             htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
                             chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
