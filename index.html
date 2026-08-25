@@ -591,7 +591,6 @@
             const response = await fetch(bollettinoURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata }) });
             if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
             const result = await response.json();
-            console.log("Dati bollettino ricevuti:", result.data);
             const data = result.data; 
             
             const classiPresenti = Object.keys(data);
@@ -616,25 +615,26 @@
                 classiPresenti.forEach(classe => {
                     const classData = data[classe];
                     if (classData.length > 0) {
+                        hasData = true;
                         classData.sort(sortFunc);
-                        // MODIFICA: Validiamo se ci sono nomine o candidati > 0
-                        const validData = classData.filter(item => item.nomine_totali > 0 || item.nominati_univoci > 0 || item.candidati_totali > 0);
                         
-                        if (validData.length > 0) {
-                            hasData = true;
-                            htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
-                            htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;"><th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati Totali</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Persone Nominate</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Assunzione</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Posizione Massima</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Rifiuto</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 31/08</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 30/06</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio Spezzoni</th></tr></thead><tbody>`;
-                            const labels = validData.map(item => item.provincia);
-                            const dataCand = validData.map(item => item.candidati_totali);
-                            const dataNominati = validData.map(item => item.nominati_univoci);
-                            const dataMaxPos = validData.map(item => item.max_posizione);
+                        htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
+                        htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;"><th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati Totali</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Persone Nominate</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Assunzione</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Posizione Massima</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Rifiuto</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 31/08</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 30/06</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio Spezzoni</th></tr></thead><tbody>`;
+                        
+                        const labels = classData.map(item => item.provincia);
+                        const dataCand = classData.map(item => item.candidati_totali);
+                        const dataNominati = classData.map(item => item.nominati_univoci);
+                        const dataMaxPos = classData.map(item => item.max_posizione);
 
-                            validData.forEach(item => {
-                                const regione = item.regione === 'N/D' ? '-' : item.regione;
-                                htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td></tr>`;
-                                statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br><span style="color: #333;">Percentuale di Assunzione: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} nominate su ${item.candidati_totali} candidati)</span><br><span style="color: #333;">Scorrimento della Graduatoria: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Posizione massima raggiunta: ${item.max_posizione})</span><br><span style="color: #333;">Punteggi Minimi di Chiamata: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span></li>`;
-                            });
-                            htmlOutput += `</tbody></table>`;
+                        classData.forEach(item => {
+                            const regione = item.regione === 'N/D' ? '-' : item.regione;
+                            htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td></tr>`;
+                            statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br><span style="color: #333;">Percentuale di Assunzione: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} nominate su ${item.candidati_totali} candidati)</span><br><span style="color: #333;">Scorrimento della Graduatoria: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Posizione massima raggiunta: ${item.max_posizione})</span><br><span style="color: #333;">Punteggi Minimi di Chiamata: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span></li>`;
+                        });
+                        htmlOutput += `</tbody></table>`;
+                        
+                        // Aggiungi il grafico solo se ci sono etichette valide
+                        if (labels.length > 0) {
                             htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
                             chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
                         }
