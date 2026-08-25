@@ -104,9 +104,62 @@
 
 <header id="siteHeader">
     <h1>Estrazione Dati Scolastici</h1>
-    <a href="guida.html" class="header-btn" style="text-decoration: none; display: inline-block; margin-left: 10px;">Guida ai Dati</a>
-    <button class="header-btn" onclick="scrollToTop()">Home</button>
+    <button class="header-btn" id="guidaBtn" onclick="toggleGuida(true)">Guida ai Dati</button>
+    <button class="header-btn" id="homeBtn" onclick="toggleGuida(false)" style="display: none; background: var(--accent-orange);">Torna al Tool</button>
 </header>
+<div id="guidaContainer" style="display: none; max-width: 800px; margin: 80px auto 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 40px;">
+    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e6f1fb; padding-bottom: 20px;">
+        <h2 style="color: #003B73; margin: 0; font-size: 28px;">Guida alla Letura dei Dati</h2>
+        <p style="color: #666; margin-top: 10px;">Capire le graduatorie scolastiche non è mai stato così semplice</p>
+    </div>
+
+    <!-- ASSORBIMENTO -->
+    <div style="margin-bottom: 50px; border-bottom: 2px solid #e6f1fb; padding-bottom: 40px;">
+        <h3 style="color: #003B73; font-size: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0055A5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;"><path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 5-5"/></svg>
+            1. Tasso di Assorbimento Reale
+        </h3>
+        <p><strong>Cosa significa?</strong> Indica la percentuale di candidati che ha effettivamente ottenuto un incarico. Non conta le "segnalazioni", ma le persone reali che sono state chiamate.</p>
+        <div style="background: #f8fbff; border-left: 5px solid #0055A5; padding: 20px; border-radius: 4px; margin: 20px 0;">
+            <strong>⚠️ Perché il nostro calcolo è preciso?</strong><br>
+            Abbiamo depurato il dato dalle doppie nomine. Se il "Signor Rossi" riceve un contratto a settembre e poi un'altro a novembre (spezzone), viene contato come <strong>1 sola persona nominata</strong>. Molti altri strumenti sbagliano contandolo due volte, gonfiando falsamente le speranze!
+        </div>
+        <div style="background: #e8f4fd; border: 1px dashed #0055A5; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; color: #003B73; text-align: center;">
+            ESEMPIO: Assorbimento 30% a Roma = Se sei in graduatoria a Roma, hai circa 3 possibilità su 10 di essere chiamato.
+        </div>
+    </div>
+
+    <!-- CUT-OFF -->
+    <div style="margin-bottom: 50px; border-bottom: 2px solid #e6f1fb; padding-bottom: 40px;">
+        <h3 style="color: #003B73; font-size: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#F39C12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            2. Punteggio di Cut-Off (Taglio)
+        </h3>
+        <p><strong>Cosa significa?</strong> È il punteggio esatto dell'ultimo candidato che è stato chiamato. Ti dice esattamente fin dove è arrivata la "lama" che ha tagliato la graduatoria.</p>
+        <div style="background: #f8fbff; border-left: 5px solid #0055A5; padding: 20px; border-radius: 4px; margin: 20px 0;">
+            <strong>🎯 I tre tagli fondamentali:</strong><br>
+            1. <strong>31/08 (Annuale):</strong> Il contratto più ambito. Il punteggio di taglio è il più ALTO.<br>
+            2. <strong>30/06 (Fine Lezioni):</strong> Contratto lungo ma non annuale. Punteggio MEDIO.<br>
+            3. <strong>Spezzoni:</strong> Contratti brevi (es. sostituzioni maternità). Punteggio di taglio BASSO.
+        </div>
+        <div style="background: #e8f4fd; border: 1px dashed #0055A5; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; color: #003B73; text-align: center;">
+            ESEMPIO: Se il Cut-off Spezzoni è 40 e il tuo punteggio è 42, probabilmente riceverai una chiamata per uno spezzone!
+        </div>
+    </div>
+
+    <!-- RINUNCIA -->
+    <div style="margin-bottom: 20px;">
+        <h3 style="color: #003B73; font-size: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            3. Tasso di Rinuncia / Scorrimento
+        </h3>
+        <p><strong>Cosa significa?</strong> Ti dice quante persone hanno detto "no" alla nomina prima che arrivassero a chiamare te. Più è alto, più la graduatoria è "scesa" in basso.</p>
+        <div style="background: #fffdf5; border-left: 5px solid #F39C12; padding: 20px; border-radius: 4px; margin: 20px 0;">
+            <strong>💡 Utilità strategica:</strong><br>
+            Se hai un punteggio basso, devi cercare le province con un <strong>alto tasso di rinuncia</strong> (es. 60-70%). Significa che in quella provincia molti docenti rifiutano il posto (magari perché pendolari, o perché hanno già un'altra supplenza), permettendo alla graduatoria di scendere fino al tuo punteggio!
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <div class="section">
@@ -779,6 +832,27 @@
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
         } finally { btn.disabled = false; btn.innerText = "Vedi Nomine Reali"; }
     }
+        function toggleGuida(show) {
+        const main = document.querySelector('.container');
+        const guida = document.getElementById('guidaContainer');
+        const guidaBtn = document.getElementById('guidaBtn');
+        const homeBtn = document.getElementById('homeBtn');
+        
+        if (show) {
+            main.style.display = 'none';
+            guida.style.display = 'block';
+            guidaBtn.style.display = 'none';
+            homeBtn.style.display = 'inline-block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            main.style.display = 'block';
+            guida.style.display = 'none';
+            guidaBtn.style.display = 'inline-block';
+            homeBtn.style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }
+    
 </script>
 </body>
 </html>
