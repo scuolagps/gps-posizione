@@ -24,7 +24,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;1,600&family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Poppins:wght@600;700&family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -86,8 +86,8 @@
         /* Il container principale non ha più sfondo, lascia vedere il gradiente del body */
         .container { max-width: 1000px; margin: 30px auto; background: transparent; padding: 0; border-radius: 8px; box-shadow: none; margin-bottom: 60px; border-top: none; }
         
-        /* I titoli h2 ora hanno un'icona affianco */
-        h2 { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--light-blue); padding-bottom: 15px; color: var(--primary-blue); font-size: 20px; font-weight: 600; margin-bottom: 20px; margin-top: 0; }
+        /* I titoli h2 ora usano Montserrat */
+        h2 { font-family: 'Montserrat', sans-serif; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--light-blue); padding-bottom: 15px; color: var(--primary-blue); font-size: 20px; font-weight: 700; margin-bottom: 20px; margin-top: 0; }
         h2 svg { width: 24px; height: 24px; stroke: var(--accent-orange); flex-shrink: 0; }
         
         /* Le sezioni diventano "Cards" bianche e staccate */
@@ -173,9 +173,10 @@
 <body>
 
 <header id="siteHeader">
-    <!-- Solo Logo, nessuna scritta -->
-    <div class="header-logo">
-        <img src="logo.png" alt="Logo Scuola GPS">
+    <!-- Logo e Nome Brand con font Georgia -->
+    <div class="header-logo" style="display: flex; align-items: center; gap: 12px;">
+        <img src="logo.png" alt="Logo Scuola GPS" style="height: 50px; border-radius: 6px;">
+        <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: bold; font-style: italic; color: var(--primary-blue); line-height: 1;">ScuolaGps</span>
     </div>
     
     <!-- Pulsanti grandi a destra -->
