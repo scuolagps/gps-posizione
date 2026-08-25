@@ -530,7 +530,7 @@
                 classiPresenti.forEach(classe => {
                     const classStats = stats[classe];
                     const labels = Object.keys(classStats);
-                    // Genera grafico e tabella se ci sono candidati > 0
+                    // Creiamo la tabella se ci sono candidati > 0 (non importa se mancano le scuole)
                     const validLabels = labels.filter(l => classStats[l].candidati > 0);
                     
                     if (validLabels.length > 0) {
@@ -546,8 +546,13 @@
                             htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${topScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${bottomScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
                         });
                         htmlOutput += `</tbody></table>`;
-                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
-                        chartsToRender.push({ id: `chart_${classe}`, labels: validLabels, stats: classStats });
+                        
+                        // Aggiungiamo il grafico solo se ci sono anche le scuole > 0
+                        const validForChart = validLabels.filter(l => classStats[l].scuole > 0);
+                        if (validForChart.length > 0) {
+                            htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
+                            chartsToRender.push({ id: `chart_${classe}`, labels: validForChart, stats: classStats });
+                        }
                     }
                 });
 
@@ -556,11 +561,7 @@
                 chartsToRender.forEach(c => {
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    if (c.labels.length > 6) {
-                        container.style.width = (c.labels.length * 80) + 'px';
-                    } else {
-                        container.style.width = '100%';
-                    }
+                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 80) + 'px'; } else { container.style.width = '100%'; }
                     const chart = new Chart(ctx, {
                         type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Rapporto Scuole/Candidati', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
                         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${c.id.replace('chart_', '')}`, font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = c.stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole: ${info.scuole}`, `Candidati: ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati' } }, x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } } } }
