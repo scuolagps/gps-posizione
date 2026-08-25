@@ -24,7 +24,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Spectral:ital,wght@0,400;0,500;1,400&family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">eet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Spectral:ital,wght@0,400;0,500;1,400&family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -40,7 +40,7 @@
     <style>
         :root {
             --primary-blue: #0055A5; --dark-blue: #003B73; --light-blue: #E6F1FB;
-            --accent-orange: #F39C12; --text-gray: #2D3748; --border-gray: #CBD5E0; /* Testi più scuri e bordi più visibili */
+            --accent-orange: #F39C12; --text-gray: #2D3748; --border-gray: #CBD5E0;
             --bg-gray: #EDF2F7; --white: #FFFFFF;
         }
         * { box-sizing: border-box; }
@@ -54,21 +54,24 @@
             padding-top: 95px; line-height: 1.6; 
         }
         
+        /* Colore selezione testo personalizzato */
+        ::selection { background: #BBD7F0; color: #003B73; }
+        ::-moz-selection { background: #BBD7F0; color: #003B73; }
+
         /* Intestazione trasparente (effetto vetro) */
         #siteHeader { 
             position: fixed; top: 0; left: 0; width: 100%; height: 80px; 
-            /* Leggermente più bianco e opaco rispetto allo sfondo */
             background: rgba(255, 255, 255, 0.75); 
             backdrop-filter: blur(12px); 
             -webkit-backdrop-filter: blur(12px);
             display: flex; align-items: center; justify-content: space-between; 
             padding: 0 40px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            border-bottom: 1px solid rgba(209, 217, 230, 0.5); /* Sottile bordo per staccarlo */
+            border-bottom: 1px solid rgba(209, 217, 230, 0.5); 
             z-index: 1000; transition: transform 0.3s ease-in-out; 
         }
         #siteHeader.hidden { transform: translateY(-100%); }
-        .header-logo img { height: 55px; border-radius: 8px; }
+        .header-logo img { height: 50px; border-radius: 8px; }
         
         /* Pulsanti grandi a forma di pillola */
         .header-nav { display: flex; align-items: center; gap: 15px; }
@@ -82,15 +85,14 @@
         .btn-pill.orange { background: var(--accent-orange); }
         .btn-pill.orange:hover { background: #e67e22; }
 
-        /* Il container principale non ha più sfondo, lascia vedere il gradiente del body */
         .container { max-width: 1000px; margin: 30px auto; background: transparent; padding: 0; border-radius: 8px; box-shadow: none; margin-bottom: 60px; border-top: none; }
         
-        /* Titoli H2 elegantissimi con Playfair Display Italic */
-        h2 { font-family: 'Playfair Display', serif; font-style: italic; font-weight: 600; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--border-gray); padding-bottom: 15px; color: var(--dark-blue); font-size: 24px; margin-bottom: 25px; margin-top: 0; }
-        h2 svg { width: 26px; height: 26px; stroke: var(--accent-orange); flex-shrink: 0; }
+        /* Titoli h2 senza grassetto e font precedente */
+        h2 { font-family: 'Montserrat', sans-serif; font-weight: 500; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--light-blue); padding-bottom: 15px; color: var(--dark-blue); font-size: 22px; margin-bottom: 25px; margin-top: 0; }
+        h2 svg { width: 24px; height: 24px; stroke: var(--accent-orange); flex-shrink: 0; }
         
-        /* Sezioni con ombra molto più marcata per staccare dallo sfondo */
         .section { background: var(--white); border: 1px solid var(--border-gray); border-radius: 12px; padding: 30px; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .form-group { margin-bottom: 20px; }
         label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--dark-blue); font-size: 15px; }
         select, input[type="text"] { padding: 10px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; font-size: 15px; font-family: inherit; width: 100%; background: var(--white); transition: border-color 0.2s; }
         select:focus, input:focus { border-color: var(--primary-blue); outline: none; box-shadow: 0 0 0 2px var(--light-blue); }
@@ -117,7 +119,6 @@
         #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
         .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
-/* Tab ridisegnate in stile "Pillola Solida" per maggiore incisività */
         .tab-navigation { display: none; position: sticky; top: 80px; background: transparent; z-index: 900; padding: 15px 0; margin-bottom: 30px; border-bottom: none; }
         .tab-btn { background: var(--white); border: 1px solid var(--border-gray); padding: 10px 25px; cursor: pointer; font-size: 16px; color: var(--text-gray); border-radius: 30px; margin-bottom: 0; font-weight: 700; width: auto; display: none; font-family: inherit; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); border-color: var(--primary-blue); }
@@ -145,7 +146,8 @@
         .modal-content { background: white; width: 100%; max-width: 800px; max-height: 85vh; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-header { background: var(--primary-blue); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
         .modal-header h3 { margin: 0; font-size: 20px; font-weight: 600; }
-        .modal-close { background: none; border: none; color: white; font-size: 28px; cursor: pointer; line-height: 1; }
+        .modal-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; line-height: 1; padding: 0; opacity: 0.8; }
+        .modal-close:hover { opacity: 1; }
         .modal-body { padding: 30px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #333; }
         .legal-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-gray); }
         .legal-tab { padding: 10px 15px; border: none; background: none; cursor: pointer; font-weight: 600; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: inherit; }
@@ -160,7 +162,8 @@
             .header-logo img { height: 45px; }
             .btn-pill { padding: 10px 20px; font-size: 14px; }
             body { padding-top: 80px; }
-            .container { padding: 20px 15px; margin: 15px auto; } h2 { font-size: 18px; }
+            .container { padding: 0; margin: 15px auto; } h2 { font-size: 18px; }
+            .section { padding: 20px; }
             .multi-select-wrapper { flex-direction: column; gap: 10px; } .select-box { width: 100%; }
             .checkbox-group { gap: 15px; } .checkbox-item { font-size: 14px; }
             .tab-navigation { top: 0 !important; padding: 10px 0; } .tab-btn { padding: 8px 15px; font-size: 14px; }
@@ -173,82 +176,43 @@
 <body>
 
 <header id="siteHeader">
-    <!-- Logo e Nome Brand con font Georgia -->
     <div class="header-logo" style="display: flex; align-items: center; gap: 12px;">
         <img src="logo.png" alt="Logo Scuola GPS" style="height: 50px; border-radius: 6px;">
         <span style="font-family: Georgia, 'Times New Roman', serif; font-size: 26px; font-weight: bold; font-style: italic; color: var(--primary-blue); line-height: 1;">ScuolaGps</span>
     </div>
-    
-    <!-- Pulsanti grandi a destra -->
     <nav class="header-nav">
         <button class="btn-pill" onclick="toggleGuida(false)">Home</button>
         <button class="btn-pill orange" onclick="toggleGuida(true)">Guida</button>
     </nav>
 </header>
 
-<div id="guidaContainer" style="display: none; max-width: 800px; margin: 110px auto 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 40px;">
+<div id="guidaContainer" style="display: none; max-width: 800px; margin: 110px auto 40px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); padding: 40px;">
     <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e6f1fb; padding-bottom: 20px;">
         <h2 style="color: #003B73; margin: 0; font-size: 28px;">Guida alla Lettura dei Dati</h2>
         <p style="color: #666; margin-top: 10px;">Capire le graduatorie scolastiche non è mai stato così semplice</p>
     </div>
-
-    <!-- ASSORBIMENTO -->
     <div style="margin-bottom: 50px; border-bottom: 2px solid #e6f1fb; padding-bottom: 40px;">
-        <h3 style="color: #003B73; font-size: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#0055A5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;"><path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 5-5"/></svg>
-            1. Tasso di Assorbimento Reale
-        </h3>
-        <p><strong>Cosa significa?</strong> Indica la percentuale di candidati che ha effettivamente ottenuto un incarico. Non conta le "segnalazioni", ma le persone reali che sono state chiamate.</p>
-        <div style="background: #f8fbff; border-left: 5px solid #0055A5; padding: 20px; border-radius: 4px; margin: 20px 0;">
-            <strong>⚠️ Perché il nostro calcolo è preciso?</strong><br>
-            Abbiamo depurato il dato dalle doppie nomine. Se il "Signor Rossi" riceve un contratto a settembre e poi un'altro a novembre (spezzone), viene contato come <strong>1 sola persona nominata</strong>. Molti altri strumenti sbagliano contandolo due volte, gonfiando falsamente le speranze!
-        </div>
-        <div style="background: #e8f4fd; border: 1px dashed #0055A5; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; color: #003B73; text-align: center;">
-            ESEMPIO: Assorbimento 30% a Roma = Se sei in graduatoria a Roma, hai circa 3 possibilità su 10 di essere chiamato.
-        </div>
+        <h3 style="color: #003B73; font-size: 24px; margin-bottom: 20px;">1. Tasso di Assorbimento Reale</h3>
+        <p>Indica la percentuale di candidati che ha effettivamente ottenuto un incarico. Abbiamo depurato il dato dalle doppie nomine per offrirti una stima precisa.</p>
     </div>
-
-    <!-- CUT-OFF -->
     <div style="margin-bottom: 50px; border-bottom: 2px solid #e6f1fb; padding-bottom: 40px;">
-        <h3 style="color: #003B73; font-size: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#F39C12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-            2. Punteggio di Cut-Off (Taglio)
-        </h3>
-        <p><strong>Cosa significa?</strong> È il punteggio esatto dell'ultimo candidato che è stato chiamato. Ti dice esattamente fin dove è arrivata la "lama" che ha tagliato la graduatoria.</p>
-        <div style="background: #f8fbff; border-left: 5px solid #0055A5; padding: 20px; border-radius: 4px; margin: 20px 0;">
-            <strong>🎯 I tre tagli fondamentali:</strong><br>
-            1. <strong>31/08 (Annuale):</strong> Il contratto più ambito. Il punteggio di taglio è il più ALTO.<br>
-            2. <strong>30/06 (Fine Lezioni):</strong> Contratto lungo ma non annuale. Punteggio MEDIO.<br>
-            3. <strong>Spezzoni:</strong> Contratti brevi (es. sostituzioni maternità). Punteggio di taglio BASSO.
-        </div>
-        <div style="background: #e8f4fd; border: 1px dashed #0055A5; padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; color: #003B73; text-align: center;">
-            ESEMPIO: Se il Cut-off Spezzoni è 40 e il tuo punteggio è 42, probabilmente riceverai una chiamata per uno spezzone!
-        </div>
+        <h3 style="color: #003B73; font-size: 24px; margin-bottom: 20px;">2. Punteggio di Cut-Off (Taglio)</h3>
+        <p>È il punteggio esatto dell'ultimo candidato che è stato chiamato. Ti dice fin dove è arrivata la "lama" che ha tagliato la graduatoria.</p>
     </div>
-
-    <!-- RINUNCIA -->
-    <div style="margin-bottom: 20px;">
-        <h3 style="color: #003B73; font-size: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 40px; height: 40px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            3. Tasso di Rinuncia / Scorrimento
-        </h3>
-        <p><strong>Cosa significa?</strong> Ti dice quante persone hanno detto "no" alla nomina prima che arrivassero a chiamare te. Più è alto, più la graduatoria è "scesa" in basso.</p>
-        <div style="background: #fffdf5; border-left: 5px solid #F39C12; padding: 20px; border-radius: 4px; margin: 20px 0;">
-            <strong>💡 Utilità strategica:</strong><br>
-            Se hai un punteggio basso, devi cercare le province con un <strong>alto tasso di rinuncia</strong> (es. 60-70%). Significa che in quella provincia molti docenti rifiutano il posto (magari perché pendolari, o perché hanno già un'altra supplenza), permettendo alla graduatoria di scendere fino al tuo punteggio!
-        </div>
+    <div>
+        <h3 style="color: #003B73; font-size: 24px; margin-bottom: 20px;">3. Tasso di Rinuncia / Scorrimento</h3>
+        <p>Ti dice quante persone hanno detto "no" alla nomina prima che arrivassero a chiamare te. Più è alto, più la graduatoria è "scesa" in basso.</p>
     </div>
 </div>
 
 <div class="container">
-    <!-- TITOLO E DESCRIZIONE SITO -->
-    <div style="text-align: center; margin-bottom: 35px; padding: 45px 30px; background: var(--white); border-radius: 12px; border: 1px solid var(--border-gray); box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+    <!-- TESTO SOSPESO (nessun contenitore) -->
+    <div style="text-align: center; margin-bottom: 40px; padding: 10px 20px;">
         <h1 style="font-family: 'Spectral', serif; font-weight: 500; font-size: 32px; color: var(--dark-blue); margin: 0 0 15px 0; line-height: 1.3;">Scopri in tempo reale le dinamiche delle graduatorie</h1>
         <p style="font-family: 'Spectral', serif; font-size: 18px; font-style: italic; color: var(--text-gray); max-width: 800px; margin: 0 auto; line-height: 1.6;">
             Confronta assorbimenti, punteggi di cut-off e tassi di scorrimento per individuare la provincia dove hai più probabilità di ottenere la nomina.
         </p>
     </div>
-    <!-- FINE TITOLO E DESCRIZIONE SITO -->
 
     <div class="section">
         <h2>
@@ -310,20 +274,18 @@
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Classi di Concorso
         </h2>
-        
         <div class="form-group">
             <div id="classiTagsContainer" class="tags-container" style="margin-bottom: 15px; min-height: 0; border: none; background: none; padding: 0; display: none;"></div>
             <input type="text" id="searchClassi" placeholder="Cerca classe (es. AM56, Matematica, Clarinetto)...">
         </div>
-        
         <div id="classiContainer" class="classi-container"></div>
         <p id="noClassiMsg">Seleziona almeno un Ordine di Scuola per visualizzare le classi.</p>
     </div>
 
     <div class="section">
         <div style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
-            <button id="generaBtn" style="flex: 1 1 250px;">Genera PDF e Grafici</button>
-            <button id="bollettinoBtn" style="flex: 1 1 250px; background: var(--accent-orange);">Vedi Nomine Reali</button>
+            <button id="generaBtn" style="flex: 1 1 250px;">Graduatorie</button>
+            <button id="bollettinoBtn" style="flex: 1 1 250px; background: var(--accent-orange);">Nomine</button>
         </div>
         <div id="statusMessage"></div>
     </div>
@@ -371,7 +333,6 @@
     </div>
 </div>
 
-<!-- INIZIO FOOTER -->
 <footer class="site-footer">
     <div class="footer-links">
         <a href="#" onclick="openLegalModal('privacy')">Privacy</a> · 
@@ -379,270 +340,76 @@
         <a href="#" onclick="openLegalModal('termini')">Termini e condizioni</a> · 
         <a href="#" onclick="openLegalModal('informativa')">Informativa cookie</a>
     </div>
-    
     <p class="footer-disclaimer">
-        <strong>Fonti dei dati:</strong> Scuola GPS lavora su graduatorie e dati ufficiali del Ministero dell'Istruzione e del Merito e degli Uffici Scolastici. Le analisi e le previsioni che ne ricaviamo sono elaborazioni accurate, ma restano stime: il valore legale è delle pubblicazioni ufficiali e, per i punteggi, delle tabelle delle Ordinanze Ministeriali vigenti (GPS) e del DM 89/2024 (personale ATA, terza fascia).
+        <strong>Fonti dei dati:</strong> Scuola GPS lavora su graduatorie e dati ufficiali del Ministero dell'Istruzione e del Merito e degli Uffici Scolastici. Le analisi e le previsioni che ne ricaviamo sono elaborazioni accurate, ma restano stime: il valore legale è delle pubblicazioni ufficiali.
     </p>
-    
     <p style="margin-top: 15px;">&copy; <script>document.write(new Date().getFullYear())</script> Scuola GPS. Tutti i diritti riservati.</p>
 </footer>
-<!-- FINE FOOTER -->
+
+<div id="legalModal" class="modal-overlay" onclick="closeLegalModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Informative e Normative</h3>
+            <button class="modal-close" onclick="closeLegalModal(event)">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="legal-tabs">
+                <button class="legal-tab active" onclick="switchLegalTab(event, 'privacy')">Privacy</button>
+                <button class="legal-tab" onclick="switchLegalTab(event, 'cookie')">Cookie</button>
+                <button class="legal-tab" onclick="switchLegalTab(event, 'termini')">Termini e Condizioni</button>
+                <button class="legal-tab" onclick="switchLegalTab(event, 'informativa')">Informativa Cookie</button>
+            </div>
+
+            <div id="privacy" class="legal-section active">
+                <h4>1. Titolare del Trattamento</h4>
+                <p>Il titolare del trattamento dei dati è Scuola GPS. Il sito non richiede registrazione e non raccoglie direttamente dati personali sensibili degli utenti. Le elaborazioni avvengono su dati pubblici (Ministero dell'Istruzione) o su parametri inseriti dall'utente per finalità statistiche, senza memorizzare quest'ultimi sui server.</p>
+                <h4>2. Dati di Navigazione</h4>
+                <p>I sistemi informatici preposti al funzionamento di questo sito acquisiscono, nel corso del loro normale esercizio, alcuni dati la cui trasmissione è implicita nell'uso dei protocolli di comunicazione internet (indirizzi IP, tipologia di browser). Questi dati, necessari per la fruizione del servizio, sono trattati per ricavare informazioni statistiche anonime.</p>
+                <h4>3. Fonti dei Dati</h4>
+                <p>Le graduatorie analizzate sono di pubblico dominio e provengono dalle pubblicazioni ufficiali del Ministero dell'Istruzione e del Merito, nonché dagli Uffici Scolastici Regionali e Provinciali. Le analisi sui punteggi si basano sulle Ordinanze Ministeriali vigenti.</p>
+            </div>
+
+            <div id="cookie" class="legal-section">
+                <h4>Cookie Policy</h4>
+                <p>Il sito utilizza cookie tecnici e cookie analitici di terze parti (Google Analytics) per migliorare l'esperienza utente.</p>
+                <ul>
+                    <li><strong>Cookie Tecnici:</strong> Essenziali per il corretto funzionamento del sito. Non richiedono consenso.</li>
+                    <li><strong>Cookie Analitici:</strong> Utilizzati in forma aggregata e anonima per raccogliere statistiche sugli accessi.</li>
+                </ul>
+                <h4>Gestione dei Cookie</h4>
+                <p>L'utente può gestire le preferenze relative ai cookie direttamente all'interno del proprio browser ed impedire che terze parti possano installarne. Tramite le preferenze del browser è inoltre possibile eliminare i cookie installati in passato.</p>
+            </div>
+
+            <div id="termini" class="legal-section">
+                <h4>Termini e Condizioni di Utilizzo</h4>
+                <p>Le analisi sulle graduatorie e le previsioni sui punteggi di cut-off sono stime basate su algoritmi matematici applicati a dati storici estrapolati dalle graduatorie pubbliche. Scuola GPS non garantisce l'esattezza assoluta delle previsioni, in quanto soggette a variazioni dipendenti da flussi di assunzione non prevedibili. Il valore legale rimane esclusivamente delle pubblicazioni ufficiali.</p>
+                <h4>Proprietà Intellettuale</h4>
+                <p>I grafici, le interfacce e il codice di elaborazione sono di proprietà di Scuola GPS. È vietata la copia o la riproduzione non autorizzata del software.</p>
+            </div>
+
+            <div id="informativa" class="legal-section">
+                <h4>Informativa Estesa (Art. 13 GDPR)</h4>
+                <p>Ai sensi del Regolamento (UE) 2016/679 (GDPR), forniamo i dettagli sui cookie installati. Utilizziamo Google Analytics con IP mascherato per raccogliere dati in forma aggregata.</p>
+                <ul>
+                    <li><strong>Nome:</strong> _ga / _gid</li>
+                    <li><strong>Durata:</strong> 2 anni / 24 ore</li>
+                    <li><strong>Scopo:</strong> Generare dati statistici anonimi su come il visitatore utilizza il sito.</li>
+                </ul>
+                <p>L'utente ha diritto di chiedere l'accesso ai propri dati, la cancellazione o di opporsi al trattamento disabilitando i cookie dal proprio browser in qualsiasi momento.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     const RENDER_URL = "https://scanner-scolastico.onrender.com/genera-pdf";
     const regioniProvince = { "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"] };
 
     const classiConcorsoDB = {
-        "infanzia": [
-            "AA01 - Sostegno Infanzia",
-            "AE01 - Educatore dei servizi per l'infanzia",
-            "AB1 - Scuola dell'infanzia e primaria",
-            "AAAA - Classe AAAA",
-            "AAHN - Classe AAHN",
-            "AAIN - Classe AAIN",
-            "AALN - Classe AALN",
-            "ADAA - Classe ADAA"
-        ],
-        "primaria": [
-            "AA02 - Sostegno Primaria",
-            "AB1 - Scuola dell'infanzia e primaria",
-            "ADEE - Classe ADEE",
-            "EEEE - Classe EEEE",
-            "EEEM - Classe EEEM",
-            "EEHN - Classe EEHN",
-            "EEIN - Classe EEIN",
-            "EELN - Classe EELN"
-        ],
-        "secondaria_I": [
-            "AB24 - Sostegno Sec. I grado",
-            "A011 - Arte e immagine",
-            "A012 - Diritto ed economia",
-            "A013 - Educazione musicale",
-            "A014 - Educazione tecnica",
-            "A015 - Educazione fisica",
-            "A016 - Francese",
-            "A018 - Inglese",
-            "A021 - Matematica e scienze",
-            "A023 - Spagnolo",
-            "A024 - Tedesco",
-            "A028 - Matematica e Scienze",
-            "A060 - Tecnologia",
-            "A076 - Strumento musicale (Scuola Sec. I grado)",
-            "A077 - Musica d'insieme (Scuola Sec. I grado)",
-            "A078 - Teoria, lettura ed esecuzione musicale",
-            "A084 - Classe A084",
-            "A085 - Classe A085",
-            "A-01 - Arte e immagine",
-            "A-12 - Lettere (Italiano, storia, geografia)",
-            "A-23 - Italiano L2",
-            "A-28 - Matematica e Scienze",
-            "A-30 - Musica",
-            "A-48 - Scienze Motorie",
-            "A-60 - Tecnologia",
-            "AA22 - Francese (A-22)",
-            "AB22 - Inglese (A-22)",
-            "AC22 - Spagnolo (A-22)",
-            "AD22 - Tedesco (A-22)",
-            "AE22 - Sloveno (A-22)",
-            "ADMM - Classe ADMM",
-            "IRC - Religione Cattolica",
-            "AA56 - Arpa",
-            "AB56 - Chitarra",
-            "AC56 - Clarinetto",
-            "AD56 - Contrabbasso",
-            "AE56 - Fagotto",
-            "AF56 - Flauto",
-            "AG56 - Oboe",
-            "AH56 - Pianoforte",
-            "AI56 - Sassofono",
-            "AJ56 - Tromba",
-            "AK56 - Trombone",
-            "AL56 - Viola",
-            "AM56 - Violino",
-            "AN56 - Violoncello",
-            "AM01 - Classe AM01",
-            "AM2A - Classe AM2A",
-            "AM2B - Classe AM2B",
-            "AM2C - Classe AM2C",
-            "AM2D - Classe AM2D",
-            "AM2E - Classe AM2E",
-            "AM2F - Classe AM2F",
-            "AM2G - Classe AM2G",
-            "AM12 - Classe AM12",
-            "AM30 - Classe AM30",
-            "AM48 - Classe AM48",
-            "AM70 - Classe AM70",
-            "AM71 - Classe AM71",
-            "AO55 - Classe AO55",
-            "AP55 - Classe AP55",
-            "AQ55 - Classe AQ55",
-            "AR55 - Classe AR55",
-            "AS01 - Classe AS01",
-            "AS2A - Classe AS2A",
-            "AS2B - Classe AS2B",
-            "AS2C - Classe AS2C",
-            "AS2D - Classe AS2D",
-            "AS2E - Classe AS2E",
-            "AS2I - Classe AS2I",
-            "AS2L - Classe AS2L",
-            "AS2N - Classe AS2N",
-            "AS12 - Classe AS12",
-            "AS30 - Classe AS30",
-            "AS48 - Classe AS48",
-            "AS55 - Classe AS55",
-            "AT55 - Classe AT55",
-            "AU55 - Classe AU55",
-            "AW55 - Classe AW55"
-        ],
-        "secondaria_II": [
-            "ADSS - Sostegno Sec. II grado",
-            "A001 - Disegno e storia dell'arte",
-            "A002 - Design metalli, oreficeria, pietre",
-            "A003 - Discipline audiovisive",
-            "A004 - Discipline geometriche, architettura, scenotecnica",
-            "A005 - Design del tessuto e della moda",
-            "A006 - Discipline grafiche, pittoriche, scenografiche",
-            "A007 - Discipline plastiche e scultoree",
-            "A008 - Discipline letterarie",
-            "A009 - Lettere, latino e greco - Liceo Classico",
-            "A010 - Modellazione odontotecnica",
-            "A011 - Lettere e latino",
-            "A013 - Discipline sanitarie",
-            "A014 - Filosofia e scienze umane",
-            "A015 - Filosofia e storia",
-            "A016 - Fisica",
-            "A018 - Geografia",
-            "A019 - Italiano L2",
-            "A020 - Lingue e culture dell'Asia orientale e sud-orientale",
-            "A021 - Matematica",
-            "A026 - Matematica e fisica",
-            "A027 - Musica",
-            "A033 - Scienze degli alimenti",
-            "A034 - Scienze della geologia e della mineralogia",
-            "A035 - Scienze e tecnologie aeronautiche",
-            "A036 - Scienze e tecnologie chimiche",
-            "A037 - Scienze e tecnologie della logistica",
-            "A038 - Tecnologie delle costruzioni e rappresentazione grafica",
-            "A039 - Costruzioni aeronautiche",
-            "A040 - Costruzioni navali",
-            "A041 - Scienze e tecnologie elettriche ed elettroniche",
-            "A042 - Scienze e tecnologie informatiche",
-            "A043 - Scienze e tecnologie meccaniche",
-            "A044 - Scienze e tecnologie nautiche",
-            "A045 - Tecnologie tessili, abbigliamento e moda",
-            "A046 - Scienze economico-aziendali",
-            "A047 - Scienze giuridico-economiche",
-            "A050 - Diritto ed economia politica",
-            "A051 - Scienze motorie e sportive",
-            "A052 - Scienze naturali, chimiche e biologiche",
-            "A053 - Tecnologie agrarie",
-            "A054 - Tecnologie di produzioni animali",
-            "A057 - Storia",
-            "A058 - Storia dell'arte",
-            "A059 - Tecnica della danza classica",
-            "A061 - Tecnica della danza contemporanea",
-            "A062 - Storia della musica e della danza",
-            "A063 - Tecnologie e tecniche delle comunicazioni multimediali",
-            "A064 - Tecnologie e tecniche per la grafica",
-            "A065 - Tecnologie musicali",
-            "A066 - Teoria, analisi e composizione",
-            "A079 - IRC (Religione Cattolica)",
-            "A080 - IRC (Religione Cattolica)",
-            "A081 - IRC (Religione Cattolica)",
-            "A082 - Classe A082",
-            "A083 - IRC (Religione Cattolica)",
-            "A086 - Classe A086",
-            "AA55 - Arpa",
-            "AB55 - Chitarra",
-            "AC55 - Clarinetto",
-            "AD55 - Contrabbasso",
-            "AE55 - Fagotto",
-            "AF55 - Flauto",
-            "AG55 - Oboe",
-            "AH55 - Pianoforte",
-            "AI55 - Sassofono",
-            "AJ55 - Tromba",
-            "AK55 - Trombone",
-            "AL55 - Viola",
-            "AM55 - Violino",
-            "AN55 - Violoncello",
-            "AM12 - Classe AM12",
-            "AM2A - Classe AM2A",
-            "AM2B - Classe AM2B",
-            "AM2C - Classe AM2C",
-            "AM2D - Classe AM2D",
-            "AM48 - Classe AM48",
-            "AO55 - Classe AO55",
-            "AP55 - Classe AP55",
-            "AQ55 - Classe AQ55",
-            "AR55 - Classe AR55",
-            "AS12 - Classe AS12",
-            "AS2A - Classe AS2A",
-            "AS2B - Classe AS2B",
-            "AS2C - Classe AS2C",
-            "AS2D - Classe AS2D",
-            "AS2E - Classe AS2E",
-            "AS2F - Classe AS2F",
-            "AS2H - Classe AS2H",
-            "AS2I - Classe AS2I",
-            "AS2J - Classe AS2J",
-            "AS2K - Classe AS2K",
-            "AS2L - Classe AS2L",
-            "AS2M - Classe AS2M",
-            "AS2N - Classe AS2N",
-            "AS48 - Classe AS48",
-            "AS55 - Classe AS55",
-            "AS71 - Classe AS71",
-            "AT55 - Classe AT55",
-            "AU55 - Classe AU55",
-            "AV55 - Classe AV55",
-            "AW55 - Classe AW55",
-            "B003 - Classe B003",
-            "B004 - Classe B004",
-            "B005 - Classe B005",
-            "B006 - Classe B006",
-            "B007 - Classe B007",
-            "B008 - Classe B008",
-            "B009 - Classe B009",
-            "B010 - Classe B010",
-            "B011 - Classe B011",
-            "B012 - Classe B012",
-            "B013 - Classe B013",
-            "B014 - Classe B014",
-            "B015 - Classe B015",
-            "B016 - Classe B016",
-            "B017 - Classe B017",
-            "B018 - Classe B018",
-            "B019 - Classe B019",
-            "B020 - Classe B020",
-            "B021 - Classe B021",
-            "B022 - Classe B022",
-            "B023 - Classe B023",
-            "B024 - Classe B024",
-            "B025 - Classe B025",
-            "B026 - Classe B026",
-            "B027 - Classe B027",
-            "B028 - Classe B028",
-            "B029 - Classe B029",
-            "B030 - Classe B030",
-            "B031 - Classe B031",
-            "B032 - Classe B032",
-            "B033 - Classe B033",
-            "BA02 - Classe BA02",
-            "BB02 - Classe BB02",
-            "BC02 - Classe BC02",
-            "BD02 - Classe BD02",
-            "BE02 - Classe BE02",
-            "BF02 - Classe BF02",
-            "BG02 - Classe BG02",
-            "BH02 - Classe BH02",
-            "BI02 - Classe BI02",
-            "BJ02 - Classe BJ02",
-            "BK02 - Classe BK02",
-            "BL02 - Classe BL02",
-            "BM02 - Classe BM02",
-            "BN02 - Classe BN02"
-        ]
+        "infanzia": ["AA01 - Sostegno Infanzia","AE01 - Educatore dei servizi per l'infanzia","AB1 - Scuola dell'infanzia e primaria","AAAA - Classe AAAA","AAHN - Classe AAHN","AAIN - Classe AAIN","AALN - Classe AALN","ADAA - Classe ADAA"],
+        "primaria": ["AA02 - Sostegno Primaria","AB1 - Scuola dell'infanzia e primaria","ADEE - Classe ADEE","EEEE - Classe EEEE","EEEM - Classe EEEM","EEHN - Classe EEHN","EEIN - Classe EEIN","EELN - Classe EELN"],
+        "secondaria_I": ["AB24 - Sostegno Sec. I grado","A011 - Arte e immagine","A012 - Diritto ed economia","A013 - Educazione musicale","A014 - Educazione tecnica","A015 - Educazione fisica","A016 - Francese","A018 - Inglese","A021 - Matematica e scienze","A023 - Spagnolo","A024 - Tedesco","A028 - Matematica e Scienze","A060 - Tecnologia","A076 - Strumento musicale (Scuola Sec. I grado)","A077 - Musica d'insieme (Scuola Sec. I grado)","A078 - Teoria, lettura ed esecuzione musicale","A084 - Classe A084","A085 - Classe A085","A-01 - Arte e immagine","A-12 - Lettere (Italiano, storia, geografia)","A-23 - Italiano L2","A-28 - Matematica e Scienze","A-30 - Musica","A-48 - Scienze Motorie","A-60 - Tecnologia","AA22 - Francese (A-22)","AB22 - Inglese (A-22)","AC22 - Spagnolo (A-22)","AD22 - Tedesco (A-22)","AE22 - Sloveno (A-22)","ADMM - Classe ADMM","IRC - Religione Cattolica","AA56 - Arpa","AB56 - Chitarra","AC56 - Clarinetto","AD56 - Contrabbasso","AE56 - Fagotto","AF56 - Flauto","AG56 - Oboe","AH56 - Pianoforte","AI56 - Sassofono","AJ56 - Tromba","AK56 - Trombone","AL56 - Viola","AM56 - Violino","AN56 - Violoncello","AM01 - Classe AM01","AM2A - Classe AM2A","AM2B - Classe AM2B","AM2C - Classe AM2C","AM2D - Classe AM2D","AM2E - Classe AM2E","AM2F - Classe AM2F","AM2G - Classe AM2G","AM12 - Classe AM12","AM30 - Classe AM30","AM48 - Classe AM48","AM70 - Classe AM70","AM71 - Classe AM71","AO55 - Classe AO55","AP55 - Classe AP55","AQ55 - Classe AQ55","AR55 - Classe AR55","AS01 - Classe AS01","AS2A - Classe AS2A","AS2B - Classe AS2B","AS2C - Classe AS2C","AS2D - Classe AS2D","AS2E - Classe AS2E","AS2I - Classe AS2I","AS2L - Classe AS2L","AS2N - Classe AS2N","AS12 - Classe AS12","AS30 - Classe AS30","AS48 - Classe AS48","AS55 - Classe AS55","AT55 - Classe AT55","AU55 - Classe AU55","AW55 - Classe AW55"],
+        "secondaria_II": ["ADSS - Sostegno Sec. II grado","A001 - Disegno e storia dell'arte","A002 - Design metalli, oreficeria, pietre","A003 - Discipline audiovisive","A004 - Discipline geometriche, architettura, scenotecnica","A005 - Design del tessuto e della moda","A006 - Discipline grafiche, pittoriche, scenografiche","A007 - Discipline plastiche e scultoree","A008 - Discipline letterarie","A009 - Lettere, latino e greco - Liceo Classico","A010 - Modellazione odontotecnica","A011 - Lettere e latino","A013 - Discipline sanitarie","A014 - Filosofia e scienze umane","A015 - Filosofia e storia","A016 - Fisica","A018 - Geografia","A019 - Italiano L2","A020 - Lingue e culture dell'Asia orientale e sud-orientale","A021 - Matematica","A026 - Matematica e fisica","A027 - Musica","A033 - Scienze degli alimenti","A034 - Scienze della geologia e della mineralogia","A035 - Scienze e tecnologie aeronautiche","A036 - Scienze e tecnologie chimiche","A037 - Scienze e tecnologie della logistica","A038 - Tecnologie delle costruzioni e rappresentazione grafica","A039 - Costruzioni aeronautiche","A040 - Costruzioni navali","A041 - Scienze e tecnologie elettriche ed elettroniche","A042 - Scienze e tecnologie informatiche","A043 - Scienze e tecnologie meccaniche","A044 - Scienze e tecnologie nautiche","A045 - Tecnologie tessili, abbigliamento e moda","A046 - Scienze economico-aziendali","A047 - Scienze giuridico-economiche","A050 - Diritto ed economia politica","A051 - Scienze motorie e sportive","A052 - Scienze naturali, chimiche e biologiche","A053 - Tecnologie agrarie","A054 - Tecnologie di produzioni animali","A057 - Storia","A058 - Storia dell'arte","A059 - Tecnica della danza classica","A061 - Tecnica della danza contemporanea","A062 - Storia della musica e della danza","A063 - Tecnologie e tecniche delle comunicazioni multimediali","A064 - Tecnologie e tecniche per la grafica","A065 - Tecnologie musicali","A066 - Teoria, analisi e composizione","A079 - IRC (Religione Cattolica)","A080 - IRC (Religione Cattolica)","A081 - IRC (Religione Cattolica)","A082 - Classe A082","A083 - IRC (Religione Cattolica)","A086 - Classe A086","AA55 - Arpa","AB55 - Chitarra","AC55 - Clarinetto","AD55 - Contrabbasso","AE55 - Fagotto","AF55 - Flauto","AG55 - Oboe","AH55 - Pianoforte","AI55 - Sassofono","AJ55 - Tromba","AK55 - Trombone","AL55 - Viola","AM55 - Violino","AN55 - Violoncello","AM12 - Classe AM12","AM2A - Classe AM2A","AM2B - Classe AM2B","AM2C - Classe AM2C","AM2D - Classe AM2D","AM48 - Classe AM48","AO55 - Classe AO55","AP55 - Classe AP55","AQ55 - Classe AQ55","AR55 - Classe AR55","AS12 - Classe AS12","AS2A - Classe AS2A","AS2B - Classe AS2B","AS2C - Classe AS2C","AS2D - Classe AS2D","AS2E - Classe AS2E","AS2F - Classe AS2F","AS2H - Classe AS2H","AS2I - Classe AS2I","AS2J - Classe AS2J","AS2K - Classe AS2K","AS2L - Classe AS2L","AS2M - Classe AS2M","AS2N - Classe AS2N","AS48 - Classe AS48","AS55 - Classe AS55","AS71 - Classe AS71","AT55 - Classe AT55","AU55 - Classe AU55","AV55 - Classe AV55","AW55 - Classe AW55","B003 - Classe B003","B004 - Classe B004","B005 - Classe B005","B006 - Classe B006","B007 - Classe B007","B008 - Classe B008","B009 - Classe B009","B010 - Classe B010","B011 - Classe B011","B012 - Classe B012","B013 - Classe B013","B014 - Classe B014","B015 - Classe B015","B016 - Classe B016","B017 - Classe B017","B018 - Classe B018","B019 - Classe B019","B020 - Classe B020","B021 - Classe B021","B022 - Classe B022","B023 - Classe B023","B024 - Classe B024","B025 - Classe B025","B026 - Classe B026","B027 - Classe B027","B028 - Classe B028","B029 - Classe B029","B030 - Classe B030","B031 - Classe B031","B032 - Classe B032","B033 - Classe B033","BA02 - Classe BA02","BB02 - Classe BB02","BC02 - Classe BC02","BD02 - Classe BD02","BE02 - Classe BE02","BF02 - Classe BF02","BG02 - Classe BG02","BH02 - Classe BH02","BI02 - Classe BI02","BJ02 - Classe BJ02","BK02 - Classe BK02","BL02 - Classe BL02","BM02 - Classe BM02","BN02 - Classe BN02"]
     };
 
     let selectedRegioni = []; let selectedProvince = []; let myChartPdf = null; let myChartBollettino = null;
@@ -703,7 +470,6 @@
         selectedRegioni.forEach(r => { let tag = document.createElement('div'); tag.className = 'tag'; let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;'; span.addEventListener('click', function() { removeRegione(r); }); tag.appendChild(document.createTextNode(r + " ")); tag.appendChild(span); regioniTagsDiv.appendChild(tag); });
         selectedProvince.forEach(p => { let tag = document.createElement('div'); tag.className = 'tag'; let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;'; span.addEventListener('click', function() { removeProvincia(p); }); tag.appendChild(document.createTextNode(p + " ")); tag.appendChild(span); provinceTagsDiv.appendChild(tag); });
     }
-    
     function aggiornaClassiVisibili() {
         const container = document.getElementById('classiContainer'); const noClassiMsg = document.getElementById('noClassiMsg'); container.innerHTML = '';
         let ordiniSelezionati = [];
@@ -724,34 +490,19 @@
         filtraClassi();
         renderClassiTags();
     }
-
     function renderClassiTags() {
         const tagsDiv = document.getElementById('classiTagsContainer');
         tagsDiv.innerHTML = '';
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
-        
-        if (checkboxes.length === 0) {
-            tagsDiv.style.display = 'none';
-            return;
-        }
-        
+        if (checkboxes.length === 0) { tagsDiv.style.display = 'none'; return; }
         tagsDiv.style.display = 'flex';
         checkboxes.forEach(cb => {
-            let tag = document.createElement('div'); 
-            tag.className = 'tag';
-            let span = document.createElement('span'); 
-            span.className = 'remove-tag'; 
-            span.innerHTML = '&times;';
-            span.addEventListener('click', function() {
-                cb.checked = false;
-                renderClassiTags();
-            });
-            tag.appendChild(document.createTextNode(cb.value + " ")); 
-            tag.appendChild(span); 
-            tagsDiv.appendChild(tag);
+            let tag = document.createElement('div'); tag.className = 'tag';
+            let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;';
+            span.addEventListener('click', function() { cb.checked = false; renderClassiTags(); });
+            tag.appendChild(document.createTextNode(cb.value + " ")); tag.appendChild(span); tagsDiv.appendChild(tag);
         });
     }
-
     function filtraClassi() {
         let input = document.getElementById('searchClassi'); let filter = input.value.toLowerCase();
         let items = document.getElementsByClassName('classe-item');
@@ -760,14 +511,12 @@
             if (txtValue.toLowerCase().indexOf(filter) > -1) { items[i].style.display = ""; } else { items[i].style.display = "none"; }
         }
     }
-
     function formatScore(val) {
         if (val === "N/D" || val === null || val === undefined) return '-';
         let s = String(val).replace('.', ',');
         if (s.endsWith(',0')) s = s.replace(',0', '');
         return s;
     }
-
     async function generaPDF() {
         const statusMsg = document.getElementById('statusMessage');
         const pdfViewerDiv = document.getElementById('pdfViewer');
@@ -822,23 +571,14 @@
                 });
                 tableHTML += `</tbody></table>`;
                 document.getElementById('statsTableContainerPdf').innerHTML = tableHTML;
-                
                 const ctx = document.getElementById('statsChartPdf').getContext('2d');
                 if (myChartPdf) { myChartPdf.destroy(); }
-                
-                // Allarga dinamicamente il grafico in base al numero di province
                 const containerPdf = document.getElementById('statsChartPdf').parentNode;
-                if (labels.length > 6) {
-                    containerPdf.style.width = (labels.length * 80) + 'px';
-                } else {
-                    containerPdf.style.width = '100%';
-                }
-
+                if (labels.length > 6) { containerPdf.style.width = (labels.length * 80) + 'px'; } else { containerPdf.style.width = '100%'; }
                 myChartPdf = new Chart(ctx, {
                     type: 'bar', data: { labels: labels, datasets: [{ label: 'Scuole per Candidato', data: labels.map(l => stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Rapporto Scuole per Candidato', font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } } } }
                 });
-                
                 sec5Wrapper.style.display = 'block'; sec5_1Wrapper.style.display = 'block';
                 if(myChartPdf) myChartPdf.resize();
                 const tabNav = document.getElementById('tabNav');
@@ -851,9 +591,8 @@
             showTab('pdf');
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
-        } finally { btn.disabled = false; btn.innerText = "Genera PDF e Grafici"; }
+        } finally { btn.disabled = false; btn.innerText = "Graduatorie"; }
     }
-
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
@@ -880,8 +619,6 @@
             const result = await response.json();
             const data = result.data;
             if (data.length > 0) {
-                
-                // NUOVA TABELLA CON METRICHE CORRETTE
                 let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;">
                     <th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th>
                     <th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th>
@@ -894,16 +631,13 @@
                     <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 30/06</th>
                     <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off Spezzoni</th>
                 </tr></thead><tbody>`;
-                
                 const labels = data.map(item => item.provincia);
                 const dataCand = data.map(item => item.candidati_totali);
                 const dataNominati = data.map(item => item.nominati_univoci);
                 const dataMaxPos = data.map(item => item.max_posizione);
-                
                 let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;">
                     <p style="margin-top:0;"><strong>📌 Legenda Metriche:</strong></p>
                     <ul style="list-style-type: none; padding: 0; margin: 0;">`;
-                
                 data.forEach(item => {
                     const regione = item.regione === 'N/D' ? '-' : item.regione;
                     tableHTML += `<tr style="background: #fff;">
@@ -918,7 +652,6 @@
                         <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td>
                         <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td>
                     </tr>`;
-                    
                     statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
                         <strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia}</strong><br>
                         <span style="color: #333;">Assorbimento Reale: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} univoci su ${item.candidati_totali} candidati)</span><br>
@@ -928,32 +661,20 @@
                 });
                 tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
-                
                 document.getElementById('statsTableContainerBollettino').innerHTML = tableHTML;
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
-                
-                // GRAFICO AGGIORNATO: CANDIDATI VS NOMINATI VS SCORRIMENTO
                 const ctx = document.getElementById('statsChartBollettino').getContext('2d');
                 if (myChartBollettino) { myChartBollettino.destroy(); }
-                
-                // Allarga dinamicamente il grafico in base al numero di province
                 const containerBollettino = document.getElementById('statsChartBollettino').parentNode;
-                if (labels.length > 6) {
-                    containerBollettino.style.width = (labels.length * 80) + 'px';
-                } else {
-                    containerBollettino.style.width = '100%';
-                }
-
+                if (labels.length > 6) { containerBollettino.style.width = (labels.length * 80) + 'px'; } else { containerBollettino.style.width = '100%'; }
                 myChartBollettino = new Chart(ctx, {
-                    type: 'bar', 
-                    data: { labels: labels, datasets: [
+                    type: 'bar', data: { labels: labels, datasets: [
                         { label: 'Candidati Totali', data: dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
                         { label: 'Nominati Univoci', data: dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
                         { type: 'line', label: 'Max Posizione (Scorrimento)', data: dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                     ]},
                     options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Analisi Competizione: Candidati vs Nominati vs Scorrimento', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone' }, grid: { drawOnChartArea: true }, beginAtZero: true } } }
                 });
-                
                 chartSectionWrapper.style.display = 'block'; chartSec6_1Wrapper.style.display = 'block'; analisiWrapper.style.display = 'block';
                 const tabNav = document.getElementById('tabNav');
                 tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
@@ -967,14 +688,12 @@
             statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i dati qui sotto.";
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
-        } finally { btn.disabled = false; btn.innerText = "Vedi Nomine Reali"; }
+        } finally { btn.disabled = false; btn.innerText = "Nomine"; }
     }
-    
     function toggleGuida(showGuida) {
         const main = document.querySelector('.container');
         const guida = document.getElementById('guidaContainer');
         const footer = document.querySelector('.site-footer');
-        
         if (showGuida) {
             main.style.display = 'none';
             guida.style.display = 'block';
@@ -986,95 +705,16 @@
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-</script>
-<!-- MODAL INFORMATIVA LEGALE -->
-<div id="legalModal" class="modal-overlay" onclick="closeLegalModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <h3>Informative e Normative</h3>
-            <button class="modal-close" onclick="closeLegalModal(event)">&times;</button>
-        </div>
-        <div class="modal-body">
-            <div class="legal-tabs">
-                <button class="legal-tab active" onclick="switchLegalTab(event, 'privacy')">Privacy</button>
-                <button class="legal-tab" onclick="switchLegalTab(event, 'cookie')">Cookie</button>
-                <button class="legal-tab" onclick="switchLegalTab(event, 'termini')">Termini e Condizioni</button>
-                <button class="legal-tab" onclick="switchLegalTab(event, 'informativa')">Informativa Cookie</button>
-            </div>
-
-            <!-- SEZIONE PRIVACY -->
-            <div id="privacy" class="legal-section active">
-                <h4>1. Titolare del Trattamento</h4>
-                <p>Il titolare del trattamento dei dati è Scuola GPS. Per qualsiasi richiesta relativa alla privacy, è possibile contattarci tramite le informazioni fornute sul sito.</p>
-                <h4>2. Tipologia di Dati Raccolti</h4>
-                <p>Il nostro sito non richiede la registrazione degli utenti e non raccoglie direttamente dati personali sensibili. I dati che inserisci (province, classi di concorso) vengono utilizzati esclusivamente per elaborare le statistiche richieste e non vengono memorizzati sui nostri server in modo permanente.</p>
-                <h4>3. Dati di Navigazione e Finalità</h4>
-                <p>Utilizziamo strumenti di terze parti (Google Analytics) per raccogliere statistiche anonime aggregate su come il sito viene utilizzato, al fine di migliorarne l'esperienza utente. Questi sistemi memorizzano solo ID anonimi e non associano il tuo indirizzo IP alla tua identità.</p>
-                <h4>4. Base Giuridica e Consenso</h4>
-                <p>Il trattamento dei dati di navigazione si basa sul tuo consenso, che puoi revocare in qualsiasi momento disabilitando i cookie dalle impostazioni del tuo browser.</p>
-            </div>
-
-            <!-- SEZIONE COOKIE -->
-            <div id="cookie" class="legal-section">
-                <h4>Cookie Policy</h4>
-                <p>I cookie sono piccoli file di testo che i siti visitati inviano al browser dell'utente, dove vengono memorizzati per essere ritrasmessi al sito alla successiva visita del medesimo utente.</p>
-                <h4>Cookie Utilizzati</h4>
-                <ul>
-                    <li><strong>Cookie Tecnici (Necessari):</strong> Essenziali per il corretto funzionamento del sito. Non richiedono consenso.</li>
-                    <li><strong>Cookie Analitici (Google Analytics):</strong> Utilizzati per raccogliere informazioni aggregate sull'utilizzo del sito. I dati sono anonimi e ci aiutano a migliorare il servizio.</li>
-                </ul>
-                <h4>Gestione e Disabilitazione</h4>
-                <p>L'utente può gestire le preferenze relative ai cookie direttamente all'interno del proprio browser ed impedire – ad esempio – che terze parti possano installarne. Tramite le preferenze del browser è inoltre possibile eliminare i cookie installati in passato.</p>
-            </div>
-
-            <!-- SEZIONE TERMINI -->
-            <div id="termini" class="legal-section">
-                <h4>Termini e Condizioni di Utilizzo</h4>
-                <p>L'accesso e l'utilizzo del sito Scuola GPS implicano l'accettazione integrale dei presenti termini e condizioni.</p>
-                <h4>Natura del Servizio</h4>
-                <p>Scuola GPS è uno strumento di analisi automatizzata. I dati, le estrazioni e le statistiche mostrate sono elaborazioni di dati pubblici ufficiali (Ministero dell'Istruzione). Nessun dato mostrato sul sito costituisce atto amministrativo ufficiale.</p>
-                <h4>Limitazione di Responsabilità</h4>
-                <p>Le analisi, le previsioni sui punteggi di cut-off e i tassi di assorbimento sono stime basate su algoritmi matematici. Scuola GPS non risponde di eventuali discrepanze o errori nei dati grezzi forniti dalle fonti esterne. Il valore legale rimane esclusivamente delle pubblicazioni ufficiali.</p>
-                <h4>Proprietà Intellettuale</h4>
-                <p>I grafici, le interfacce e il codice di elaborazione sono di proprietà di Scuola GPS. È vietata la copia o la riproduzione non autorizzata del software.</p>
-            </div>
-
-            <!-- SEZIONE INFORMATIVA COOKIE (ESTESA) -->
-            <div id="informativa" class="legal-section">
-                <h4>Informativa Estesa sui Cookie (Art. 13 GDPR)</h4>
-                <p>Ai sensi del Regolamento (UE) 2016/679 (GDPR) e della normativa italiana sul diritto alla privacy, forniamo i dettagli specifici sui cookie installati.</p>
-                <h4>Cookie di Google Analytics</h4>
-                <ul>
-                    <li><strong>Nome:</strong> _ga</li>
-                    <li><strong>Durata:</strong> 2 anni</li>
-                    <li><strong>Scopo:</strong> Registrare un ID univoco per generare dati statistici su come il visitatore utilizza il sito.</li>
-                </ul>
-                <ul>
-                    <li><strong>Nome:</strong> _gid</li>
-                    <li><strong>Durata:</strong> 24 ore</li>
-                    <li><strong>Scopo:</strong> Registrare un ID univoco per generare dati statistici su come il visitatore utilizza il sito.</li>
-                </ul>
-                <h4>Diritti dell'Interessato</h4>
-                <p>In qualità di utente, hai il diritto di chiedere l'accesso ai tuoi dati, la cancellazione degli stessi o di opporti al loro trattamento. Per esercitare questi diritti, puoi disabilitare i cookie dal tuo browser in qualsiasi momento.</p>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-<script>
     function openLegalModal(tabName) {
         event.preventDefault();
         document.getElementById('legalModal').style.display = 'flex';
         switchLegalTab(event, tabName);
     }
-
     function closeLegalModal(e) {
         if (e.target.id === 'legalModal' || e.target.classList.contains('modal-close')) {
             document.getElementById('legalModal').style.display = 'none';
         }
     }
-
     function switchLegalTab(evt, tabName) {
         var i, tabcontent, tablinks;
         tabcontent = document.getElementsByClassName("legal-section");
