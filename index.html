@@ -39,83 +39,44 @@
 
     <style>
         :root {
-            --primary-blue: #0E6E63; --dark-blue: #0A4A43; --light-blue: #E1F2EF;
-            --accent-orange: #E76F51; --text-gray: #374151; --border-gray: #D1D5DB;
-            --bg-gray: #F9FAFB; --white: #FFFFFF;
+            --primary-blue: #0055A5; --dark-blue: #003B73; --light-blue: #E6F1FB;
+            --accent-orange: #F39C12; --text-gray: #4A4A4A; --border-gray: #D1D9E6;
+            --bg-gray: #F4F7F9; --white: #FFFFFF;
         }
         * { box-sizing: border-box; }
         body { font-family: 'Titillium Web', sans-serif; margin: 0; padding: 0; background-color: var(--bg-gray); color: var(--text-gray); padding-top: 95px; line-height: 1.6; }
         
-        /* Intestazione più larga e chiara */
-        #siteHeader { position: fixed; top: 0; left: 0; width: 100%; height: 80px; background: var(--primary-blue); color: var(--white); display: flex; align-items: center; padding: 0 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; transition: transform 0.3s ease-in-out; overflow: hidden; }
+        /* Intestazione trasparente (effetto vetro) */
+        #siteHeader { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 80px; 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 0 40px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+            z-index: 1000; transition: transform 0.3s ease-in-out; 
+        }
         #siteHeader.hidden { transform: translateY(-100%); }
-        .header-left { display: flex; flex-direction: column; justify-content: center; flex: 1; }
-        .header-title-row { display: flex; align-items: center; gap: 10px; }
-        #siteHeader h1 { margin: 0; font-family: 'Montserrat', sans-serif; font-size: 24px; font-weight: 700; font-style: italic; white-space: nowrap; }
-        .header-slogan { font-size: 12px; color: rgba(255,255,255,0.8); font-weight: 400; margin-top: 2px; }
-        .header-nav { display: flex; align-items: center; gap: 10px; margin-left: 20px; }
-        .header-link { background: transparent; border: none; color: var(--white); padding: 8px 12px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; border-radius: 4px; transition: background 0.2s; }
-        .header-link:hover { background: rgba(255,255,255,0.15); }
-        .header-link.orange { background: var(--accent-orange); }
-        .header-link.orange:hover { background: #e67e22; }
-
-        .container { max-width: 1000px; margin: 30px auto; background: var(--white); padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 60px; border-top: 5px solid var(--primary-blue); }
-        h2 { border-bottom: 2px solid var(--light-blue); padding-bottom: 10px; color: var(--primary-blue); font-size: 22px; font-weight: 600; margin-bottom: 20px; }
-        .section { margin-bottom: 40px; } .form-group { margin-bottom: 20px; }
-        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--dark-blue); font-size: 15px; }
-        select, input[type="text"] { padding: 10px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; font-size: 15px; font-family: inherit; width: 100%; background: var(--white); transition: border-color 0.2s; }
-        select:focus, input:focus { border-color: var(--primary-blue); outline: none; box-shadow: 0 0 0 2px var(--light-blue); }
-        .multi-select-wrapper { display: flex; gap: 15px; align-items: flex-start; }
-        .select-box { width: 35%; }
-        .tags-container { flex: 1; min-height: 42px; padding: 5px; border: 1px solid var(--border-gray); border-radius: 4px; background: var(--white); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .tag { background: var(--light-blue); color: var(--dark-blue); padding: 6px 12px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
-        .tag .remove-tag { cursor: pointer; font-weight: bold; background: var(--primary-blue); color: var(--white); border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1; }
-        .tag .remove-tag:hover { background: var(--dark-blue); }
-        .checkbox-group { display: flex; gap: 30px; flex-wrap: wrap; }
-        .checkbox-item { display: flex; align-items: center; font-size: 16px; }
-        .checkbox-item input { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--primary-blue); }
-        .classi-container { border: 1px solid var(--border-gray); padding: 15px; height: 250px; overflow-y: auto; background: var(--bg-gray); border-radius: 4px; }
-        .classe-item { padding: 8px 0; }
-        .classe-item label { font-weight: 400; display: flex; align-items: center; font-size: 15px; }
-        .classe-item input { margin-right: 10px; }
-        button { background: var(--primary-blue); color: var(--white); border: none; padding: 15px 20px; width: 100%; font-size: 18px; border-radius: 4px; cursor: pointer; transition: background 0.3s; font-weight: 600; font-family: inherit; letter-spacing: 0.5px; }
-        button:hover { background: var(--dark-blue); }
-        button:disabled { background: #AAB7C4; cursor: not-allowed; }
-        #statusMessage { text-align: center; margin-top: 20px; font-weight: 600; font-size: 16px; color: #333333; }
-        #noClassiMsg { color: #E74C3C; font-style: italic; display: none; }
-        #pdfViewerContainer { width: 100%; height: 600px; border: 1px solid var(--border-gray); background: var(--bg-gray); display: none; overflow-y: auto; overflow-x: hidden; border-radius: 4px; }
-        #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
-        #pdfViewer iframe { width: 100%; height: 580px; border: none; }
-        .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
-        .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
-        .tab-navigation { display: none; position: sticky; top: 80px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
-        .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
-        .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
-        .tab-btn.active { color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); background: var(--white); }
-        .tab-content { display: none; } .tab-content.active { display: block; }
-        .collapsible-header { display: flex; align-items: center; cursor: pointer; padding: 12px 0; border-bottom: 2px solid var(--light-blue); color: var(--primary-blue); margin-bottom: 20px; user-select: none; flex-direction: row-reverse; justify-content: flex-start; }
-        .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 15px; }
-        .collapse-arrow { transition: transform 0.3s ease; font-size: 14px; }
-        .collapsible-header.collapsed .collapse-arrow { transform: rotate(-90deg); }
-        .collapsible-content { display: block; } .collapsible-content.hidden { display: none; }
-        .pdf-mobile-actions { display: none; text-align: center; padding: 15px; background: var(--light-blue); border-radius: 4px; margin-bottom: 15px; }
-        .pdf-mobile-actions a { display: inline-block; background: var(--primary-blue); color: white !important; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 16px; }
-        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .table-scroll table { min-width: 500px; }
+        .header-logo img { height: 55px; border-radius: 8px; }
         
-        /* Stile Footer */
-        .site-footer { max-width: 1000px; margin: 0 auto 60px; padding: 30px 40px; text-align: center; color: #666; font-size: 13px; border-top: 1px solid var(--border-gray); }
-        .footer-links { margin-bottom: 15px; }
-        .footer-links a { color: var(--primary-blue); text-decoration: none; margin: 0 8px; font-weight: 600; }
-        .footer-links a:hover { text-decoration: underline; }
-        .footer-disclaimer { line-height: 1.6; color: #888; max-width: 800px; margin: 0 auto 15px; }
-
+        /* Pulsanti grandi a forma di pillola */
+        .header-nav { display: flex; align-items: center; gap: 15px; }
+        .btn-pill { 
+            background: var(--primary-blue); color: var(--white); border: none; 
+            padding: 12px 28px; font-size: 16px; font-weight: 600; 
+            border-radius: 30px; cursor: pointer; transition: all 0.3s; 
+            font-family: inherit; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        .btn-pill:hover { background: var(--dark-blue); transform: translateY(-2px); }
+        .btn-pill.orange { background: var(--accent-orange); }
+        .btn-pill.orange:hover { background: #e67e22; }
+        
         @media (max-width: 768px) {
-            #siteHeader { height: 65px; padding: 0 15px; }
-            .header-slogan { display: none; }
-            #siteHeader h1 { font-size: 18px; }
-            .header-nav { margin-left: 10px; gap: 5px; }
+            #siteHeader { height: 70px; padding: 0 15px; }
+            .header-logo img { height: 45px; }
+            .btn-pill { padding: 10px 20px; font-size: 14px; }
             body { padding-top: 80px; }
+        }
             .container { padding: 20px 15px; margin: 15px auto; } h2 { font-size: 18px; }
             .multi-select-wrapper { flex-direction: column; gap: 10px; } .select-box { width: 100%; }
             .checkbox-group { gap: 15px; } .checkbox-item { font-size: 14px; }
@@ -129,17 +90,16 @@
 <body>
 
 <header id="siteHeader">
-    <div class="header-left">
-        <div class="header-title-row">
-            <img src="logo.png" alt="Logo Scuola GPS" style="height: 45px; border-radius: 6px;">
-            <h1>Scuola GPS</h1>
-            <nav class="header-nav">
-                <button class="header-link" onclick="toggleGuida(false)">Home</button>
-                <button class="header-link orange" onclick="toggleGuida(true)">Guida</button>
-            </nav>
-        </div>
-        <span class="header-slogan">Tutti gli strumenti per orientarti nelle graduatorie della scuola, in un posto solo.</span>
+    <!-- Solo Logo, nessuna scritta -->
+    <div class="header-logo">
+        <img src="logo.png" alt="Logo Scuola GPS">
     </div>
+    
+    <!-- Pulsanti grandi a destra -->
+    <nav class="header-nav">
+        <button class="btn-pill" onclick="toggleGuida(false)">Home</button>
+        <button class="btn-pill orange" onclick="toggleGuida(true)">Guida</button>
+    </nav>
 </header>
 
 <div id="guidaContainer" style="display: none; max-width: 800px; margin: 110px auto 40px; background: white; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); padding: 40px;">
