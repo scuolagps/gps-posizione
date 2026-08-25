@@ -144,6 +144,13 @@
         .footer-links a:hover { text-decoration: underline; }
         .footer-disclaimer { line-height: 1.6; color: #888; max-width: 800px; margin: 0 auto 15px; }
 
+        /* Widget Contatti e Social */
+        .contact-widget { position: fixed; bottom: 20px; right: 20px; background: var(--white); padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 999; border: 1px solid var(--border-gray); display: flex; flex-direction: column; gap: 10px; max-width: 200px; }
+        .contact-widget h4 { margin: 0 0 5px 0; font-family: 'Montserrat', sans-serif; font-size: 14px; color: var(--dark-blue); font-weight: 600; text-align: center; }
+        .contact-link { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text-gray); font-size: 13px; font-weight: 600; transition: color 0.2s; }
+        .contact-link:hover { color: var(--primary-blue); }
+        .contact-link svg { width: 20px; height: 20px; flex-shrink: 0; }
+
         /* STILE MODAL LEGALE */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
         .modal-content { background: white; width: 100%; max-width: 800px; max-height: 85vh; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
@@ -173,6 +180,7 @@
             .chart-container-generic { min-width: 600px; height: 400px; padding: 15px; }
             #pdfViewerContainer { height: 500px; } #pdfViewer iframe { height: 480px; }
             .pdf-mobile-actions { display: block; } button { font-size: 16px; padding: 12px 15px; }
+            .contact-widget { display: none; } /* Nascondi widget su mobile per non intralciare */
         }
     </style>
 </head>
@@ -190,21 +198,21 @@
 </header>
 
 <div id="guidaContainer" style="display: none; max-width: 800px; margin: 110px auto 40px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); padding: 40px;">
-    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e6f1fb; padding-bottom: 20px;">
-        <h2 style="color: #003B73; margin: 0; font-size: 28px;">Guida alla Lettura dei Dati</h2>
-        <p style="color: #666; margin-top: 10px;">Capire le graduatorie scolastiche non è mai stato così semplice</p>
+    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid var(--light-blue); padding-bottom: 20px;">
+        <h2 style="font-family: 'Spectral', serif; font-weight: 500; color: var(--dark-blue); margin: 0; font-size: 32px; line-height: 1.3; border: none;">Guida alla Lettura dei Dati</h2>
+        <p style="font-family: 'Spectral', serif; font-style: italic; color: var(--text-gray); margin-top: 10px; font-size: 18px;">Capire le graduatorie scolastiche non è mai stato così semplice</p>
     </div>
-    <div style="margin-bottom: 50px; border-bottom: 2px solid #e6f1fb; padding-bottom: 40px;">
-        <h3 style="color: #003B73; font-size: 24px; margin-bottom: 20px;">1. Tasso di Assorbimento Reale</h3>
-        <p>Indica la percentuale di candidati che ha effettivamente ottenuto un incarico. Abbiamo depurato il dato dalle doppie nomine per offrirti una stima precisa.</p>
+    <div style="margin-bottom: 50px; border-bottom: 2px solid var(--light-blue); padding-bottom: 40px;">
+        <h3 style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: var(--dark-blue); font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;"><svg viewBox="0 0 24 24" fill="none" stroke="#0055A5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 28px; height: 28px;"><path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 5-5"/></svg> 1. Tasso di Assorbimento Reale</h3>
+        <p style="font-family: 'Titillium Web', sans-serif; color: var(--text-gray); line-height: 1.6;">Indica la percentuale di candidati che ha effettivamente ottenuto un incarico. Abbiamo depurato il dato dalle doppie nomine per offrirti una stima precisa.</p>
     </div>
-    <div style="margin-bottom: 50px; border-bottom: 2px solid #e6f1fb; padding-bottom: 40px;">
-        <h3 style="color: #003B73; font-size: 24px; margin-bottom: 20px;">2. Punteggio di Cut-Off (Taglio)</h3>
-        <p>È il punteggio esatto dell'ultimo candidato che è stato chiamato. Ti dice fin dove è arrivata la "lama" che ha tagliato la graduatoria.</p>
+    <div style="margin-bottom: 50px; border-bottom: 2px solid var(--light-blue); padding-bottom: 40px;">
+        <h3 style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: var(--dark-blue); font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;"><svg viewBox="0 0 24 24" fill="none" stroke="#F39C12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 28px; height: 28px;"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> 2. Punteggio di Cut-Off (Taglio)</h3>
+        <p style="font-family: 'Titillium Web', sans-serif; color: var(--text-gray); line-height: 1.6;">È il punteggio esatto dell'ultimo candidato che è stato chiamato. Ti dice fin dove è arrivata la "lama" che ha tagliato la graduatoria.</p>
     </div>
     <div>
-        <h3 style="color: #003B73; font-size: 24px; margin-bottom: 20px;">3. Tasso di Rinuncia / Scorrimento</h3>
-        <p>Ti dice quante persone hanno detto "no" alla nomina prima che arrivassero a chiamare te. Più è alto, più la graduatoria è "scesa" in basso.</p>
+        <h3 style="font-family: 'Montserrat', sans-serif; font-weight: 500; color: var(--dark-blue); font-size: 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;"><svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 28px; height: 28px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> 3. Tasso di Rinuncia / Scorrimento</h3>
+        <p style="font-family: 'Titillium Web', sans-serif; color: var(--text-gray); line-height: 1.6;">Ti dice quante persone hanno detto "no" alla nomina prima che arrivassero a chiamare te. Più è alto, più la graduatoria è "scesa" in basso.</p>
     </div>
 </div>
 
@@ -310,12 +318,6 @@
             <div class="collapsible-header" onclick="toggleSection(this, 'sec5-content')"><span class="collapse-arrow">&#9660;</span><h2>Riepilogo Candidati</h2></div>
             <div id="sec5-content" class="collapsible-content"><div id="statsTableContainerPdf" class="table-scroll" style="margin-bottom: 20px;"></div></div>
         </div>
-        <div class="section" id="sec5_1-wrapper" style="display: none; margin-bottom: 40px;">
-            <div class="collapsible-header" onclick="toggleSection(this, 'sec5_1-content')"><span class="collapse-arrow">&#9660;</span><h2>Grafico Scuole vs Candidati</h2></div>
-            <div id="sec5_1-content" class="collapsible-content">
-                <div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="statsChartPdf"></canvas></div></div>
-            </div>
-        </div>
     </div>
 
     <div id="tab-bollettino" class="tab-content">
@@ -323,17 +325,24 @@
             <div class="collapsible-header" onclick="toggleSection(this, 'sec6-content')"><span class="collapse-arrow">&#9660;</span><h2>Riepilogo Nomine</h2></div>
             <div id="sec6-content" class="collapsible-content"><div id="statsTableContainerBollettino" class="table-scroll" style="margin-bottom: 20px;"></div></div>
         </div>
-        <div class="section" id="sec6_1-wrapper" style="display: none; margin-bottom: 40px;">
-            <div class="collapsible-header" onclick="toggleSection(this, 'sec6_1-content')"><span class="collapse-arrow">&#9660;</span><h2>Grafico Punteggi Minimi</h2></div>
-            <div id="sec6_1-content" class="collapsible-content">
-                <div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="statsChartBollettino"></canvas></div></div>
-            </div>
-        </div>
         <div class="section" id="analisiBollettinoWrapper" style="display: none; margin-bottom: 40px;">
             <div class="collapsible-header" onclick="toggleSection(this, 'sec7-content')"><span class="collapse-arrow">&#9660;</span><h2>Dettagli per Provincia</h2></div>
             <div id="sec7-content" class="collapsible-content"><div id="statsAvanzateContainer"></div></div>
         </div>
     </div>
+</div>
+
+<!-- Widget Contatti e Social -->
+<div class="contact-widget">
+    <h4>Contatti</h4>
+    <a href="mailto:infoscuolagps@gmail.com" class="contact-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Email
+    </a>
+    <a href="#" target="_blank" class="contact-link" style="color: #1877F2;">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+        Facebook
+    </a>
 </div>
 
 <footer class="site-footer">
@@ -415,7 +424,7 @@
         "secondaria_II": ["ADSS - Sostegno Sec. II grado","A001 - Disegno e storia dell'arte","A002 - Design metalli, oreficeria, pietre","A003 - Discipline audiovisive","A004 - Discipline geometriche, architettura, scenotecnica","A005 - Design del tessuto e della moda","A006 - Discipline grafiche, pittoriche, scenografiche","A007 - Discipline plastiche e scultoree","A008 - Discipline letterarie","A009 - Lettere, latino e greco - Liceo Classico","A010 - Modellazione odontotecnica","A011 - Lettere e latino","A013 - Discipline sanitarie","A014 - Filosofia e scienze umane","A015 - Filosofia e storia","A016 - Fisica","A018 - Geografia","A019 - Italiano L2","A020 - Lingue e culture dell'Asia orientale e sud-orientale","A021 - Matematica","A026 - Matematica e fisica","A027 - Musica","A033 - Scienze degli alimenti","A034 - Scienze della geologia e della mineralogia","A035 - Scienze e tecnologie aeronautiche","A036 - Scienze e tecnologie chimiche","A037 - Scienze e tecnologie della logistica","A038 - Tecnologie delle costruzioni e rappresentazione grafica","A039 - Costruzioni aeronautiche","A040 - Costruzioni navali","A041 - Scienze e tecnologie elettriche ed elettroniche","A042 - Scienze e tecnologie informatiche","A043 - Scienze e tecnologie meccaniche","A044 - Scienze e tecnologie nautiche","A045 - Tecnologie tessili, abbigliamento e moda","A046 - Scienze economico-aziendali","A047 - Scienze giuridico-economiche","A050 - Diritto ed economia politica","A051 - Scienze motorie e sportive","A052 - Scienze naturali, chimiche e biologiche","A053 - Tecnologie agrarie","A054 - Tecnologie di produzioni animali","A057 - Storia","A058 - Storia dell'arte","A059 - Tecnica della danza classica","A061 - Tecnica della danza contemporanea","A062 - Storia della musica e della danza","A063 - Tecnologie e tecniche delle comunicazioni multimediali","A064 - Tecnologie e tecniche per la grafica","A065 - Tecnologie musicali","A066 - Teoria, analisi e composizione","A079 - IRC (Religione Cattolica)","A080 - IRC (Religione Cattolica)","A081 - IRC (Religione Cattolica)","A082 - Classe A082","A083 - IRC (Religione Cattolica)","A086 - Classe A086","AA55 - Arpa","AB55 - Chitarra","AC55 - Clarinetto","AD55 - Contrabbasso","AE55 - Fagotto","AF55 - Flauto","AG55 - Oboe","AH55 - Pianoforte","AI55 - Sassofono","AJ55 - Tromba","AK55 - Trombone","AL55 - Viola","AM55 - Violino","AN55 - Violoncello","AM12 - Classe AM12","AM2A - Classe AM2A","AM2B - Classe AM2B","AM2C - Classe AM2C","AM2D - Classe AM2D","AM48 - Classe AM48","AO55 - Classe AO55","AP55 - Classe AP55","AQ55 - Classe AQ55","AR55 - Classe AR55","AS12 - Classe AS12","AS2A - Classe AS2A","AS2B - Classe AS2B","AS2C - Classe AS2C","AS2D - Classe AS2D","AS2E - Classe AS2E","AS2F - Classe AS2F","AS2H - Classe AS2H","AS2I - Classe AS2I","AS2J - Classe AS2J","AS2K - Classe AS2K","AS2L - Classe AS2L","AS2M - Classe AS2M","AS2N - Classe AS2N","AS48 - Classe AS48","AS55 - Classe AS55","AS71 - Classe AS71","AT55 - Classe AT55","AU55 - Classe AU55","AV55 - Classe AV55","AW55 - Classe AW55","B003 - Classe B003","B004 - Classe B004","B005 - Classe B005","B006 - Classe B006","B007 - Classe B007","B008 - Classe B008","B009 - Classe B009","B010 - Classe B010","B011 - Classe B011","B012 - Classe B012","B013 - Classe B013","B014 - Classe B014","B015 - Classe B015","B016 - Classe B016","B017 - Classe B017","B018 - Classe B018","B019 - Classe B019","B020 - Classe B020","B021 - Classe B021","B022 - Classe B022","B023 - Classe B023","B024 - Classe B024","B025 - Classe B025","B026 - Classe B026","B027 - Classe B027","B028 - Classe B028","B029 - Classe B029","B030 - Classe B030","B031 - Classe B031","B032 - Classe B032","B033 - Classe B033","BA02 - Classe BA02","BB02 - Classe BB02","BC02 - Classe BC02","BD02 - Classe BD02","BE02 - Classe BE02","BF02 - Classe BF02","BG02 - Classe BG02","BH02 - Classe BH02","BI02 - Classe BI02","BJ02 - Classe BJ02","BK02 - Classe BK02","BL02 - Classe BL02","BM02 - Classe BM02","BN02 - Classe BN02"]
     };
 
-    let selectedRegioni = []; let selectedProvince = []; let myChartPdf = []; let myChartBollettino = null;
+    let selectedRegioni = []; let selectedProvince = []; let myChartPdf = []; let myChartBollettino = [];
     let lastScrollTop = 0;
     window.addEventListener('scroll', function() {
         let st = window.pageYOffset || document.documentElement.scrollTop;
@@ -443,10 +452,8 @@
         headerElement.classList.toggle('collapsed');
         const isHidden = content.classList.toggle('hidden');
         if (!isHidden) {
-            if (contentId === 'sec5-content' && myChartPdf) {
-                if (Array.isArray(myChartPdf)) myChartPdf.forEach(c => c.resize());
-            }
-            if (contentId === 'sec6_1-content' && myChartBollettino) myChartBollettino.resize();
+            if (contentId === 'sec5-content' && Array.isArray(myChartPdf)) myChartPdf.forEach(c => c.resize());
+            if (contentId === 'sec6-content' && Array.isArray(myChartBollettino)) myChartBollettino.forEach(c => c.resize());
         }
     }
     document.addEventListener('DOMContentLoaded', function() {
@@ -473,13 +480,8 @@
     }
     function aggiornaClassiVisibili() {
         const container = document.getElementById('classiContainer'); const noClassiMsg = document.getElementById('noClassiMsg'); 
-        
-        // Salva le classi attualmente selezionate
         let checkedValues = [];
-        document.querySelectorAll('.classe-item input[type="checkbox"]:checked').forEach(cb => {
-            checkedValues.push(cb.value);
-        });
-        
+        document.querySelectorAll('.classe-item input[type="checkbox"]:checked').forEach(cb => checkedValues.push(cb.value));
         container.innerHTML = '';
         let ordiniSelezionati = [];
         document.querySelectorAll('input[name="ordineScuola"]:checked').forEach(cb => ordiniSelezionati.push(cb.value));
@@ -490,10 +492,7 @@
                 classiConcorsoDB[ordine].forEach(classe => {
                     let div = document.createElement('div'); div.className = 'classe-item';
                     let input = document.createElement('input'); input.type = 'checkbox'; input.id = classe.replace(/\s+/g, '-'); input.value = classe; input.dataset.ordine = ordine;
-                    // Ripristina il check se era selezionato
-                    if (checkedValues.includes(classe)) {
-                        input.checked = true;
-                    }
+                    if (checkedValues.includes(classe)) input.checked = true;
                     input.addEventListener('change', renderClassiTags);
                     let label = document.createElement('label'); label.htmlFor = input.id; label.textContent = classe;
                     div.appendChild(input); div.appendChild(label); container.appendChild(div);
@@ -537,7 +536,6 @@
         const pdfDownloadLink = document.getElementById('pdfDownloadLink');
         const sec4Wrapper = document.getElementById('sec4-wrapper');
         const sec5Wrapper = document.getElementById('chartSectionPdfWrapper');
-        const sec5_1Wrapper = document.getElementById('sec5_1-wrapper');
         const btn = document.getElementById('generaBtn');
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
         let classiSelezionate = [];
@@ -569,14 +567,14 @@
             const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
             
-            // Distruggi grafici precedenti
             if (myChartPdf && Array.isArray(myChartPdf)) myChartPdf.forEach(c => c.destroy());
             myChartPdf = [];
 
-            const stats = data.stats; // Ora è un oggetto di oggetti: { "A022": {"Roma": {...}} }
+            const stats = data.stats; 
             const classiPresenti = Object.keys(stats);
             sec4Wrapper.style.display = 'block';
             
+            let hasAnyData = false;
             if (classiPresenti.length > 0) {
                 let htmlOutput = '';
                 const chartsToRender = [];
@@ -584,10 +582,14 @@
                 classiPresenti.forEach(classe => {
                     const classStats = stats[classe];
                     const labels = Object.keys(classStats);
-                    if (labels.length > 0) {
+                    // Filtra province con dati effettivi (candidati > 0 o scuole > 0)
+                    const validLabels = labels.filter(l => classStats[l].candidati > 0 || classStats[l].scuole > 0);
+                    
+                    if (validLabels.length > 0) {
+                        hasAnyData = true;
                         htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
                         htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
-                        labels.forEach(l => {
+                        validLabels.forEach(l => {
                             const info = classStats[l];
                             const regione = info.regione === 'N/D' ? '-' : info.regione;
                             const medianScore = formatScore(info.median);
@@ -597,7 +599,7 @@
                         });
                         htmlOutput += `</tbody></table>`;
                         htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
-                        chartsToRender.push({ id: `chart_${classe}`, labels: labels, stats: classStats });
+                        chartsToRender.push({ id: `chart_${classe}`, labels: validLabels, stats: classStats });
                     }
                 });
 
@@ -606,25 +608,24 @@
                 chartsToRender.forEach(c => {
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    if (c.labels.length > 6) {
-                        container.style.width = (c.labels.length * 80) + 'px';
-                    } else {
-                        container.style.width = '100%';
-                    }
+                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 80) + 'px'; } else { container.style.width = '100%'; }
                     const chart = new Chart(ctx, {
                         type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Scuole per Candidato', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
                         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${c.id.replace('chart_', '')}`, font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = c.stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } } } }
                     });
                     myChartPdf.push(chart);
                 });
-
-                sec5Wrapper.style.display = 'block'; 
-                sec5_1Wrapper.style.display = 'none'; // Nascondiamo il vecchio wrapper statico
-                const tabNav = document.getElementById('tabNav');
-                tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
-                if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
+                
+                if (hasAnyData) {
+                    sec5Wrapper.style.display = 'block';
+                    const tabNav = document.getElementById('tabNav');
+                    tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
+                    if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
+                } else {
+                    sec5Wrapper.style.display = 'none'; 
+                }
             } else { 
-                sec5Wrapper.style.display = 'none'; sec5_1Wrapper.style.display = 'none'; 
+                sec5Wrapper.style.display = 'none'; 
             }
             statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
             showTab('pdf');
@@ -635,7 +636,6 @@
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
-        const chartSec6_1Wrapper = document.getElementById('sec6_1-wrapper');
         const analisiWrapper = document.getElementById('analisiBollettinoWrapper');
         const btn = document.getElementById('bollettinoBtn');
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
@@ -656,13 +656,15 @@
             });
             if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
             const result = await response.json();
-            const data = result.data; // Ora è un oggetto: { "A022": [...], "AB24": [...] }
+            const data = result.data; 
             
             const classiPresenti = Object.keys(data);
             let hasData = false;
-            classiPresenti.forEach(classe => { if(data[classe].length > 0) hasData = true; });
+            
+            if (myChartBollettino && Array.isArray(myChartBollettino)) myChartBollettino.forEach(c => c.destroy());
+            myChartBollettino = [];
 
-            if (hasData) {
+            if (classiPresenti.length > 0) {
                 const sortFunc = (a, b) => {
                     if (a.regione < b.regione) return -1;
                     if (a.regione > b.regione) return 1;
@@ -681,56 +683,57 @@
                     const classData = data[classe];
                     if (classData.length > 0) {
                         classData.sort(sortFunc);
+                        const validData = classData.filter(item => item.candidati_totali > 0 || item.nominati_univoci > 0);
                         
-                        htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
-                        htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;">
-                            <th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Nominati Univoci</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Assorbimento %</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Max Pos.</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Rinuncia %</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 31/08</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 30/06</th>
-                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off Spezzoni</th>
-                        </tr></thead><tbody>`;
-                        
-                        const labels = classData.map(item => item.provincia);
-                        const dataCand = classData.map(item => item.candidati_totali);
-                        const dataNominati = classData.map(item => item.nominati_univoci);
-                        const dataMaxPos = classData.map(item => item.max_posizione);
+                        if (validData.length > 0) {
+                            hasData = true;
+                            htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
+                            htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;">
+                                <th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Nominati Univoci</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Assorbimento %</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Max Pos.</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Rinuncia %</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 31/08</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 30/06</th>
+                                <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off Spezzoni</th>
+                            </tr></thead><tbody>`;
+                            
+                            const labels = validData.map(item => item.provincia);
+                            const dataCand = validData.map(item => item.candidati_totali);
+                            const dataNominati = validData.map(item => item.nominati_univoci);
+                            const dataMaxPos = validData.map(item => item.max_posizione);
 
-                        classData.forEach(item => {
-                            const regione = item.regione === 'N/D' ? '-' : item.regione;
-                            htmlOutput += `<tr style="background: #fff;">
-                                <td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td>
-                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td>
-                            </tr>`;
-                            statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
-                                <strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br>
-                                <span style="color: #333;">Assorbimento Reale: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} univoci su ${item.candidati_totali} candidati)</span><br>
-                                <span style="color: #333;">Tasso di Rinuncia/Scorrimento: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Max posizione raggiunta: ${item.max_posizione})</span><br>
-                                <span style="color: #333;">Punteggi di Cut-Off: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span>
-                            </li>`;
-                        });
-                        htmlOutput += `</tbody></table>`;
-                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
-                        chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
+                            validData.forEach(item => {
+                                const regione = item.regione === 'N/D' ? '-' : item.regione;
+                                htmlOutput += `<tr style="background: #fff;">
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td>
+                                    <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td>
+                                </tr>`;
+                                statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
+                                    <strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br>
+                                    <span style="color: #333;">Assorbimento Reale: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} univoci su ${item.candidati_totali} candidati)</span><br>
+                                    <span style="color: #333;">Tasso di Rinuncia/Scorrimento: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Max posizione raggiunta: ${item.max_posizione})</span><br>
+                                    <span style="color: #333;">Punteggi di Cut-Off: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span>
+                                </li>`;
+                            });
+                            htmlOutput += `</tbody></table>`;
+                            htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
+                            chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
+                        }
                     }
                 });
                 statsAvanzateHTML += `</ul></div>`;
-
-                if (myChartBollettino && Array.isArray(myChartBollettino)) myChartBollettino.forEach(c => c.destroy());
-                myChartBollettino = [];
 
                 document.getElementById('statsTableContainerBollettino').innerHTML = htmlOutput;
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
@@ -750,15 +753,21 @@
                     myChartBollettino.push(chart);
                 });
 
-                chartSectionWrapper.style.display = 'block'; 
-                chartSec6_1Wrapper.style.display = 'none'; // Nascondiamo il vecchio wrapper singolo
-                analisiWrapper.style.display = 'block';
-                const tabNav = document.getElementById('tabNav');
-                tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
-                if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
-                showTab('bollettino');
+                if (hasData) {
+                    chartSectionWrapper.style.display = 'block';
+                    analisiWrapper.style.display = 'block';
+                    const tabNav = document.getElementById('tabNav');
+                    tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
+                    if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
+                    showTab('bollettino');
+                } else {
+                    chartSectionWrapper.style.display = 'none'; 
+                    analisiWrapper.style.display = 'none';
+                    statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati."; return;
+                }
             } else {
-                chartSectionWrapper.style.display = 'none'; chartSec6_1Wrapper.style.display = 'none'; analisiWrapper.style.display = 'none';
+                chartSectionWrapper.style.display = 'none'; 
+                analisiWrapper.style.display = 'none';
                 statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati."; return;
             }
             statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i dati qui sotto.";
