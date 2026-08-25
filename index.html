@@ -698,37 +698,71 @@
             const result = await response.json();
             const data = result.data;
             if (data.length > 0) {
-                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Nomine Totali</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Ultimo Punteggio F1</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Ultimo Punteggio F2</th></tr></thead><tbody>`;
+                
+                // NUOVA TABELLA CON METRICHE CORRETTE
+                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;">
+                    <th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Nominati Univoci</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Assorbimento %</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Max Pos.</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Rinuncia %</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 31/08</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 30/06</th>
+                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off Spezzoni</th>
+                </tr></thead><tbody>`;
+                
                 const labels = data.map(item => item.provincia);
-                const dataNomine = data.map(item => item.nomine_totali);
-                const dataMinF1 = data.map(item => item.min_f1 === "N/D" ? null : parseFloat(item.min_f1.replace(',', '.')));
-                const dataMinF2 = data.map(item => item.min_f2 === "N/D" ? null : parseFloat(item.min_f2.replace(',', '.')));
-                let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;"><ul style="list-style-type: none; padding: 0; margin: 0;">`;
+                const dataCand = data.map(item => item.candidati_totali);
+                const dataNominati = data.map(item => item.nominati_univoci);
+                const dataMaxPos = data.map(item => item.max_posizione);
+                
+                let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;">
+                    <p style="margin-top:0;"><strong>📌 Legenda Metriche:</strong></p>
+                    <ul style="list-style-type: none; padding: 0; margin: 0;">`;
+                
                 data.forEach(item => {
                     const regione = item.regione === 'N/D' ? '-' : item.regione;
-                    const minF1 = item.min_f1 === 'N/D' ? '-' : item.min_f1;
-                    const minF2 = item.min_f2 === 'N/D' ? '-' : item.min_f2;
-                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${item.nomine_totali}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${minF1}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${minF2}</td></tr>`;
-                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia}</strong><br><span style="color: #333;">Copertura I Fascia: <strong style="color: var(--primary-blue);">${item.assorbimento_f1}%</strong></span> (Nomine F1: ${item.nomine_f1} su ${item.nomine_totali})`;
-                    if (fasciaSelezionata === "" && item.nomine_f1 > 0 && item.nomine_f2 > 0) {
-                        statsAvanzateHTML += `<br><span style="color: #333;">Riparto nomine: <strong style="color: var(--primary-blue);">F1 ${item.prob_f1}%</strong> | <strong style="color: var(--primary-blue);">F2 ${item.prob_f2}%</strong></span>`;
-                    }
-                    statsAvanzateHTML += `</li>`;
+                    tableHTML += `<tr style="background: #fff;">
+                        <td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td>
+                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td>
+                    </tr>`;
+                    
+                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
+                        <strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia}</strong><br>
+                        <span style="color: #333;">Assorbimento Reale: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} univoci su ${item.candidati_totali} candidati)</span><br>
+                        <span style="color: #333;">Tasso di Rinuncia/Scorrimento: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Max posizione raggiunta: ${item.max_posizione})</span><br>
+                        <span style="color: #333;">Punteggi di Cut-Off: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span>
+                    </li>`;
                 });
                 tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
+                
                 document.getElementById('statsTableContainerBollettino').innerHTML = tableHTML;
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
+                
+                // GRAFICO AGGIORNATO: CANDIDATI VS NOMINATI VS SCORRIMENTO
                 const ctx = document.getElementById('statsChartBollettino').getContext('2d');
                 if (myChartBollettino) { myChartBollettino.destroy(); }
                 myChartBollettino = new Chart(ctx, {
-                    type: 'bar', data: { labels: labels, datasets: [
-                        { label: 'Nomine Totali', data: dataNomine, backgroundColor: 'rgba(173, 216, 230, 0.6)', borderColor: 'rgba(173, 216, 230, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
-                        { type: 'line', label: 'Ultimo Punteggio F1', data: dataMinF1, borderColor: 'rgba(0, 85, 165, 1)', backgroundColor: 'rgba(0, 85, 165, 1)', yAxisID: 'y2', tension: 0, pointRadius: 6, pointBorderColor: '#fff', pointBorderWidth: 2, showLine: false, order: 1 },
-                        { type: 'line', label: 'Ultimo Punteggio F2', data: dataMinF2, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 1)', yAxisID: 'y2', tension: 0, pointRadius: 6, pointBorderColor: '#fff', pointBorderWidth: 2, showLine: false, order: 2 }
+                    type: 'bar', 
+                    data: { labels: labels, datasets: [
+                        { label: 'Candidati Totali', data: dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
+                        { label: 'Nominati Univoci', data: dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
+                        { type: 'line', label: 'Max Posizione (Scorrimento)', data: dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                     ]},
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Nomine Totali e Punteggi Minimi', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false, callbacks: { label: function(context) { let l = context.dataset.label || ''; if (l) { l += ': '; } if (context.parsed.y !== null) { if (context.dataset.yAxisID === 'y2') { let val = String(context.parsed.y).replace('.', ','); if (val.endsWith(',0')) val = val.replace(',0', ''); l += val; } else { l += context.parsed.y; } } return l; } } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'N. Nomine' }, grid: { drawOnChartArea: true }, beginAtZero: true }, y2: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Punteggio' }, grid: { drawOnChartArea: false }, beginAtZero: true } } }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Analisi Competizione: Candidati vs Nominati vs Scorrimento', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone' }, grid: { drawOnChartArea: true }, beginAtZero: true } } }
                 });
+                
                 chartSectionWrapper.style.display = 'block'; chartSec6_1Wrapper.style.display = 'block'; analisiWrapper.style.display = 'block';
                 const tabNav = document.getElementById('tabNav');
                 tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
