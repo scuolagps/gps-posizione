@@ -5,21 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- TAG SEO PER GOOGLE -->
-    <title>Estrazione Dati Scolastici - Graduatorie e Nomine</title>
+    <title>Scuola GPS - Graduatorie e Nomine</title>
     <meta name="description" content="Strumento gratuito per l'estrazione e l'analisi delle graduatorie provinciali di supplenza. Genera PDF, grafici e statistiche su nomine, punteggi e classi di concorso.">
     <meta name="keywords" content="graduatorie supplenza, estrazione dati, classi di concorso, nomine scuola, punteggi graduatorie, PDF graduatorie, bollettino nomine">
     <meta name="author" content="ScuolaGPS">
     <meta name="robots" content="index, follow">
 
     <!-- TAG PER CONDIVISIONE SOCIAL (WhatsApp, Facebook, ecc.) -->
-    <meta property="og:title" content="Estrazione Dati Scolastici - Graduatorie e Nomine">
+    <meta property="og:title" content="Scuola GPS - Graduatorie e Nomine">
     <meta property="og:description" content="Genera PDF, grafici e statistiche sulle graduatorie di supplenza e nomine scuola.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://scuolagps.github.io/gps-posizione/">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Sostituito Titillium Web con Montserrat (include lo stile italic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,600;0,700;1,600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -39,10 +40,10 @@
             --bg-gray: #F4F7F9; --white: #FFFFFF;
         }
         * { box-sizing: border-box; }
-        body { font-family: 'Titillium Web', sans-serif; margin: 0; padding: 0; background-color: var(--bg-gray); color: var(--text-gray); padding-top: 70px; line-height: 1.6; }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; padding: 0; background-color: var(--bg-gray); color: var(--text-gray); padding-top: 70px; line-height: 1.6; }
         #siteHeader { position: fixed; top: 0; left: 0; width: 100%; height: 60px; background: var(--primary-blue); color: var(--white); display: flex; align-items: center; padding: 0 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; transition: transform 0.3s ease-in-out; overflow: hidden; }
         #siteHeader.hidden { transform: translateY(-100%); }
-        #siteHeader h1 { margin: 0; font-size: 22px; font-weight: 700; flex: 1; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #siteHeader h1 { margin: 0; font-size: 24px; font-weight: 700; font-style: italic; flex: 1; letter-spacing: 0.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .header-btn { background: transparent; border: 1px solid var(--white); color: var(--white); padding: 8px 18px; cursor: pointer; margin-left: 15px; border-radius: 4px; font-size: 14px; font-weight: 600; width: auto; transition: all 0.2s; font-family: inherit; flex-shrink: 0; }
         .header-btn:hover { background: var(--white); color: var(--primary-blue); }
         .container { max-width: 1000px; margin: 30px auto; background: var(--white); padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 60px; border-top: 5px solid var(--primary-blue); }
@@ -103,7 +104,7 @@
 <body>
 
 <header id="siteHeader">
-    <h1>Estrazione Dati Scolastici</h1>
+    <h1>Scuola GPS</h1>
     <button class="header-btn" onclick="toggleGuida(false)">Home</button>
     <button class="header-btn" onclick="toggleGuida(true)" style="background: var(--accent-orange);">Guida ai Dati</button>
 </header>
