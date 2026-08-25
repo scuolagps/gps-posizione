@@ -149,8 +149,8 @@
         .modal-content { background: white; width: 100%; max-width: 800px; max-height: 85vh; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .modal-header { background: var(--primary-blue); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
         .modal-header h3 { margin: 0; font-size: 20px; font-weight: 600; }
-        .modal-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; line-height: 1; padding: 0; opacity: 0.8; }
-        .modal-close:hover { opacity: 1; }
+        .modal-close { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 16px; cursor: pointer; line-height: 1; padding: 0; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
+        .modal-close:hover { background: rgba(255,255,255,0.4); }
         .modal-body { padding: 30px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #333; }
         .legal-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-gray); }
         .legal-tab { padding: 10px 15px; border: none; background: none; cursor: pointer; font-weight: 600; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: inherit; }
@@ -656,78 +656,106 @@
             });
             if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
             const result = await response.json();
-            const data = result.data;
-            if (data.length > 0) {
-                // Ordine alfabetico per Regione e Provincia
-                data.sort((a, b) => {
+            const data = result.data; // Ora è un oggetto: { "A022": [...], "AB24": [...] }
+            
+            const classiPresenti = Object.keys(data);
+            let hasData = false;
+            classiPresenti.forEach(classe => { if(data[classe].length > 0) hasData = true; });
+
+            if (hasData) {
+                const sortFunc = (a, b) => {
                     if (a.regione < b.regione) return -1;
                     if (a.regione > b.regione) return 1;
                     if (a.provincia < b.provincia) return -1;
                     if (a.provincia > b.provincia) return 1;
                     return 0;
-                });
+                };
 
-                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;">
-                    <th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Nominati Univoci</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Assorbimento %</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Max Pos.</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Rinuncia %</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 31/08</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 30/06</th>
-                    <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off Spezzoni</th>
-                </tr></thead><tbody>`;
-                const labels = data.map(item => item.provincia);
-                const dataCand = data.map(item => item.candidati_totali);
-                const dataNominati = data.map(item => item.nominati_univoci);
-                const dataMaxPos = data.map(item => item.max_posizione);
+                let htmlOutput = '';
                 let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;">
                     <p style="margin-top:0;"><strong>📌 Legenda Metriche:</strong></p>
                     <ul style="list-style-type: none; padding: 0; margin: 0;">`;
-                data.forEach(item => {
-                    const regione = item.regione === 'N/D' ? '-' : item.regione;
-                    tableHTML += `<tr style="background: #fff;">
-                        <td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td>
-                        <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td>
-                    </tr>`;
-                    statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
-                        <strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia}</strong><br>
-                        <span style="color: #333;">Assorbimento Reale: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} univoci su ${item.candidati_totali} candidati)</span><br>
-                        <span style="color: #333;">Tasso di Rinuncia/Scorrimento: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Max posizione raggiunta: ${item.max_posizione})</span><br>
-                        <span style="color: #333;">Punteggi di Cut-Off: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span>
-                    </li>`;
+                const chartsToRender = [];
+
+                classiPresenti.forEach(classe => {
+                    const classData = data[classe];
+                    if (classData.length > 0) {
+                        classData.sort(sortFunc);
+                        
+                        htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
+                        htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;">
+                            <th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Nominati Univoci</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Assorbimento %</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Max Pos.</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Rinuncia %</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 31/08</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off 30/06</th>
+                            <th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Cut-off Spezzoni</th>
+                        </tr></thead><tbody>`;
+                        
+                        const labels = classData.map(item => item.provincia);
+                        const dataCand = classData.map(item => item.candidati_totali);
+                        const dataNominati = classData.map(item => item.nominati_univoci);
+                        const dataMaxPos = classData.map(item => item.max_posizione);
+
+                        classData.forEach(item => {
+                            const regione = item.regione === 'N/D' ? '-' : item.regione;
+                            htmlOutput += `<tr style="background: #fff;">
+                                <td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td>
+                                <td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td>
+                            </tr>`;
+                            statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;">
+                                <strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br>
+                                <span style="color: #333;">Assorbimento Reale: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} univoci su ${item.candidati_totali} candidati)</span><br>
+                                <span style="color: #333;">Tasso di Rinuncia/Scorrimento: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Max posizione raggiunta: ${item.max_posizione})</span><br>
+                                <span style="color: #333;">Punteggi di Cut-Off: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span>
+                            </li>`;
+                        });
+                        htmlOutput += `</tbody></table>`;
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
+                        chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
+                    }
                 });
-                tableHTML += `</tbody></table>`;
                 statsAvanzateHTML += `</ul></div>`;
-                document.getElementById('statsTableContainerBollettino').innerHTML = tableHTML;
+
+                if (myChartBollettino && Array.isArray(myChartBollettino)) myChartBollettino.forEach(c => c.destroy());
+                myChartBollettino = [];
+
+                document.getElementById('statsTableContainerBollettino').innerHTML = htmlOutput;
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
-                const ctx = document.getElementById('statsChartBollettino').getContext('2d');
-                if (myChartBollettino) { myChartBollettino.destroy(); }
-                const containerBollettino = document.getElementById('statsChartBollettino').parentNode;
-                if (labels.length > 6) { containerBollettino.style.width = (labels.length * 80) + 'px'; } else { containerBollettino.style.width = '100%'; }
-                myChartBollettino = new Chart(ctx, {
-                    type: 'bar', data: { labels: labels, datasets: [
-                        { label: 'Candidati Totali', data: dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
-                        { label: 'Nominati Univoci', data: dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
-                        { type: 'line', label: 'Max Posizione (Scorrimento)', data: dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
-                    ]},
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Analisi Competizione: Candidati vs Nominati vs Scorrimento', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone' }, grid: { drawOnChartArea: true }, beginAtZero: true } } }
+
+                chartsToRender.forEach(c => {
+                    const ctx = document.getElementById(c.id).getContext('2d');
+                    const container = ctx.canvas.parentNode;
+                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 80) + 'px'; } else { container.style.width = '100%'; }
+                    const chart = new Chart(ctx, {
+                        type: 'bar', data: { labels: c.labels, datasets: [
+                            { label: 'Candidati Totali', data: c.dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
+                            { label: 'Nominati Univoci', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
+                            { type: 'line', label: 'Max Posizione (Scorrimento)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
+                        ]},
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Analisi Competizione - ${c.id.replace('chart_bollettino_', '')}`, font: { size: 14 } }, tooltip: { mode: 'index', intersect: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone' }, grid: { drawOnChartArea: true }, beginAtZero: true } } }
+                    });
+                    myChartBollettino.push(chart);
                 });
-                chartSectionWrapper.style.display = 'block'; chartSec6_1Wrapper.style.display = 'block'; analisiWrapper.style.display = 'block';
+
+                chartSectionWrapper.style.display = 'block'; 
+                chartSec6_1Wrapper.style.display = 'none'; // Nascondiamo il vecchio wrapper singolo
+                analisiWrapper.style.display = 'block';
                 const tabNav = document.getElementById('tabNav');
                 tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
                 if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
-                if(myChartBollettino) myChartBollettino.resize();
                 showTab('bollettino');
             } else {
                 chartSectionWrapper.style.display = 'none'; chartSec6_1Wrapper.style.display = 'none'; analisiWrapper.style.display = 'none';
