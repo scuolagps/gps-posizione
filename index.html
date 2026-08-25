@@ -73,7 +73,7 @@
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
         #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
-        .chart-container-generic { display: block; width: 100%; min-width: 600px; max-width: 800px; margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
+                .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
         .tab-navigation { display: none; position: sticky; top: 60px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
         .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
         .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
@@ -705,12 +705,21 @@
                 });
                 tableHTML += `</tbody></table>`;
                 document.getElementById('statsTableContainerPdf').innerHTML = tableHTML;
-                const ctx = document.getElementById('statsChartPdf').getContext('2d');
+                               const ctx = document.getElementById('statsChartPdf').getContext('2d');
                 if (myChartPdf) { myChartPdf.destroy(); }
+                
+                // Allarga dinamicamente il grafico in base al numero di province
+                const containerPdf = document.getElementById('statsChartPdf').parentNode;
+                if (labels.length > 6) {
+                    containerPdf.style.width = (labels.length * 80) + 'px';
+                } else {
+                    containerPdf.style.width = '100%';
+                }
+
                 myChartPdf = new Chart(ctx, {
                     type: 'bar', data: { labels: labels, datasets: [{ label: 'Scuole per Candidato', data: labels.map(l => stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Rapporto Scuole per Candidato', font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } } } }
-                });                
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Rapporto Scuole per Candidato', font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } } } }
+                });
                 sec5Wrapper.style.display = 'block'; sec5_1Wrapper.style.display = 'block';
                 if(myChartPdf) myChartPdf.resize();
                 const tabNav = document.getElementById('tabNav');
@@ -805,8 +814,17 @@
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
                 
                 // GRAFICO AGGIORNATO: CANDIDATI VS NOMINATI VS SCORRIMENTO
-                const ctx = document.getElementById('statsChartBollettino').getContext('2d');
+                                const ctx = document.getElementById('statsChartBollettino').getContext('2d');
                 if (myChartBollettino) { myChartBollettino.destroy(); }
+                
+                // Allarga dinamicamente il grafico in base al numero di province
+                const containerBollettino = document.getElementById('statsChartBollettino').parentNode;
+                if (labels.length > 6) {
+                    containerBollettino.style.width = (labels.length * 80) + 'px';
+                } else {
+                    containerBollettino.style.width = '100%';
+                }
+
                 myChartBollettino = new Chart(ctx, {
                     type: 'bar', 
                     data: { labels: labels, datasets: [
@@ -814,7 +832,7 @@
                         { label: 'Nominati Univoci', data: dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
                         { type: 'line', label: 'Max Posizione (Scorrimento)', data: dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                     ]},
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Analisi Competizione: Candidati vs Nominati vs Scorrimento', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45 } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone' }, grid: { drawOnChartArea: true }, beginAtZero: true } } }
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: 'Analisi Competizione: Candidati vs Nominati vs Scorrimento', font: { size: 14 } }, tooltip: { mode: 'index', intersect: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone' }, grid: { drawOnChartArea: true }, beginAtZero: true } } }
                 });
                 
                 chartSectionWrapper.style.display = 'block'; chartSec6_1Wrapper.style.display = 'block'; analisiWrapper.style.display = 'block';
