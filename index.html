@@ -119,10 +119,13 @@
         #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
         .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
-        .tab-navigation { display: none; position: sticky; top: 80px; background: transparent; z-index: 900; padding: 15px 0; margin-bottom: 30px; border-bottom: none; }
-        .tab-btn { background: var(--white); border: 1px solid var(--border-gray); padding: 10px 25px; cursor: pointer; font-size: 16px; color: var(--text-gray); border-radius: 30px; margin-bottom: 0; font-weight: 700; width: auto; display: none; font-family: inherit; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); border-color: var(--primary-blue); }
-        .tab-btn.active { color: var(--white); border: 1px solid var(--primary-blue); background: var(--primary-blue); box-shadow: 0 4px 10px rgba(0, 85, 165, 0.3); }
+        
+        /* Tab stile originale */
+        .tab-navigation { display: none; position: sticky; top: 80px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
+        .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
+        .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
+        .tab-btn.active { color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); background: var(--white); }
+        
         .tab-content { display: none; } .tab-content.active { display: block; }
         .collapsible-header { display: flex; align-items: center; cursor: pointer; padding: 12px 0; border-bottom: 2px solid var(--light-blue); color: var(--primary-blue); margin-bottom: 20px; user-select: none; flex-direction: row-reverse; justify-content: flex-start; }
         .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 15px; }
@@ -206,7 +209,7 @@
 </div>
 
 <div class="container">
-    <!-- TESTO SOSPESO (nessun contenitore) -->
+    <!-- TESTO SOSPESO -->
     <div style="text-align: center; margin-bottom: 40px; padding: 10px 20px;">
         <h1 style="font-family: 'Spectral', serif; font-weight: 500; font-size: 32px; color: var(--dark-blue); margin: 0 0 15px 0; line-height: 1.3;">Scopri in tempo reale le dinamiche delle graduatorie</h1>
         <p style="font-family: 'Spectral', serif; font-size: 18px; font-style: italic; color: var(--text-gray); max-width: 800px; margin: 0 auto; line-height: 1.6;">
@@ -412,7 +415,7 @@
         "secondaria_II": ["ADSS - Sostegno Sec. II grado","A001 - Disegno e storia dell'arte","A002 - Design metalli, oreficeria, pietre","A003 - Discipline audiovisive","A004 - Discipline geometriche, architettura, scenotecnica","A005 - Design del tessuto e della moda","A006 - Discipline grafiche, pittoriche, scenografiche","A007 - Discipline plastiche e scultoree","A008 - Discipline letterarie","A009 - Lettere, latino e greco - Liceo Classico","A010 - Modellazione odontotecnica","A011 - Lettere e latino","A013 - Discipline sanitarie","A014 - Filosofia e scienze umane","A015 - Filosofia e storia","A016 - Fisica","A018 - Geografia","A019 - Italiano L2","A020 - Lingue e culture dell'Asia orientale e sud-orientale","A021 - Matematica","A026 - Matematica e fisica","A027 - Musica","A033 - Scienze degli alimenti","A034 - Scienze della geologia e della mineralogia","A035 - Scienze e tecnologie aeronautiche","A036 - Scienze e tecnologie chimiche","A037 - Scienze e tecnologie della logistica","A038 - Tecnologie delle costruzioni e rappresentazione grafica","A039 - Costruzioni aeronautiche","A040 - Costruzioni navali","A041 - Scienze e tecnologie elettriche ed elettroniche","A042 - Scienze e tecnologie informatiche","A043 - Scienze e tecnologie meccaniche","A044 - Scienze e tecnologie nautiche","A045 - Tecnologie tessili, abbigliamento e moda","A046 - Scienze economico-aziendali","A047 - Scienze giuridico-economiche","A050 - Diritto ed economia politica","A051 - Scienze motorie e sportive","A052 - Scienze naturali, chimiche e biologiche","A053 - Tecnologie agrarie","A054 - Tecnologie di produzioni animali","A057 - Storia","A058 - Storia dell'arte","A059 - Tecnica della danza classica","A061 - Tecnica della danza contemporanea","A062 - Storia della musica e della danza","A063 - Tecnologie e tecniche delle comunicazioni multimediali","A064 - Tecnologie e tecniche per la grafica","A065 - Tecnologie musicali","A066 - Teoria, analisi e composizione","A079 - IRC (Religione Cattolica)","A080 - IRC (Religione Cattolica)","A081 - IRC (Religione Cattolica)","A082 - Classe A082","A083 - IRC (Religione Cattolica)","A086 - Classe A086","AA55 - Arpa","AB55 - Chitarra","AC55 - Clarinetto","AD55 - Contrabbasso","AE55 - Fagotto","AF55 - Flauto","AG55 - Oboe","AH55 - Pianoforte","AI55 - Sassofono","AJ55 - Tromba","AK55 - Trombone","AL55 - Viola","AM55 - Violino","AN55 - Violoncello","AM12 - Classe AM12","AM2A - Classe AM2A","AM2B - Classe AM2B","AM2C - Classe AM2C","AM2D - Classe AM2D","AM48 - Classe AM48","AO55 - Classe AO55","AP55 - Classe AP55","AQ55 - Classe AQ55","AR55 - Classe AR55","AS12 - Classe AS12","AS2A - Classe AS2A","AS2B - Classe AS2B","AS2C - Classe AS2C","AS2D - Classe AS2D","AS2E - Classe AS2E","AS2F - Classe AS2F","AS2H - Classe AS2H","AS2I - Classe AS2I","AS2J - Classe AS2J","AS2K - Classe AS2K","AS2L - Classe AS2L","AS2M - Classe AS2M","AS2N - Classe AS2N","AS48 - Classe AS48","AS55 - Classe AS55","AS71 - Classe AS71","AT55 - Classe AT55","AU55 - Classe AU55","AV55 - Classe AV55","AW55 - Classe AW55","B003 - Classe B003","B004 - Classe B004","B005 - Classe B005","B006 - Classe B006","B007 - Classe B007","B008 - Classe B008","B009 - Classe B009","B010 - Classe B010","B011 - Classe B011","B012 - Classe B012","B013 - Classe B013","B014 - Classe B014","B015 - Classe B015","B016 - Classe B016","B017 - Classe B017","B018 - Classe B018","B019 - Classe B019","B020 - Classe B020","B021 - Classe B021","B022 - Classe B022","B023 - Classe B023","B024 - Classe B024","B025 - Classe B025","B026 - Classe B026","B027 - Classe B027","B028 - Classe B028","B029 - Classe B029","B030 - Classe B030","B031 - Classe B031","B032 - Classe B032","B033 - Classe B033","BA02 - Classe BA02","BB02 - Classe BB02","BC02 - Classe BC02","BD02 - Classe BD02","BE02 - Classe BE02","BF02 - Classe BF02","BG02 - Classe BG02","BH02 - Classe BH02","BI02 - Classe BI02","BJ02 - Classe BJ02","BK02 - Classe BK02","BL02 - Classe BL02","BM02 - Classe BM02","BN02 - Classe BN02"]
     };
 
-    let selectedRegioni = []; let selectedProvince = []; let myChartPdf = null; let myChartBollettino = null;
+    let selectedRegioni = []; let selectedProvince = []; let myChartPdf = []; let myChartBollettino = null;
     let lastScrollTop = 0;
     window.addEventListener('scroll', function() {
         let st = window.pageYOffset || document.documentElement.scrollTop;
@@ -440,12 +443,10 @@
         headerElement.classList.toggle('collapsed');
         const isHidden = content.classList.toggle('hidden');
         if (!isHidden) {
-            const canvas = content.querySelector('canvas');
-            if (canvas) {
-                const chartId = canvas.id;
-                if (chartId === 'statsChartPdf' && myChartPdf) myChartPdf.resize();
-                if (chartId === 'statsChartBollettino' && myChartBollettino) myChartBollettino.resize();
+            if (contentId === 'sec5-content' && myChartPdf) {
+                if (Array.isArray(myChartPdf)) myChartPdf.forEach(c => c.resize());
             }
+            if (contentId === 'sec6_1-content' && myChartBollettino) myChartBollettino.resize();
         }
     }
     document.addEventListener('DOMContentLoaded', function() {
@@ -471,7 +472,15 @@
         selectedProvince.forEach(p => { let tag = document.createElement('div'); tag.className = 'tag'; let span = document.createElement('span'); span.className = 'remove-tag'; span.innerHTML = '&times;'; span.addEventListener('click', function() { removeProvincia(p); }); tag.appendChild(document.createTextNode(p + " ")); tag.appendChild(span); provinceTagsDiv.appendChild(tag); });
     }
     function aggiornaClassiVisibili() {
-        const container = document.getElementById('classiContainer'); const noClassiMsg = document.getElementById('noClassiMsg'); container.innerHTML = '';
+        const container = document.getElementById('classiContainer'); const noClassiMsg = document.getElementById('noClassiMsg'); 
+        
+        // Salva le classi attualmente selezionate
+        let checkedValues = [];
+        document.querySelectorAll('.classe-item input[type="checkbox"]:checked').forEach(cb => {
+            checkedValues.push(cb.value);
+        });
+        
+        container.innerHTML = '';
         let ordiniSelezionati = [];
         document.querySelectorAll('input[name="ordineScuola"]:checked').forEach(cb => ordiniSelezionati.push(cb.value));
         if (ordiniSelezionati.length === 0) { noClassiMsg.style.display = 'block'; return; }
@@ -481,6 +490,10 @@
                 classiConcorsoDB[ordine].forEach(classe => {
                     let div = document.createElement('div'); div.className = 'classe-item';
                     let input = document.createElement('input'); input.type = 'checkbox'; input.id = classe.replace(/\s+/g, '-'); input.value = classe; input.dataset.ordine = ordine;
+                    // Ripristina il check se era selezionato
+                    if (checkedValues.includes(classe)) {
+                        input.checked = true;
+                    }
                     input.addEventListener('change', renderClassiTags);
                     let label = document.createElement('label'); label.htmlFor = input.id; label.textContent = classe;
                     div.appendChild(input); div.appendChild(label); container.appendChild(div);
@@ -556,31 +569,57 @@
             const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
             pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
             
-            const stats = data.stats; const labels = Object.keys(stats);
+            // Distruggi grafici precedenti
+            if (myChartPdf && Array.isArray(myChartPdf)) myChartPdf.forEach(c => c.destroy());
+            myChartPdf = [];
+
+            const stats = data.stats; // Ora è un oggetto di oggetti: { "A022": {"Roma": {...}} }
+            const classiPresenti = Object.keys(stats);
             sec4Wrapper.style.display = 'block';
             
-            if (labels.length > 0) {
-                let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Punteggio Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
-                labels.forEach(l => {
-                    const info = stats[l];
-                    const regione = info.regione === 'N/D' ? '-' : info.regione;
-                    const medianScore = formatScore(info.median);
-                    const topScore = formatScore(info.top);
-                    const bottomScore = formatScore(info.bottom);
-                    tableHTML += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${topScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${bottomScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
+            if (classiPresenti.length > 0) {
+                let htmlOutput = '';
+                const chartsToRender = [];
+
+                classiPresenti.forEach(classe => {
+                    const classStats = stats[classe];
+                    const labels = Object.keys(classStats);
+                    if (labels.length > 0) {
+                        htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
+                        htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
+                        labels.forEach(l => {
+                            const info = classStats[l];
+                            const regione = info.regione === 'N/D' ? '-' : info.regione;
+                            const medianScore = formatScore(info.median);
+                            const topScore = formatScore(info.top);
+                            const bottomScore = formatScore(info.bottom);
+                            htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${topScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${bottomScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
+                        });
+                        htmlOutput += `</tbody></table>`;
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
+                        chartsToRender.push({ id: `chart_${classe}`, labels: labels, stats: classStats });
+                    }
                 });
-                tableHTML += `</tbody></table>`;
-                document.getElementById('statsTableContainerPdf').innerHTML = tableHTML;
-                const ctx = document.getElementById('statsChartPdf').getContext('2d');
-                if (myChartPdf) { myChartPdf.destroy(); }
-                const containerPdf = document.getElementById('statsChartPdf').parentNode;
-                if (labels.length > 6) { containerPdf.style.width = (labels.length * 80) + 'px'; } else { containerPdf.style.width = '100%'; }
-                myChartPdf = new Chart(ctx, {
-                    type: 'bar', data: { labels: labels, datasets: [{ label: 'Scuole per Candidato', data: labels.map(l => stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: 'Rapporto Scuole per Candidato', font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } } } }
+
+                document.getElementById('statsTableContainerPdf').innerHTML = htmlOutput;
+
+                chartsToRender.forEach(c => {
+                    const ctx = document.getElementById(c.id).getContext('2d');
+                    const container = ctx.canvas.parentNode;
+                    if (c.labels.length > 6) {
+                        container.style.width = (c.labels.length * 80) + 'px';
+                    } else {
+                        container.style.width = '100%';
+                    }
+                    const chart = new Chart(ctx, {
+                        type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Scuole per Candidato', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${c.id.replace('chart_', '')}`, font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = c.stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole (S): ${info.scuole}`, `Candidati (C): ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto (S/C)' } }, x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } } } }
+                    });
+                    myChartPdf.push(chart);
                 });
-                sec5Wrapper.style.display = 'block'; sec5_1Wrapper.style.display = 'block';
-                if(myChartPdf) myChartPdf.resize();
+
+                sec5Wrapper.style.display = 'block'; 
+                sec5_1Wrapper.style.display = 'none'; // Nascondiamo il vecchio wrapper statico
                 const tabNav = document.getElementById('tabNav');
                 tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
                 if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
@@ -619,6 +658,15 @@
             const result = await response.json();
             const data = result.data;
             if (data.length > 0) {
+                // Ordine alfabetico per Regione e Provincia
+                data.sort((a, b) => {
+                    if (a.regione < b.regione) return -1;
+                    if (a.regione > b.regione) return 1;
+                    if (a.provincia < b.provincia) return -1;
+                    if (a.provincia > b.provincia) return 1;
+                    return 0;
+                });
+
                 let tableHTML = `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;">
                     <th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th>
                     <th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th>
