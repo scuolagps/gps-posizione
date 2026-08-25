@@ -70,13 +70,78 @@
         .btn-pill:hover { background: var(--dark-blue); transform: translateY(-2px); }
         .btn-pill.orange { background: var(--accent-orange); }
         .btn-pill.orange:hover { background: #e67e22; }
+
+        .container { max-width: 1000px; margin: 30px auto; background: var(--white); padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 60px; border-top: 5px solid var(--primary-blue); }
+        h2 { border-bottom: 2px solid var(--light-blue); padding-bottom: 10px; color: var(--primary-blue); font-size: 22px; font-weight: 600; margin-bottom: 20px; }
+        .section { margin-bottom: 40px; } .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: 600; margin-bottom: 8px; color: var(--dark-blue); font-size: 15px; }
+        select, input[type="text"] { padding: 10px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; font-size: 15px; font-family: inherit; width: 100%; background: var(--white); transition: border-color 0.2s; }
+        select:focus, input:focus { border-color: var(--primary-blue); outline: none; box-shadow: 0 0 0 2px var(--light-blue); }
+        .multi-select-wrapper { display: flex; gap: 15px; align-items: flex-start; }
+        .select-box { width: 35%; }
+        .tags-container { flex: 1; min-height: 42px; padding: 5px; border: 1px solid var(--border-gray); border-radius: 4px; background: var(--white); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tag { background: var(--light-blue); color: var(--dark-blue); padding: 6px 12px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .tag .remove-tag { cursor: pointer; font-weight: bold; background: var(--primary-blue); color: var(--white); border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 12px; line-height: 1; }
+        .tag .remove-tag:hover { background: var(--dark-blue); }
+        .checkbox-group { display: flex; gap: 30px; flex-wrap: wrap; }
+        .checkbox-item { display: flex; align-items: center; font-size: 16px; }
+        .checkbox-item input { margin-right: 10px; width: 18px; height: 18px; accent-color: var(--primary-blue); }
+        .classi-container { border: 1px solid var(--border-gray); padding: 15px; height: 250px; overflow-y: auto; background: var(--bg-gray); border-radius: 4px; }
+        .classe-item { padding: 8px 0; }
+        .classe-item label { font-weight: 400; display: flex; align-items: center; font-size: 15px; }
+        .classe-item input { margin-right: 10px; }
+        button { background: var(--primary-blue); color: var(--white); border: none; padding: 15px 20px; width: 100%; font-size: 18px; border-radius: 4px; cursor: pointer; transition: background 0.3s; font-weight: 600; font-family: inherit; letter-spacing: 0.5px; }
+        button:hover { background: var(--dark-blue); }
+        button:disabled { background: #AAB7C4; cursor: not-allowed; }
+        #statusMessage { text-align: center; margin-top: 20px; font-weight: 600; font-size: 16px; color: #333333; }
+        #noClassiMsg { color: #E74C3C; font-style: italic; display: none; }
+        #pdfViewerContainer { width: 100%; height: 600px; border: 1px solid var(--border-gray); background: var(--bg-gray); display: none; overflow-y: auto; overflow-x: hidden; border-radius: 4px; }
+        #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
+        #pdfViewer iframe { width: 100%; height: 580px; border: none; }
+        .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
+        .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
+        .tab-navigation { display: none; position: sticky; top: 80px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
+        .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
+        .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
+        .tab-btn.active { color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); background: var(--white); }
+        .tab-content { display: none; } .tab-content.active { display: block; }
+        .collapsible-header { display: flex; align-items: center; cursor: pointer; padding: 12px 0; border-bottom: 2px solid var(--light-blue); color: var(--primary-blue); margin-bottom: 20px; user-select: none; flex-direction: row-reverse; justify-content: flex-start; }
+        .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 15px; }
+        .collapse-arrow { transition: transform 0.3s ease; font-size: 14px; }
+        .collapsible-header.collapsed .collapse-arrow { transform: rotate(-90deg); }
+        .collapsible-content { display: block; } .collapsible-content.hidden { display: none; }
+        .pdf-mobile-actions { display: none; text-align: center; padding: 15px; background: var(--light-blue); border-radius: 4px; margin-bottom: 15px; }
+        .pdf-mobile-actions a { display: inline-block; background: var(--primary-blue); color: white !important; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 16px; }
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table-scroll table { min-width: 500px; }
         
+        /* Stile Footer */
+        .site-footer { max-width: 1000px; margin: 0 auto 60px; padding: 30px 40px; text-align: center; color: #666; font-size: 13px; border-top: 1px solid var(--border-gray); }
+        .footer-links { margin-bottom: 15px; }
+        .footer-links a { color: var(--primary-blue); text-decoration: none; margin: 0 8px; font-weight: 600; }
+        .footer-links a:hover { text-decoration: underline; }
+        .footer-disclaimer { line-height: 1.6; color: #888; max-width: 800px; margin: 0 auto 15px; }
+
+        /* STILE MODAL LEGALE */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { background: white; width: 100%; max-width: 800px; max-height: 85vh; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .modal-header { background: var(--primary-blue); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; font-size: 20px; font-weight: 600; }
+        .modal-close { background: none; border: none; color: white; font-size: 28px; cursor: pointer; line-height: 1; }
+        .modal-body { padding: 30px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #333; }
+        .legal-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-gray); }
+        .legal-tab { padding: 10px 15px; border: none; background: none; cursor: pointer; font-weight: 600; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: inherit; }
+        .legal-tab.active { color: var(--primary-blue); border-bottom-color: var(--primary-blue); }
+        .legal-section { display: none; }
+        .legal-section.active { display: block; }
+        .legal-section h4 { color: var(--primary-blue); margin-top: 20px; margin-bottom: 10px; font-size: 16px; }
+        .legal-section p, .legal-section ul { margin-bottom: 15px; }
+
         @media (max-width: 768px) {
             #siteHeader { height: 70px; padding: 0 15px; }
             .header-logo img { height: 45px; }
             .btn-pill { padding: 10px 20px; font-size: 14px; }
             body { padding-top: 80px; }
-        }
             .container { padding: 20px 15px; margin: 15px auto; } h2 { font-size: 18px; }
             .multi-select-wrapper { flex-direction: column; gap: 10px; } .select-box { width: 100%; }
             .checkbox-group { gap: 15px; } .checkbox-item { font-size: 14px; }
@@ -278,10 +343,10 @@
 <!-- INIZIO FOOTER -->
 <footer class="site-footer">
     <div class="footer-links">
-        <a href="#">Privacy</a> · 
-        <a href="#">Cookie</a> · 
-        <a href="#">Termini e condizioni</a> · 
-        <a href="#">Informativa cookie</a>
+        <a href="#" onclick="openLegalModal('privacy')">Privacy</a> · 
+        <a href="#" onclick="openLegalModal('cookie')">Cookie</a> · 
+        <a href="#" onclick="openLegalModal('termini')">Termini e condizioni</a> · 
+        <a href="#" onclick="openLegalModal('informativa')">Informativa cookie</a>
     </div>
     
     <p class="footer-disclaimer">
@@ -889,6 +954,110 @@
             if(footer) footer.style.display = 'block';
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+</script>
+<!-- MODAL INFORMATIVA LEGALE -->
+<div id="legalModal" class="modal-overlay" onclick="closeLegalModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Informative e Normative</h3>
+            <button class="modal-close" onclick="closeLegalModal(event)">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="legal-tabs">
+                <button class="legal-tab active" onclick="switchLegalTab(event, 'privacy')">Privacy</button>
+                <button class="legal-tab" onclick="switchLegalTab(event, 'cookie')">Cookie</button>
+                <button class="legal-tab" onclick="switchLegalTab(event, 'termini')">Termini e Condizioni</button>
+                <button class="legal-tab" onclick="switchLegalTab(event, 'informativa')">Informativa Cookie</button>
+            </div>
+
+            <!-- SEZIONE PRIVACY -->
+            <div id="privacy" class="legal-section active">
+                <h4>1. Titolare del Trattamento</h4>
+                <p>Il titolare del trattamento dei dati è Scuola GPS. Per qualsiasi richiesta relativa alla privacy, è possibile contattarci tramite le informazioni fornute sul sito.</p>
+                <h4>2. Tipologia di Dati Raccolti</h4>
+                <p>Il nostro sito non richiede la registrazione degli utenti e non raccoglie direttamente dati personali sensibili. I dati che inserisci (province, classi di concorso) vengono utilizzati esclusivamente per elaborare le statistiche richieste e non vengono memorizzati sui nostri server in modo permanente.</p>
+                <h4>3. Dati di Navigazione e Finalità</h4>
+                <p>Utilizziamo strumenti di terze parti (Google Analytics) per raccogliere statistiche anonime aggregate su come il sito viene utilizzato, al fine di migliorarne l'esperienza utente. Questi sistemi memorizzano solo ID anonimi e non associano il tuo indirizzo IP alla tua identità.</p>
+                <h4>4. Base Giuridica e Consenso</h4>
+                <p>Il trattamento dei dati di navigazione si basa sul tuo consenso, che puoi revocare in qualsiasi momento disabilitando i cookie dalle impostazioni del tuo browser.</p>
+            </div>
+
+            <!-- SEZIONE COOKIE -->
+            <div id="cookie" class="legal-section">
+                <h4>Cookie Policy</h4>
+                <p>I cookie sono piccoli file di testo che i siti visitati inviano al browser dell'utente, dove vengono memorizzati per essere ritrasmessi al sito alla successiva visita del medesimo utente.</p>
+                <h4>Cookie Utilizzati</h4>
+                <ul>
+                    <li><strong>Cookie Tecnici (Necessari):</strong> Essenziali per il corretto funzionamento del sito. Non richiedono consenso.</li>
+                    <li><strong>Cookie Analitici (Google Analytics):</strong> Utilizzati per raccogliere informazioni aggregate sull'utilizzo del sito. I dati sono anonimi e ci aiutano a migliorare il servizio.</li>
+                </ul>
+                <h4>Gestione e Disabilitazione</h4>
+                <p>L'utente può gestire le preferenze relative ai cookie direttamente all'interno del proprio browser ed impedire – ad esempio – che terze parti possano installarne. Tramite le preferenze del browser è inoltre possibile eliminare i cookie installati in passato.</p>
+            </div>
+
+            <!-- SEZIONE TERMINI -->
+            <div id="termini" class="legal-section">
+                <h4>Termini e Condizioni di Utilizzo</h4>
+                <p>L'accesso e l'utilizzo del sito Scuola GPS implicano l'accettazione integrale dei presenti termini e condizioni.</p>
+                <h4>Natura del Servizio</h4>
+                <p>Scuola GPS è uno strumento di analisi automatizzata. I dati, le estrazioni e le statistiche mostrate sono elaborazioni di dati pubblici ufficiali (Ministero dell'Istruzione). Nessun dato mostrato sul sito costituisce atto amministrativo ufficiale.</p>
+                <h4>Limitazione di Responsabilità</h4>
+                <p>Le analisi, le previsioni sui punteggi di cut-off e i tassi di assorbimento sono stime basate su algoritmi matematici. Scuola GPS non risponde di eventuali discrepanze o errori nei dati grezzi forniti dalle fonti esterne. Il valore legale rimane esclusivamente delle pubblicazioni ufficiali.</p>
+                <h4>Proprietà Intellettuale</h4>
+                <p>I grafici, le interfacce e il codice di elaborazione sono di proprietà di Scuola GPS. È vietata la copia o la riproduzione non autorizzata del software.</p>
+            </div>
+
+            <!-- SEZIONE INFORMATIVA COOKIE (ESTESA) -->
+            <div id="informativa" class="legal-section">
+                <h4>Informativa Estesa sui Cookie (Art. 13 GDPR)</h4>
+                <p>Ai sensi del Regolamento (UE) 2016/679 (GDPR) e della normativa italiana sul diritto alla privacy, forniamo i dettagli specifici sui cookie installati.</p>
+                <h4>Cookie di Google Analytics</h4>
+                <ul>
+                    <li><strong>Nome:</strong> _ga</li>
+                    <li><strong>Durata:</strong> 2 anni</li>
+                    <li><strong>Scopo:</strong> Registrare un ID univoco per generare dati statistici su come il visitatore utilizza il sito.</li>
+                </ul>
+                <ul>
+                    <li><strong>Nome:</strong> _gid</li>
+                    <li><strong>Durata:</strong> 24 ore</li>
+                    <li><strong>Scopo:</strong> Registrare un ID univoco per generare dati statistici su come il visitatore utilizza il sito.</li>
+                </ul>
+                <h4>Diritti dell'Interessato</h4>
+                <p>In qualità di utente, hai il diritto di chiedere l'accesso ai tuoi dati, la cancellazione degli stessi o di opporti al loro trattamento. Per esercitare questi diritti, puoi disabilitare i cookie dal tuo browser in qualsiasi momento.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function openLegalModal(tabName) {
+        event.preventDefault();
+        document.getElementById('legalModal').style.display = 'flex';
+        switchLegalTab(event, tabName);
+    }
+
+    function closeLegalModal(e) {
+        if (e.target.id === 'legalModal' || e.target.classList.contains('modal-close')) {
+            document.getElementById('legalModal').style.display = 'none';
+        }
+    }
+
+    function switchLegalTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("legal-section");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+            tabcontent[i].classList.remove('active');
+        }
+        tablinks = document.getElementsByClassName("legal-tab");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById(tabName).classList.add('active');
+        if(evt) evt.currentTarget.className += " active";
     }
 </script>
 </body>
