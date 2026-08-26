@@ -658,6 +658,33 @@
                         const dataMaxPos = classData.map(item => item.max_posizione);
 
                         classData.forEach(item => {
+                            // --- INIZIO BLOCCO SANITIZZAZIONE DATI ---
+                            let candidati = parseInt(item.candidati_totali) || 0;
+                            let nominati = parseInt(item.nominati_univoci) || 0;
+                            let maxPos = parseInt(item.max_posizione) || 0;
+
+                            // 1. Se ci sono più nominati dei candidati totali, limitiamo i nominati al totale
+                            if (nominati > candidati && candidati > 0) {
+                                nominati = candidati;
+                            }
+
+                            // 2. Se la posizione massima è maggiore del numero di candidati, la limitiamo
+                            if (maxPos > candidati && candidati > 0) {
+                                maxPos = candidati; 
+                            }
+
+                            // 3. Ricalcoliamo le percentuali per essere coerenti
+                            let assorbimento = candidati > 0 ? ((nominati / candidati) * 100).toFixed(2) : 0;
+                            let rinuncia = maxPos > 0 ? (((maxPos - nominati) / maxPos) * 100).toFixed(2) : 0;
+
+                            // Aggiorniamo l'oggetto item con i valori corretti
+                            item.candidati_totali = candidati;
+                            item.nominati_univoci = nominati;
+                            item.max_posizione = maxPos;
+                            item.assorbimento = assorbimento;
+                            item.rinuncia = rinuncia;
+                            // --- FINE BLOCCO SANITIZZAZIONE DATI ---
+
                             const regione = item.regione === 'N/D' ? '-' : item.regione;
                             htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td></tr>`;
                             statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br><span style="color: #333;">Percentuale di Assunzione: <strong style="color: var(--primary-blue);">${item.assorbimento}%</strong> (${item.nominati_univoci} nominate su ${item.candidati_totali} candidati)</span><br><span style="color: #333;">Scorrimento della Graduatoria: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Posizione massima raggiunta: ${item.max_posizione})</span><br><span style="color: #333;">Punteggi Minimi di Chiamata: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span></li>`;
