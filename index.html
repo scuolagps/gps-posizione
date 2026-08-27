@@ -122,23 +122,40 @@
         .legal-section h4 { color: var(--primary-blue); margin-top: 20px; margin-bottom: 10px; font-size: 16px; }
 
         @media (max-width: 768px) {
-            #siteHeader { height: 56px; padding: 0 10px; gap: 8px; }
-            .header-logo { gap: 6px !important; }
+            /* Header compatto solo su smartphone */
+            #siteHeader { height: 54px; padding: 0 10px; gap: 5px; }
+            .header-logo { gap: 5px !important; }
             .header-logo img { height: 32px; border-radius: 4px; }
             .header-logo span { font-size: 18px !important; }
-            .header-nav { gap: 6px; }
+            .header-nav { gap: 5px; }
             .btn-pill { padding: 6px 12px; font-size: 12px; border-radius: 20px; }
-            body { padding-top: 56px; }
-            .container { padding: 0; margin: 12px auto; } h2 { font-size: 17px; }
+            
+            body { padding-top: 54px; }
+            .container { padding: 0; margin: 10px auto; } 
+            h2 { font-size: 17px; }
             .section { padding: 15px; }
-            .multi-select-wrapper { flex-direction: column; gap: 10px; } .select-box { width: 100%; }
-            .checkbox-group { gap: 12px; } .checkbox-item { font-size: 13px; }
-            .tab-navigation { top: 0 !important; padding: 8px 0; } .tab-btn { padding: 6px 12px; font-size: 13px; }
-            .chart-container-generic { min-width: 700px; height: 500px; padding: 20px; }
-            #pdfViewerContainer { height: 500px; } #pdfViewer iframe { height: 480px; }
-            .pdf-mobile-actions { display: block; } button { font-size: 15px; padding: 10px 12px; }
-            h1 { font-size: 22px !important; }
-            p[style*="font-size: 18px"] { font-size: 15px !important; }
+            
+            /* GRAFICI MOLTO PIU GRANDI E LEGGIBILI SU SMARTPHONE */
+            .chart-container-generic { 
+                min-width: 800px; /* Forza lo scroll orizzontale rendendo il grafico largo */
+                height: 500px;     /* Altezza molto maggiore */
+                padding: 20px; 
+                box-sizing: border-box;
+            }
+            .chart-outer-scroll { margin: 15px 0; }
+            
+            #pdfViewerContainer { height: 500px; } 
+            #pdfViewer iframe { height: 480px; }
+            .pdf-mobile-actions { display: block; } 
+            button { font-size: 15px; padding: 12px 15px; }
+            
+            /* Sistemazione titoli e scritte */
+            h1 { font-size: 20px !important; margin-bottom: 10px !important; }
+            p[style*="font-size: 18px"] { font-size: 14px !important; }
+            
+            /* Tab navigation più compatta */
+            .tab-navigation { top: 0 !important; padding: 8px 0; } 
+            .tab-btn { padding: 6px 12px; font-size: 13px; }
         }
     </style>
 </head>
@@ -857,7 +874,8 @@ const classiConcorsoDB = {
                     if (c.labels.length > 6) { container.style.width = (c.labels.length * 80) + 'px'; } else { container.style.width = '100%'; }
                     const chart = new Chart(ctx, {
                         type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Rapporto Scuole/Candidati', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${c.id.replace('chart_', '')}`, font: { size: 14 } }, tooltip: { callbacks: { label: function(context) { const prov = context.label; const info = c.stats[prov]; const r = info.rapporto.toFixed(2).replace('.', ','); return [`Rapporto S/C: ${r}`, `Scuole: ${info.scuole}`, `Candidati: ${info.candidati}`]; } } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati' } }, x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } } } }
+                        // SOSTITUISCI TUTTO OPTIONS:
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { bodyFont: { size: 14 } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati', font: { size: 14 } }, ticks: { font: { size: 13 } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } } } }
                     });
                     myChartPdf.push(chart);
                 });
@@ -989,7 +1007,8 @@ const classiConcorsoDB = {
                             { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
                             { type: 'line', label: 'Scorrimento Graduatoria (Posizione Massima)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                         ]},
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${c.id.replace('chart_bollettino_', '')}`, font: { size: 14 } }, tooltip: { mode: 'index', intersect: false } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 45, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone' }, grid: { drawOnChartArea: true }, beginAtZero: true } } }
+                        // SOSTITUISCI TUTTO OPTIONS:
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
                     });
                     myChartBollettino.push(chart);
                 });
