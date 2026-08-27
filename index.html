@@ -27,6 +27,7 @@
             --bg-gray: #EDF2F7; --white: #FFFFFF;
         }
         * { box-sizing: border-box; }
+        html { scroll-padding-top: 90px; scroll-behavior: smooth; }
         body { font-family: 'Titillium Web', sans-serif; margin: 0; padding: 0; background-color: var(--bg-gray); background-image: linear-gradient(180deg, #E2E8F0 0%, #EDF2F7 100%); background-attachment: fixed; color: var(--text-gray); padding-top: 95px; line-height: 1.6; }
         ::selection { background: #BBD7F0; color: #003B73; }
         ::-moz-selection { background: #BBD7F0; color: #003B73; }
@@ -156,6 +157,8 @@
             /* Tab navigation più compatta */
             .tab-navigation { top: 0 !important; padding: 8px 0; } 
             .tab-btn { padding: 6px 12px; font-size: 13px; }
+
+            html { scroll-padding-top: 66px; }
         }
     </style>
 </head>
@@ -174,7 +177,7 @@
 
 <div class="container">
     <div style="text-align: center; margin-bottom: 40px; padding: 10px 20px;">
-        <h1 style="font-family: 'Spectral', serif; font-weight: 500; font-size: 32px; color: var(--dark-blue); margin: 0 0 15px 0; line-height: 1.3;"> Trova la provincia migliore per il tuo punteggio GPS</h1>
+        <h1 style="font-family: 'Spectral', serif; font-weight: 500; font-size: 32px; color: var(--dark-blue); margin: 0 0 15px 0; line-height: 1.3;"> Trova la provincia migliore per il tuo punteggio GPS</h1>
         <p style="font-family: 'Spectral', serif; font-size: 18px; font-style: italic; color: var(--text-gray); max-width: 800px; margin: 0 auto; line-height: 1.6;">La piattaforma incrocia classe di concorso, numero di istituti e dati di supplenza per individuare le province con le migliori opportunità</p>
     </div>
 
@@ -259,36 +262,6 @@
             </div>
             <div id="progressDetail" style="font-size:12px; color:#888; margin-top:6px; text-align:center;">Calcolo tempo stimato...</div>
         </div>
-    </div>
-        <div id="progressWrapper" style="display:none; margin-top:20px;">
-            <div style="display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:6px;">
-                <span id="progressLabel">Estrazione in corso...</span>
-                <span id="progressPercent">0%</span>
-            </div>
-            <div style="width:100%; height:18px; background:#E2E8F0; border-radius:9px; overflow:hidden; position:relative;">
-                <div id="progressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #0055A5, #F39C12); transition: width 0.4s ease; border-radius:9px;"></div>
-            </div>
-            <div id="progressDetail" style="font-size:12px; color:#888; margin-top:6px; text-align:center;"></div>
-        </div>
-    </div>
-        <div id="progressWrapper" style="display:none; margin-top:20px;">
-    <div style="display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:6px;">
-        <span id="progressLabel">Estrazione in corso...</span>
-        <span id="progressPercent">0%</span>
-    </div>
-    <div style="width:100%; height:18px; background:#E2E8F0; border-radius:9px; overflow:hidden; position:relative;">
-        <div id="progressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #0055A5, #F39C12); transition: width 0.4s ease; border-radius:9px;"></div>
-        <div id="progressStripes" style="position:absolute; top:0; left:0; right:0; bottom:0; background:repeating-linear-gradient(45deg, rgba(255,255,255,0.15) 0 10px, transparent 10px 20px); animation: stripes 1s linear infinite; pointer-events:none;"></div>
-    </div>
-    <div id="progressDetail" style="font-size:12px; color:#888; margin-top:6px; text-align:center;"></div>
-</div>
-
-<style>
-@keyframes stripes {
-    0% { background-position: 0 0; }
-    100% { background-position: 40px 0; }
-}
-</style>
     </div>
 
     <div class="tab-navigation" id="tabNav">
@@ -453,8 +426,23 @@
 </div>
 
 <script>
-    const RENDER_URL = "https://scanner-scolastico.onrender.com/genera-pdf";
-        let progressInterval;
+    const RENDER_BASE = "https://scanner-scolastico.onrender.com";
+    const RENDER_URL = RENDER_BASE + "/genera-pdf";
+    async function wakeUpServer() {
+        try { await fetch(RENDER_BASE + "/health", { method: 'GET' }); } catch(e) { /* ignoriamo */ }
+    }
+
+    const AGGREGATED_SCHOOL_CODES = new Set([
+        'AA56','AB56','AC56','AD56','AE56','AF56','AG56','AH56','AI56','AJ56','AK56','AL56','AM56','AN56',
+        'AA55','AB55','AC55','AD55','AE55','AF55','AG55','AH55','AI55','AJ55','AK55','AL55','AM55','AN55',
+        'AO55','AP55','AQ55','AR55','AS55','AT55','AU55','AV55','AW55'
+    ]);
+    function isAggregatedClass(classeCode) {
+        const code = classeCode.split(' - ')[0].trim().toUpperCase();
+        return AGGREGATED_SCHOOL_CODES.has(code);
+    }
+
+    let progressInterval;
     function stimaTempo(tipo) {
         const numClassi = document.querySelectorAll('.classe-item input[type="checkbox"]:checked').length;
         const numProvince = selectedProvince.length > 0 ? selectedProvince.length : (selectedRegioni.length * 4);
@@ -500,186 +488,22 @@
             document.getElementById('progressWrapper').style.display = 'none';
         }, 800);
     }
+
     const regioniProvince = { "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"] };
-const classiConcorsoDB = {
-    "infanzia": [
-        "AAAA - Scuola dell'infanzia",
-        "AAHN - Sostegno (Minorati dell'udito)",
-        "AAIN - Sostegno (Minorati della vista)",
-        "AALN - Sostegno (Minorati psicofisici)",
-        "ADAA - Sostegno (Scuola dell'infanzia)",
-        "AAPN - Sostegno (Minorati dell'udito)",
-        "AARN - Sostegno (Minorati della vista)"
-    ],
-    "primaria": [
-        "EEEE - Scuola primaria",
-        "ADEE - Sostegno (Scuola primaria)",
-        "EEEM - Educazione motoria (Scuola primaria)",
-        "EEHN - Sostegno (Minorati dell'udito)",
-        "EEIN - Sostegno (Minorati della vista)",
-        "EELN - Sostegno (Minorati psicofisici)",
-        "EEIL - Sostegno (Minorati dell'udito)",
-        "EEPN - Sostegno (Minorati della vista)",
-        "EERN - Sostegno (Minorati psicofisici)",
-        "EECN - Sostegno (Minorati dell'udito)",
-        "EEDN - Sostegno (Minorati della vista)",
-        "EEEN - Sostegno (Minorati psicofisici)",
-        "EEQN - Sostegno (Minorati dell'udito)",
-        "EECH - Sostegno (Minorati della vista)",
-        "EEZJ - Sostegno (Minorati psicofisici)"
-    ],
-    "secondaria_I": [
-        "ADMM - Sostegno Sec. I grado",
-        "A-01 - Arte e immagine",
-        "A-12 - Lettere (Vecchio ordinamento)",
-        "A-22 - Lettere (Italiano, Storia, Geografia)",
-        "AA25 - Lingua e cultura francese",
-        "AB25 - Lingua e Cultura inglese",
-        "AC25 - Lingua e Cultura spagnola",
-        "AD25 - Lingua e Cultura tedesca",
-        "AE25 - Lingua e Cultura slovena",
-        "A-25 - Lingua straniera (Vecchio ordinamento)",
-        "AM2F - Lingua straniera (Potenziamento)",
-        "AM2G - Lingua straniera (Potenziamento)",
-        "A-23 - Italiano L2",
-        "A-28 - Matematica e Scienze",
-        "A-30 - Musica",
-        "A-49 - Scienze Motorie",
-        "A-56 - Sostegno (Vecchio ordinamento)",
-        "A-60 - Tecnologia",
-        "A-70 - Potenziamento (Vecchio ordinamento)",
-        "A-77 - Potenziamento (Vecchio ordinamento)",
-        "AM70 - Potenziamento (AM70)",
-        "AM71 - Potenziamento (AM71)",
-        "A-82 - Lingua e cultura friulana",
-        "A-86 - Lingua e cultura sarda",
-        "A084 - Francese L2",
-        "A085 - Tedesco L2",
-        "IRC - Religione Cattolica",
-        "AA56 - Arpa","AB56 - Chitarra","AC56 - Clarinetto","AD56 - Contrabbasso",
-        "AE56 - Fagotto","AF56 - Flauto","AG56 - Oboe","AH56 - Pianoforte",
-        "AI56 - Sassofono","AJ56 - Tromba","AK56 - Trombone","AL56 - Viola",
-        "AM56 - Violino","AN56 - Violoncello"
-    ],
-    "secondaria_II": [
-        "ADSS - Sostegno Sec. II grado",
-        "A017 - Disegno e storia dell'arte",
-        "A002 - Design metalli, oreficeria, pietre",
-        "A003 - Design della ceramica",
-        "A004 - Design del libro",
-        "A005 - Design del tessuto e della moda",
-        "A006 - Design del vetro",
-        "A007 - Discipline audiovisive",
-        "A008 - Discipline geometriche, architettura, scenotecnica",
-        "A009 - Discipline grafiche, pittoriche, scenografiche",
-        "A010 - Discipline grafico-pubblicitarie",
-        "A011 - Lettere e latino",
-        "A012 - Discipline letterarie",
-        "A013 - Lettere, latino e greco - Liceo Classico",
-        "A014 - Discipline plastiche e scultoree",
-        "A015 - Discipline sanitarie",
-        "A016 - Modellazione odontotecnica",
-        "A018 - Filosofia e scienze umane",
-        "A019 - Filosofia e storia",
-        "A020 - Fisica",
-        "A021 - Geografia",
-        "A023 - Italiano L2",
-        "A024 - Lingue e culture straniere",
-        "A026 - Matematica",
-        "A027 - Matematica e fisica",
-        "A030 - Musica",
-        "A031 - Scienze degli alimenti",
-        "A032 - Scienze della geologia e della mineralogia",
-        "A033 - Scienze e tecnologie aeronautiche",
-        "A034 - Scienze e tecnologie chimiche",
-        "A035 - Tecnologie calzutorie e della moda",
-        "A036 - Scienze e tecnologie della logistica",
-        "A037 - Tecnologie delle costruzioni e rappresentazione grafica",
-        "A038 - Costruzioni aeronautiche",
-        "A039 - Costruzioni navali",
-        "A040 - Scienze e tecnologie elettriche ed elettroniche",
-        "A041 - Scienze e tecnologie informatiche",
-        "A042 - Scienze e tecnologie meccaniche",
-        "A043 - Scienze e tecnologie nautiche",
-        "A044 - Tecnologie tessili, abbigliamento e moda",
-        "A045 - Scienze economico-aziendali",
-        "A046 - Scienze giuridico-economiche",
-        "A047 - Scienze matematiche applicate",
-        "A048 - Scienze motorie e sportive",
-        "A050 - Scienze naturali, chimiche e biologiche",
-        "A051 - Tecnologie agrarie",
-        "A052 - Tecnologie delle produzioni animali",
-        "A053 - Storia della musica",
-        "A054 - Storia dell'arte",
-        "A057 - Tecnica della danza classica",
-        "A058 - Tecnica della danza contemporanea",
-        "A059 - Tecniche di accompagnamento alla danza e teoria, pratica musicale per la danza",
-        "A061 - Tecnologie e tecniche delle comunicazioni multimediali",
-        "A062 - Tecnologie e tecniche per la grafica",
-        "A063 - Tecnologie musicali",
-        "A064 - Teoria, analisi e composizione",
-        "A082 - Lingua e cultura friulana",
-        "A086 - Lingua e cultura sarda",
-        "IRC - Religione Cattolica",
-        "AA55 - Arpa","AB55 - Chitarra","AC55 - Clarinetto","AD55 - Contrabbasso",
-        "AE55 - Fagotto","AF55 - Flauto","AG55 - Oboe","AH55 - Pianoforte",
-        "AI55 - Sassofono","AJ55 - Tromba","AK55 - Trombone","AL55 - Viola",
-        "AM55 - Violino","AN55 - Violoncello",
-        "AO55 - Basso tuba","AP55 - Canto","AQ55 - Clarinetto basso",
-        "AR55 - Corno","AS55 - Flicorno","AT55 - Mandolino",
-        "AU55 - Organo","AV55 - Percussioni","AW55 - Tastiera elettronica",
-        "AS12 - Lettere (Potenziamento)",
-        "AS2A - Lingua e cultura francese (Potenziamento)",
-        "AS2B - Lingua e cultura inglese (Potenziamento)",
-        "AS2C - Lingua e cultura spagnola (Potenziamento)",
-        "AS2D - Lingua e cultura tedesca (Potenziamento)",
-        "AS2E - Lingua e cultura slovena (Potenziamento)",
-        "AS2F - Lingua e cultura russa (Potenziamento)",
-        "AS2H - Lingua e cultura araba (Potenziamento)",
-        "AS2I - Lingua e cultura cinese (Potenziamento)",
-        "AS2J - Lingua e cultura giapponese (Potenziamento)",
-        "AS2K - Lingua e cultura coreana (Potenziamento)",
-        "AS2L - Lingua e cultura hindi (Potenziamento)",
-        "AS2M - Lingua e cultura persiana (Potenziamento)",
-        "AS2N - Lingua e cultura portoghese (Potenziamento)",
-        "AS30 - Musica (Potenziamento)",
-        "AS48 - Scienze motorie e sportive (Potenziamento)",
-        "AS71 - Educazione civica e cittadinanza (Potenziamento)",
-        "B001 - Attività pratiche speciali",
-        "B002 - Conversazione in lingua straniera",
-        "B003 - Laboratorio di fisica",
-        "B004 - Laboratorio di chimica",
-        "B005 - Laboratorio di scienze della terra e mineralogia",
-        "B006 - Laboratorio di odontotecnica",
-        "B007 - Laboratorio di epidemiologia e igiene",
-        "B008 - Laboratorio di ceramica",
-        "B009 - Laboratorio di disegno geometrico",
-        "B010 - Laboratorio di tecnologie e tecniche di rappresentazione grafica",
-        "B011 - Laboratorio di agraria",
-        "B012 - Laboratorio di scienze e tecnologie chimiche e microbiologiche",
-        "B013 - Laboratorio di tecnologia meccanica",
-        "B014 - Laboratorio di tecnologia elettrica ed elettronica",
-        "B015 - Laboratorio di elettronica",
-        "B016 - Laboratorio di informatica",
-        "B017 - Laboratorio di lavorazione del legno",
-        "B018 - Laboratorio di lavorazione dei metalli",
-        "B019 - Laboratorio di lavorazione del vetro",
-        "B020 - Laboratorio di lavorazione delle materie plastiche",
-        "B021 - Laboratorio di enogastronomia e ospitalità alberghiera",
-        "B022 - Laboratorio di servizi commerciali",
-        "B023 - Laboratorio di servizi socio-sanitari",
-        "B024 - Laboratorio di lavorazione delle pelli e del cuoio",
-        "B025 - Laboratorio di disegno di modelli e taglio",
-        "B026 - Laboratorio di confezione",
-        "B027 - Laboratorio di lavorazione dei prodotti agricoli",
-        "B028 - Laboratorio di tecniche di allevamento",
-        "B029 - Laboratorio di tecniche di coltivazione",
-        "B030 - Laboratorio di tecnologie della pesca",
-        "B031 - Laboratorio di conduzione del mezzo navale",
-        "B032 - Laboratorio di elaborazione digitale delle immagini e dei suoni",
-        "B033 - Laboratorio di tecniche audiovisive"
-    ]
-};
+    const classiConcorsoDB = {
+        "infanzia": [
+            "AAAA - Scuola dell'infanzia", "AAHN - Sostegno (Minorati dell'udito)", "AAIN - Sostegno (Minorati della vista)", "AALN - Sostegno (Minorati psicofisici)", "ADAA - Sostegno (Scuola dell'infanzia)", "AAPN - Sostegno (Minorati dell'udito)", "AARN - Sostegno (Minorati della vista)"
+        ],
+        "primaria": [
+            "EEEE - Scuola primaria", "ADEE - Sostegno (Scuola primaria)", "EEEM - Educazione motoria (Scuola primaria)", "EEHN - Sostegno (Minorati dell'udito)", "EEIN - Sostegno (Minorati della vista)", "EELN - Sostegno (Minorati psicofisici)", "EEIL - Sostegno (Minorati dell'udito)", "EEPN - Sostegno (Minorati della vista)", "EERN - Sostegno (Minorati psicofisici)", "EECN - Sostegno (Minorati dell'udito)", "EEDN - Sostegno (Minorati della vista)", "EEEN - Sostegno (Minorati psicofisici)", "EEQN - Sostegno (Minorati dell'udito)", "EECH - Sostegno (Minorati della vista)", "EEZJ - Sostegno (Minorati psicofisici)"
+        ],
+        "secondaria_I": [
+            "ADMM - Sostegno Sec. I grado", "A-01 - Arte e immagine", "A-12 - Lettere (Vecchio ordinamento)", "A-22 - Lettere (Italiano, Storia, Geografia)", "AA25 - Lingua e cultura francese", "AB25 - Lingua e Cultura inglese", "AC25 - Lingua e Cultura spagnola", "AD25 - Lingua e Cultura tedesca", "AE25 - Lingua e Cultura slovena", "A-25 - Lingua straniera (Vecchio ordinamento)", "AM2F - Lingua straniera (Potenziamento)", "AM2G - Lingua straniera (Potenziamento)", "A-23 - Italiano L2", "A-28 - Matematica e Scienze", "A-30 - Musica", "A-49 - Scienze Motorie", "A-56 - Sostegno (Vecchio ordinamento)", "A-60 - Tecnologia", "A-70 - Potenziamento (Vecchio ordinamento)", "A-77 - Potenziamento (Vecchio ordinamento)", "AM70 - Potenziamento (AM70)", "AM71 - Potenziamento (AM71)", "A-82 - Lingua e cultura friulana", "A-86 - Lingua e cultura sarda", "A084 - Francese L2", "A085 - Tedesco L2", "IRC - Religione Cattolica", "AA56 - Arpa","AB56 - Chitarra","AC56 - Clarinetto","AD56 - Contrabbasso", "AE56 - Fagotto","AF56 - Flauto","AG56 - Oboe","AH56 - Pianoforte", "AI56 - Sassofono","AJ56 - Tromba","AK56 - Trombone","AL56 - Viola", "AM56 - Violino","AN56 - Violoncello"
+        ],
+        "secondaria_II": [
+            "ADSS - Sostegno Sec. II grado", "A017 - Disegno e storia dell'arte", "A002 - Design metalli, oreficeria, pietre", "A003 - Design della ceramica", "A004 - Design del libro", "A005 - Design del tessuto e della moda", "A006 - Design del vetro", "A007 - Discipline audiovisive", "A008 - Discipline geometriche, architettura, scenotecnica", "A009 - Discipline grafiche, pittoriche, scenografiche", "A010 - Discipline grafico-pubblicitarie", "A011 - Lettere e latino", "A012 - Discipline letterarie", "A013 - Lettere, latino e greco - Liceo Classico", "A014 - Discipline plastiche e scultoree", "A015 - Discipline sanitarie", "A016 - Modellazione odontotecnica", "A018 - Filosofia e scienze umane", "A019 - Filosofia e storia", "A020 - Fisica", "A021 - Geografia", "A023 - Italiano L2", "A024 - Lingue e culture straniere", "A026 - Matematica", "A027 - Matematica e fisica", "A030 - Musica", "A031 - Scienze degli alimenti", "A032 - Scienze della geologia e della mineralogia", "A033 - Scienze e tecnologie aeronautiche", "A034 - Scienze e tecnologie chimiche", "A035 - Tecnologie calzutorie e della moda", "A036 - Scienze e tecnologie della logistica", "A037 - Tecnologie delle costruzioni e rappresentazione grafica", "A038 - Costruzioni aeronautiche", "A039 - Costruzioni navali", "A040 - Scienze e tecnologie elettriche ed elettroniche", "A041 - Scienze e tecnologie informatiche", "A042 - Scienze e tecnologie meccaniche", "A043 - Scienze e tecnologie nautiche", "A044 - Tecnologie tessili, abbigliamento e moda", "A045 - Scienze economico-aziendali", "A046 - Scienze giuridico-economiche", "A047 - Scienze matematiche applicate", "A048 - Scienze motorie e sportive", "A050 - Scienze naturali, chimiche e biologiche", "A051 - Tecnologie agrarie", "A052 - Tecnologie delle produzioni animali", "A053 - Storia della musica", "A054 - Storia dell'arte", "A057 - Tecnica della danza classica", "A058 - Tecnica della danza contemporanea", "A059 - Tecniche di accompagnamento alla danza e teoria, pratica musicale per la danza", "A061 - Tecnologie e tecniche delle comunicazioni multimediali", "A062 - Tecnologie e tecniche per la grafica", "A063 - Tecnologie musicali", "A064 - Teoria, analisi e composizione", "A082 - Lingua e cultura friulana", "A086 - Lingua e cultura sarda", "IRC - Religione Cattolica", "AA55 - Arpa","AB55 - Chitarra","AC55 - Clarinetto","AD55 - Contrabbasso", "AE55 - Fagotto","AF55 - Flauto","AG55 - Oboe","AH55 - Pianoforte", "AI55 - Sassofono","AJ55 - Tromba","AK55 - Trombone","AL55 - Viola", "AM55 - Violino","AN55 - Violoncello", "AO55 - Basso tuba","AP55 - Canto","AQ55 - Clarinetto basso", "AR55 - Corno","AS55 - Flicorno","AT55 - Mandolino", "AU55 - Organo","AV55 - Percussioni","AW55 - Tastiera elettronica", "AS12 - Lettere (Potenziamento)", "AS2A - Lingua e cultura francese (Potenziamento)", "AS2B - Lingua e cultura inglese (Potenziamento)", "AS2C - Lingua e cultura spagnola (Potenziamento)", "AS2D - Lingua e cultura tedesca (Potenziamento)", "AS2E - Lingua e cultura slovena (Potenziamento)", "AS2F - Lingua e cultura russa (Potenziamento)", "AS2H - Lingua e cultura araba (Potenziamento)", "AS2I - Lingua e cultura cinese (Potenziamento)", "AS2J - Lingua e cultura giapponese (Potenziamento)", "AS2K - Lingua e cultura coreana (Potenziamento)", "AS2L - Lingua e cultura hindi (Potenziamento)", "AS2M - Lingua e cultura persiana (Potenziamento)", "AS2N - Lingua e cultura portoghese (Potenziamento)", "AS30 - Musica (Potenziamento)", "AS48 - Scienze motorie e sportive (Potenziamento)", "AS71 - Educazione civica e cittadinanza (Potenziamento)", "B001 - Attività pratiche speciali", "B002 - Conversazione in lingua straniera", "B003 - Laboratorio di fisica", "B004 - Laboratorio di chimica", "B005 - Laboratorio di scienze della terra e mineralogia", "B006 - Laboratorio di odontotecnica", "B007 - Laboratorio di epidemiologia e igiene", "B008 - Laboratorio di ceramica", "B009 - Laboratorio di disegno geometrico", "B010 - Laboratorio di tecnologie e tecniche di rappresentazione grafica", "B011 - Laboratorio di agraria", "B012 - Laboratorio di scienze e tecnologie chimiche e microbiologiche", "B013 - Laboratorio di tecnologia meccanica", "B014 - Laboratorio di tecnologia elettrica ed elettronica", "B015 - Laboratorio di elettronica", "B016 - Laboratorio di informatica", "B017 - Laboratorio di lavorazione del legno", "B018 - Laboratorio di lavorazione dei metalli", "B019 - Laboratorio di lavorazione del vetro", "B020 - Laboratorio di lavorazione delle materie plastiche", "B021 - Laboratorio di enogastronomia e ospitalità alberghiera", "B022 - Laboratorio di servizi commerciali", "B023 - Laboratorio di servizi socio-sanitari", "B024 - Laboratorio di lavorazione delle pelli e del cuoio", "B025 - Laboratorio di disegno di modelli e taglio", "B026 - Laboratorio di confezione", "B027 - Laboratorio di lavorazione dei prodotti agricoli", "B028 - Laboratorio di tecniche di allevamento", "B029 - Laboratorio di tecniche di coltivazione", "B030 - Laboratorio di tecnologie della pesca", "B031 - Laboratorio di conduzione del mezzo navale", "B032 - Laboratorio di elaborazione digitale delle immagini e dei suoni", "B033 - Laboratorio di tecniche audiovisive"
+        ]
+    };
     let selectedRegioni = []; let selectedProvince = []; let myChartPdf = []; let myChartBollettino = [];
     let lastScrollTop = 0;
     window.addEventListener('scroll', function() {
@@ -702,6 +526,10 @@ const classiConcorsoDB = {
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
         if (tabName === 'pdf') { document.getElementById('tab-pdf').classList.add('active'); document.getElementById('tab1Btn').classList.add('active'); }
         else { document.getElementById('tab-bollettino').classList.add('active'); document.getElementById('tab2Btn').classList.add('active'); }
+        setTimeout(() => {
+            const tabNav = document.getElementById('tabNav');
+            if (tabNav.style.display === 'flex') { tabNav.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+        }, 100);
     }
     function toggleSection(headerElement, contentId) {
         const content = document.getElementById(contentId);
@@ -803,10 +631,9 @@ const classiConcorsoDB = {
         btn.disabled = true; btn.innerText = "Generazione in corso...";
         statusMsg.style.color = "#0055A5"; statusMsg.innerText = "Avvio server in corso (può richiedere fino a 60s la prima volta)...";
         
-        startProgress('pdf'); // <-- AVVIA BARRA
+        startProgress('pdf'); // AVVIA BARRA
         await wakeUpServer(); 
         try {
-            // ... il resto del codice fetch ecc ...
             const fasciaSelezionata = document.getElementById('fasciaSelect').value;
             const annoSelezionato = document.getElementById('annoSelect').value;
             const response = await fetch(RENDER_URL, {
@@ -869,12 +696,20 @@ const classiConcorsoDB = {
                 document.getElementById('statsTableContainerPdf').innerHTML = htmlOutput;
 
                 chartsToRender.forEach(c => {
+                    const classeCode = c.id.replace('chart_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 80) + 'px'; } else { container.style.width = '100%'; }
+                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 120) + 'px'; } else { container.style.width = '100%'; }
+                    
+                    if (isAggregatedClass(classeCode)) {
+                        const note = document.createElement('p');
+                        note.style.cssText = 'font-size:11px; color:#888; margin-top:8px; line-height:1.4; font-style:italic;';
+                        note.innerHTML = '⚠️ Il numero di scuole si riferisce al <strong>totale aggregato delle scuole musicali</strong> della provincia, non alla singola classe di concorso. Il rapporto S/C è indicativo.';
+                        container.appendChild(note);
+                    }
+                    
                     const chart = new Chart(ctx, {
                         type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Rapporto Scuole/Candidati', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
-                        // SOSTITUISCI TUTTO OPTIONS:
                         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { bodyFont: { size: 14 } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati', font: { size: 14 } }, ticks: { font: { size: 13 } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } } } }
                     });
                     myChartPdf.push(chart);
@@ -897,8 +732,10 @@ const classiConcorsoDB = {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
         } finally { 
             btn.disabled = false; btn.innerText = "Graduatorie";
-            stopProgress(); // <-- FERMA BARRA
+            stopProgress(); // FERMA BARRA
         }
+    }
+
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
@@ -910,6 +747,9 @@ const classiConcorsoDB = {
         if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
         btn.disabled = true; btn.innerText = "Estrazione in corso...";
         statusMsg.style.color = "#F39C12"; statusMsg.innerText = "Estrazione nomine in corso... Attendi.";
+        
+        startProgress('bollettino'); // AVVIA BARRA
+        await wakeUpServer(); // Sveglia server
         try {
             const fasciaSelezionata = document.getElementById('fasciaSelect').value;
             const bollettinoURL = RENDER_URL.replace('/genera-pdf', '/genera-bollettino');
@@ -952,33 +792,21 @@ const classiConcorsoDB = {
                         const dataMaxPos = classData.map(item => item.max_posizione);
 
                         classData.forEach(item => {
-                            // --- INIZIO BLOCCO SANITIZZAZIONE DATI ---
                             let candidati = parseInt(item.candidati_totali) || 0;
                             let nominati = parseInt(item.nominati_univoci) || 0;
                             let maxPos = parseInt(item.max_posizione) || 0;
 
-                            // 1. Se ci sono più nominati dei candidati totali, limitiamo i nominati al totale
-                            if (nominati > candidati && candidati > 0) {
-                                nominati = candidati;
-                            }
+                            if (nominati > candidati && candidati > 0) { nominati = candidati; }
+                            if (maxPos > candidati && candidati > 0) { maxPos = candidati; }
 
-                            // 2. Se la posizione massima è maggiore del numero di candidati, la limitiamo
-                            if (maxPos > candidati && candidati > 0) {
-                                maxPos = candidati; 
-                            }
-
-                            // 3. Ricalcoliamo le percentuali per essere coerenti
-                            // candidati==0 => dato mancante sul file sorgente: mostriamo N/D, non 0%
                             let assorbimento = candidati > 0 ? ((nominati / candidati) * 100).toFixed(2) : null;
                             let rinuncia = maxPos > 0 ? (((maxPos - nominati) / maxPos) * 100).toFixed(2) : 0;
 
-                            // Aggiorniamo l'oggetto item con i valori corretti
                             item.candidati_totali = candidati;
                             item.nominati_univoci = nominati;
                             item.max_posizione = maxPos;
                             item.assorbimento = assorbimento;
                             item.rinuncia = rinuncia;
-                            // --- FINE BLOCCO SANITIZZAZIONE DATI ---
 
                             const regione = item.regione === 'N/D' ? '-' : item.regione;
                             htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento === null ? '<span style="color:#999;">N/D</span>' : item.assorbimento + '%'}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td></tr>`;
@@ -998,16 +826,24 @@ const classiConcorsoDB = {
                 document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
 
                 chartsToRender.forEach(c => {
+                    const classeCode = c.id.replace('chart_bollettino_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 80) + 'px'; } else { container.style.width = '100%'; }
+                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 120) + 'px'; } else { container.style.width = '100%'; }
+                    
+                    if (isAggregatedClass(classeCode)) {
+                        const note = document.createElement('p');
+                        note.style.cssText = 'font-size:11px; color:#888; margin-top:8px; line-height:1.4; font-style:italic;';
+                        note.innerHTML = '⚠️ Il numero di scuole si riferisce al <strong>totale aggregato delle scuole musicali</strong> della provincia, non alla singola classe di concorso.';
+                        container.appendChild(note);
+                    }
+                    
                     const chart = new Chart(ctx, {
                         type: 'bar', data: { labels: c.labels, datasets: [
                             { label: 'Candidati Totali', data: c.dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
                             { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
                             { type: 'line', label: 'Scorrimento Graduatoria (Posizione Massima)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                         ]},
-                        // SOSTITUISCI TUTTO OPTIONS:
                         options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
                     });
                     myChartBollettino.push(chart);
@@ -1033,7 +869,10 @@ const classiConcorsoDB = {
             statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i dati qui sotto.";
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
-        } finally { btn.disabled = false; btn.innerText = "Nomine"; }
+        } finally { 
+            btn.disabled = false; btn.innerText = "Nomine"; 
+            stopProgress(); // FERMA BARRA
+        }
     }
 
     // Funzioni Modali
