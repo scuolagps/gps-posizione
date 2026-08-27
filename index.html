@@ -70,15 +70,16 @@
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
         #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
-        .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 25px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 450px; }
+        .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 30px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 600px; min-width: 800px; box-sizing: border-box; }
         .tab-navigation { display: none; position: sticky; top: 80px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
         .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
         .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
         .tab-btn.active { color: var(--primary-blue); border-bottom: 3px solid var(--primary-blue); background: var(--white); }
         .tab-content { display: none; } .tab-content.active { display: block; }
-        .collapsible-header { display: flex; align-items: center; cursor: pointer; padding: 12px 0; border-bottom: 2px solid var(--light-blue); color: var(--primary-blue); margin-bottom: 20px; user-select: none; flex-direction: row-reverse; justify-content: flex-start; }
-        .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 15px; }
-        .collapse-arrow { transition: transform 0.3s ease; font-size: 14px; }
+        .collapsible-header { display: flex; align-items: center; cursor: pointer; padding: 14px 18px; border: 2px solid var(--light-blue); border-radius: 8px; background: linear-gradient(135deg, #f8fbff 0%, #eef5fc 100%); color: var(--primary-blue); margin-bottom: 20px; user-select: none; flex-direction: row-reverse; justify-content: flex-start; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,85,165,0.08); }
+        .collapsible-header:hover { background: linear-gradient(135deg, #e6f1fb 0%, #d4e8f7 100%); border-color: var(--primary-blue); transform: translateX(3px); box-shadow: 0 4px 8px rgba(0,85,165,0.15); }
+        .collapsible-header h2 { margin: 0; border: none; padding: 0; margin-right: 15px; font-size: 18px; }
+        .collapse-arrow { transition: transform 0.3s ease; font-size: 16px; background: var(--primary-blue); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
         .collapsible-header.collapsed .collapse-arrow { transform: rotate(-90deg); }
         .collapsible-content { display: block; } .collapsible-content.hidden { display: none; }
         .pdf-mobile-actions { display: none; text-align: center; padding: 15px; background: var(--light-blue); border-radius: 4px; margin-bottom: 15px; }
@@ -121,18 +122,23 @@
         .legal-section h4 { color: var(--primary-blue); margin-top: 20px; margin-bottom: 10px; font-size: 16px; }
 
         @media (max-width: 768px) {
-            #siteHeader { height: 70px; padding: 0 15px; }
-            .header-logo img { height: 45px; }
-            .btn-pill { padding: 10px 20px; font-size: 14px; }
-            body { padding-top: 80px; }
-            .container { padding: 0; margin: 15px auto; } h2 { font-size: 18px; }
-            .section { padding: 20px; }
+            #siteHeader { height: 56px; padding: 0 10px; gap: 8px; }
+            .header-logo { gap: 6px !important; }
+            .header-logo img { height: 32px; border-radius: 4px; }
+            .header-logo span { font-size: 18px !important; }
+            .header-nav { gap: 6px; }
+            .btn-pill { padding: 6px 12px; font-size: 12px; border-radius: 20px; }
+            body { padding-top: 56px; }
+            .container { padding: 0; margin: 12px auto; } h2 { font-size: 17px; }
+            .section { padding: 15px; }
             .multi-select-wrapper { flex-direction: column; gap: 10px; } .select-box { width: 100%; }
-            .checkbox-group { gap: 15px; } .checkbox-item { font-size: 14px; }
-            .tab-navigation { top: 0 !important; padding: 10px 0; } .tab-btn { padding: 8px 15px; font-size: 14px; }
-            .chart-container-generic { min-width: 600px; height: 400px; padding: 15px; }
+            .checkbox-group { gap: 12px; } .checkbox-item { font-size: 13px; }
+            .tab-navigation { top: 0 !important; padding: 8px 0; } .tab-btn { padding: 6px 12px; font-size: 13px; }
+            .chart-container-generic { min-width: 700px; height: 500px; padding: 20px; }
             #pdfViewerContainer { height: 500px; } #pdfViewer iframe { height: 480px; }
-            .pdf-mobile-actions { display: block; } button { font-size: 16px; padding: 12px 15px; }
+            .pdf-mobile-actions { display: block; } button { font-size: 15px; padding: 10px 12px; }
+            h1 { font-size: 22px !important; }
+            p[style*="font-size: 18px"] { font-size: 15px !important; }
         }
     </style>
 </head>
@@ -225,6 +231,24 @@
             <button id="bollettinoBtn" style="flex: 1 1 250px; background: var(--accent-orange);">Nomine</button>
         </div>
         <div id="statusMessage"></div>
+        <div id="progressWrapper" style="display:none; margin-top:20px;">
+    <div style="display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:6px;">
+        <span id="progressLabel">Estrazione in corso...</span>
+        <span id="progressPercent">0%</span>
+    </div>
+    <div style="width:100%; height:18px; background:#E2E8F0; border-radius:9px; overflow:hidden; position:relative;">
+        <div id="progressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #0055A5, #F39C12); transition: width 0.4s ease; border-radius:9px;"></div>
+        <div id="progressStripes" style="position:absolute; top:0; left:0; right:0; bottom:0; background:repeating-linear-gradient(45deg, rgba(255,255,255,0.15) 0 10px, transparent 10px 20px); animation: stripes 1s linear infinite; pointer-events:none;"></div>
+    </div>
+    <div id="progressDetail" style="font-size:12px; color:#888; margin-top:6px; text-align:center;"></div>
+</div>
+
+<style>
+@keyframes stripes {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 0; }
+}
+</style>
     </div>
 
     <div class="tab-navigation" id="tabNav">
