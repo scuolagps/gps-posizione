@@ -442,13 +442,20 @@
         return AGGREGATED_SCHOOL_CODES.has(code);
     }
 
+    // === SISTEMA DI CODA ESTRAZIONI ===
+    let isExtracting = false;
+    let extractionQueue = [];
     let progressInterval;
+    let globalStartTime = 0;
+    let globalEstimatedTime = 0;
+
     function stimaTempo(tipo) {
         const numClassi = document.querySelectorAll('.classe-item input[type="checkbox"]:checked').length;
         const numProvince = selectedProvince.length > 0 ? selectedProvince.length : (selectedRegioni.length * 4);
         const mult = tipo === 'pdf' ? 6000 : 10000; // ms per classe×provincia
         return Math.max(20000, numClassi * numProvince * mult); // Minimo 20 secondi
     }
+
     function startProgress(tipo) {
         const wrapper = document.getElementById('progressWrapper');
         const bar = document.getElementById('progressBar');
@@ -457,20 +464,26 @@
         const lbl = document.getElementById('progressLabel');
         
         wrapper.style.display = 'block';
-        bar.style.width = '0%';
-        pct.innerText = '0%';
-        lbl.innerText = tipo === 'pdf' ? "Estrazione Graduatorie..." : "Estrazione Nomine...";
         
-        const startTime = Date.now();
-        const estimated = stimaTempo(tipo);
+        // Se è la prima estrazione, inizializza il timer globale
+        if (globalStartTime === 0) {
+            globalStartTime = Date.now();
+            globalEstimatedTime = stimaTempo(tipo);
+            lbl.innerText = tipo === 'pdf' ? "Estrazione Graduatorie in corso..." : "Estrazione Nomine in corso...";
+        } else {
+            // Se è la seconda estrazione in coda, aggiunge il tempo stimato al totale
+            globalEstimatedTime += stimaTempo(tipo);
+            lbl.innerText = "Estrazione combinata (Graduatorie + Nomine) in corso...";
+        }
         
+        clearInterval(progressInterval);
         progressInterval = setInterval(() => {
-            const elapsed = Date.now() - startTime;
-            let progress = Math.min(95, (elapsed / estimated) * 100);
+            const elapsed = Date.now() - globalStartTime;
+            let progress = Math.min(95, (elapsed / globalEstimatedTime) * 100);
             bar.style.width = progress + '%';
             pct.innerText = Math.round(progress) + '%';
             
-            const remaining = Math.max(0, Math.round((estimated - elapsed) / 1000));
+            const remaining = Math.max(0, Math.round((globalEstimatedTime - elapsed) / 1000));
             if (remaining > 0) {
                 det.innerText = `Tempo rimanente stimato: ${remaining} secondi`;
             } else {
@@ -478,15 +491,70 @@
             }
         }, 200);
     }
+
     function stopProgress() {
         clearInterval(progressInterval);
+        globalStartTime = 0;
+        globalEstimatedTime = 0;
         const bar = document.getElementById('progressBar');
         const pct = document.getElementById('progressPercent');
         bar.style.width = '100%';
         pct.innerText = '100%';
         setTimeout(() => {
             document.getElementById('progressWrapper').style.display = 'none';
+            bar.style.width = '0%'; // Reset per il prossimo uso
         }, 800);
+    }
+
+    // Funzione wrapper che gestisce la coda
+    async function runExtraction(tipo) {
+        const statusMsg = document.getElementById('statusMessage');
+        const btnPdf = document.getElementById('generaBtn');
+        const btnBol = document.getElementById('bollettinoBtn');
+
+        // Se c'è già un'estrazione in corso, mette in coda
+        if (isExtracting) {
+            extractionQueue.push(tipo);
+            statusMsg.style.color = "#0055A5";
+            statusMsg.innerText = "Estrazione aggiunta alla coda. Attendi il completamento della prima...";
+            return;
+        }
+        
+        // Avvia estrazione
+        isExtracting = true;
+        btnPdf.disabled = true;
+        btnBol.disabled = true;
+        
+        startProgress(tipo);
+        await wakeUpServer();
+        
+        try {
+            if (tipo === 'pdf') {
+                btnPdf.innerText = "In corso...";
+                await doGeneraPDF();
+            } else {
+                btnBol.innerText = "In corso...";
+                await doGeneraBollettino();
+            }
+        } catch (error) {
+            console.error('Errore:', error);
+            statusMsg.style.color = "#E74C3C";
+            statusMsg.innerText = "Errore: " + error.message;
+        } finally {
+            // Quando l'estrazione corrente finisce, controlla se ce n'è un'altra in coda
+            isExtracting = false;
+            if (extractionQueue.length > 0) {
+                const nextTipo = extractionQueue.shift();
+                runExtraction(nextTipo); // Avvia la successiva
+            } else {
+                // Se la coda è vuota, ferma la barra e riabilita i bottoni
+                stopProgress();
+                btnPdf.disabled = false;
+                btnBol.disabled = false;
+                btnPdf.innerText = "Graduatorie";
+                btnBol.innerText = "Nomine";
+            }
+        }
     }
 
     const regioniProvince = { "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"] };
@@ -544,8 +612,8 @@
         const regioneSelect = document.getElementById('regioneSelect');
         for (let regione in regioniProvince) { let option = document.createElement('option'); option.value = regione; option.text = regione; regioneSelect.add(option); }
         aggiornaClassiVisibili();
-        document.getElementById('generaBtn').addEventListener('click', generaPDF);
-        document.getElementById('bollettinoBtn').addEventListener('click', generaBollettino);
+        document.getElementById('generaBtn').addEventListener('click', () => runExtraction('pdf'));
+        document.getElementById('bollettinoBtn').addEventListener('click', () => runExtraction('bollettino'));
         document.getElementById('regioneSelect').addEventListener('change', addRegione);
         document.getElementById('provinciaSelect').addEventListener('change', addProvincia);
         document.getElementById('searchClassi').addEventListener('input', filtraClassi);
@@ -613,89 +681,87 @@
         if (s.endsWith(',0')) s = s.replace(',0', '');
         return s;
     }
-    async function generaPDF() {
+
+    // Logica interna spostata da generaPDF a doGeneraPDF
+    async function doGeneraPDF() {
         const statusMsg = document.getElementById('statusMessage');
         const pdfViewerDiv = document.getElementById('pdfViewer');
         const pdfContainer = document.getElementById('pdfViewerContainer');
         const pdfDownloadLink = document.getElementById('pdfDownloadLink');
         const sec4Wrapper = document.getElementById('sec4-wrapper');
         const sec5Wrapper = document.getElementById('chartSectionPdfWrapper');
-        const btn = document.getElementById('generaBtn');
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
         let classiSelezionate = [];
         checkboxes.forEach(cb => {
             const ord = cb.dataset.ordine || '';
             classiSelezionate.push(ord + '|' + cb.value);
         });
-        if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
-        btn.disabled = true; btn.innerText = "Generazione in corso...";
-        statusMsg.style.color = "#0055A5"; statusMsg.innerText = "Avvio server in corso (può richiedere fino a 60s la prima volta)...";
+        if (classiSelezionate.length === 0) { throw new Error("Devi selezionare almeno una classe di concorso."); }
         
-        startProgress('pdf'); // AVVIA BARRA
-        await wakeUpServer(); 
-        try {
-            const fasciaSelezionata = document.getElementById('fasciaSelect').value;
-            const annoSelezionato = document.getElementById('annoSelect').value;
-            const response = await fetch(RENDER_URL, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata, anno: annoSelezionato })
-            });
-            if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
-            const data = await response.json();
-            const byteCharacters = atob(data.pdf_base64);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
-            const arrayBuffer = new Uint8Array(byteNumbers);
-            pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
-            pdfContainer.style.display = 'block';
-            const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
-            const pdfUrl = URL.createObjectURL(pdfBlob);
-            pdfDownloadLink.href = pdfUrl;
-            const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
-            pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
-            
-            if (myChartPdf && Array.isArray(myChartPdf)) myChartPdf.forEach(c => c.destroy());
-            myChartPdf = [];
+        statusMsg.style.color = "#0055A5"; statusMsg.innerText = "Estrazione graduatorie in corso... Attendi.";
+        
+        const fasciaSelezionata = document.getElementById('fasciaSelect').value;
+        const annoSelezionato = document.getElementById('annoSelect').value;
+        const response = await fetch(RENDER_URL, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata, anno: annoSelezionato })
+        });
+        if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
+        const data = await response.json();
+        const byteCharacters = atob(data.pdf_base64);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) { byteNumbers[i] = byteCharacters.charCodeAt(i); }
+        const arrayBuffer = new Uint8Array(byteNumbers);
+        pdfViewerDiv.innerHTML = '<p style="margin-top: 20px; color: #666;">Caricamento anteprima in corso...</p>';
+        pdfContainer.style.display = 'block';
+        const pdfBlob = new Blob([arrayBuffer], { type: 'application/pdf' });
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        pdfDownloadLink.href = pdfUrl;
+        const safePdfUrl = `${pdfUrl}#toolbar=0&navpanes=0`;
+        pdfViewerDiv.innerHTML = `<iframe src="${safePdfUrl}" style="width: 100%; height: 580px; border: none;"></iframe>`;
+        
+        if (myChartPdf && Array.isArray(myChartPdf)) myChartPdf.forEach(c => c.destroy());
+        myChartPdf = [];
 
-            const stats = data.stats; 
-            const classiPresenti = Object.keys(stats);
-            sec4Wrapper.style.display = 'block';
-            
-            let hasAnyData = false;
-            if (classiPresenti.length > 0) {
-                let htmlOutput = '';
-                const chartsToRender = [];
+        const stats = data.stats; 
+        const classiPresenti = Object.keys(stats);
+        sec4Wrapper.style.display = 'block';
+        
+        let hasAnyData = false;
+        if (classiPresenti.length > 0) {
+            let htmlOutput = '';
+            const chartsToRender = [];
 
-                classiPresenti.forEach(classe => {
-                    const classStats = stats[classe];
-                    const labels = Object.keys(classStats);
-                    const validLabels = labels.filter(l => classStats[l].candidati > 0);
+            classiPresenti.forEach(classe => {
+                const classStats = stats[classe];
+                const labels = Object.keys(classStats);
+                const validLabels = labels.filter(l => classStats[l].candidati > 0);
+                
+                if (validLabels.length > 0) {
+                    hasAnyData = true;
+                    htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
+                    htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
+                    validLabels.forEach(l => {
+                        const info = classStats[l];
+                        const regione = info.regione === 'N/D' ? '-' : info.regione;
+                        const medianScore = formatScore(info.median);
+                        const topScore = formatScore(info.top);
+                        const bottomScore = formatScore(info.bottom);
+                        htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${topScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${bottomScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
+                    });
+                    htmlOutput += `</tbody></table>`;
                     
-                    if (validLabels.length > 0) {
-                        hasAnyData = true;
-                        htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
-                        htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #0055A5; color: white;"><th style="border: 1px solid #D1D9E6; padding: 10px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 10px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Tot. Candidati</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Alto</th><th style="border: 1px solid #D1D9E6; padding: 10px;">P. Basso</th><th style="border: 1px solid #D1D9E6; padding: 10px; text-align: center;">Mediana</th></tr></thead><tbody>`;
-                        validLabels.forEach(l => {
-                            const info = classStats[l];
-                            const regione = info.regione === 'N/D' ? '-' : info.regione;
-                            const medianScore = formatScore(info.median);
-                            const topScore = formatScore(info.top);
-                            const bottomScore = formatScore(info.bottom);
-                            htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 8px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 8px; font-weight:600;">${l}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${info.candidati}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${topScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px;">${bottomScore}</td><td style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">${medianScore}</td></tr>`;
-                        });
-                        htmlOutput += `</tbody></table>`;
-                        
-                        const validForChart = validLabels.filter(l => classStats[l].scuole > 0);
-                        if (validForChart.length > 0) {
-                            htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
-                            chartsToRender.push({ id: `chart_${classe}`, labels: validForChart, stats: classStats });
-                        }
+                    const validForChart = validLabels.filter(l => classStats[l].scuole > 0);
+                    if (validForChart.length > 0) {
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
+                        chartsToRender.push({ id: `chart_${classe}`, labels: validForChart, stats: classStats });
                     }
-                });
+                }
+            });
 
-                document.getElementById('statsTableContainerPdf').innerHTML = htmlOutput;
+            document.getElementById('statsTableContainerPdf').innerHTML = htmlOutput;
 
-                chartsToRender.forEach(c => {
+            chartsToRender.forEach(c => {
                     const classeCode = c.id.replace('chart_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
@@ -713,119 +779,110 @@
                         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { bodyFont: { size: 14 } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati', font: { size: 14 } }, ticks: { font: { size: 13 } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } } } }
                     });
                     myChartPdf.push(chart);
-                });
-                
-                if (hasAnyData) {
-                    sec5Wrapper.style.display = 'block';
-                    const tabNav = document.getElementById('tabNav');
-                    tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
-                    if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
-                } else {
-                    sec5Wrapper.style.display = 'none'; 
-                }
-            } else { 
+            });
+            
+            if (hasAnyData) {
+                sec5Wrapper.style.display = 'block';
+                const tabNav = document.getElementById('tabNav');
+                tabNav.style.display = 'flex'; document.getElementById('tab1Btn').style.display = 'block';
+                if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
+            } else {
                 sec5Wrapper.style.display = 'none'; 
             }
-            statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
-            showTab('pdf');
-        } catch (error) {
-            console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
-        } finally { 
-            btn.disabled = false; btn.innerText = "Graduatorie";
-            stopProgress(); // FERMA BARRA
+        } else { 
+            sec5Wrapper.style.display = 'none'; 
         }
+        statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i grafici e il PDF qui sopra.";
+        showTab('pdf');
     }
 
-    async function generaBollettino() {
+    // Logica interna spostata da generaBollettino a doGeneraBollettino
+    async function doGeneraBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
         const analisiWrapper = document.getElementById('analisiBollettinoWrapper');
-        const btn = document.getElementById('bollettinoBtn');
         const checkboxes = document.querySelectorAll('.classe-item input[type="checkbox"]:checked');
         let classiSelezionate = [];
         checkboxes.forEach(cb => { const ord = cb.dataset.ordine || ''; classiSelezionate.push(ord + '|' + cb.value); });
-        if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
-        btn.disabled = true; btn.innerText = "Estrazione in corso...";
+        if (classiSelezionate.length === 0) { throw new Error("Devi selezionare almeno una classe di concorso."); }
+        
         statusMsg.style.color = "#F39C12"; statusMsg.innerText = "Estrazione nomine in corso... Attendi.";
         
-        startProgress('bollettino'); // AVVIA BARRA
-        await wakeUpServer(); // Sveglia server
-        try {
-            const fasciaSelezionata = document.getElementById('fasciaSelect').value;
-            const bollettinoURL = RENDER_URL.replace('/genera-pdf', '/genera-bollettino');
-            const response = await fetch(bollettinoURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata }) });
-            if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
-            const result = await response.json();
-            const data = result.data; 
-            
-            const classiPresenti = Object.keys(data);
-            let hasData = false;
-            
-            if (myChartBollettino && Array.isArray(myChartBollettino)) myChartBollettino.forEach(c => c.destroy());
-            myChartBollettino = [];
+        const fasciaSelezionata = document.getElementById('fasciaSelect').value;
+        const bollettinoURL = RENDER_URL.replace('/genera-pdf', '/genera-bollettino');
+        const response = await fetch(bollettinoURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata }) });
+        if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
+        const result = await response.json();
+        const data = result.data; 
+        
+        const classiPresenti = Object.keys(data);
+        let hasData = false;
+        
+        if (myChartBollettino && Array.isArray(myChartBollettino)) myChartBollettino.forEach(c => c.destroy());
+        myChartBollettino = [];
 
-            if (classiPresenti.length > 0) {
-                const sortFunc = (a, b) => {
-                    if (a.regione < b.regione) return -1;
-                    if (a.regione > b.regione) return 1;
-                    if (a.provincia < b.provincia) return -1;
-                    if (a.provincia > b.provincia) return 1;
-                    return 0;
-                };
+        if (classiPresenti.length > 0) {
+            const sortFunc = (a, b) => {
+                if (a.regione < b.regione) return -1;
+                if (a.regione > b.regione) return 1;
+                if (a.provincia < b.provincia) return -1;
+                if (a.provincia > b.provincia) return 1;
+                return 0;
+            };
 
-                let htmlOutput = '';
-                let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;"><p style="margin-top:0;"><strong>📌 Legenda Metriche:</strong></p><ul style="list-style-type: none; padding: 0; margin: 0;">`;
-                const chartsToRender = [];
+            let htmlOutput = '';
+            let statsAvanzateHTML = `<div style="padding: 20px; background: #FDF2E9; border-left: 5px solid #F39C12; border-radius: 4px;"><p style="margin-top:0;"><strong>📌 Legenda Metriche:</strong></p><ul style="list-style-type: none; padding: 0; margin: 0;">`;
+            const chartsToRender = [];
 
-                classiPresenti.forEach(classe => {
-                    const classData = data[classe];
-                    if (classData.length > 0) {
-                        hasData = true;
-                        classData.sort(sortFunc);
-                        
-                        htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
-                        htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;"><th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati Totali</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Persone Nominate</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Assunzione</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Posizione Massima</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Rifiuto</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 31/08</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 30/06</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio Spezzoni</th></tr></thead><tbody>`;
-                        
-                        const labels = classData.map(item => item.provincia);
-                        const dataCand = classData.map(item => item.candidati_totali);
-                        const dataNominati = classData.map(item => item.nominati_univoci);
-                        const dataMaxPos = classData.map(item => item.max_posizione);
+            classiPresenti.forEach(classe => {
+                const classData = data[classe];
+                if (classData.length > 0) {
+                    hasData = true;
+                    classData.sort(sortFunc);
+                    
+                    htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
+                    htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;"><th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati Totali</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Persone Nominate</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Assunzione</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Posizione Massima</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Rifiuto</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 31/08</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 30/06</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio Spezzoni</th></tr></thead><tbody>`;
+                    
+                    const labels = classData.map(item => item.provincia);
+                    const dataCand = classData.map(item => item.candidati_totali);
+                    const dataNominati = classData.map(item => item.nominati_univoci);
+                    const dataMaxPos = classData.map(item => item.max_posizione);
 
-                        classData.forEach(item => {
-                            let candidati = parseInt(item.candidati_totali) || 0;
-                            let nominati = parseInt(item.nominati_univoci) || 0;
-                            let maxPos = parseInt(item.max_posizione) || 0;
+                    classData.forEach(item => {
+                        let candidati = parseInt(item.candidati_totali) || 0;
+                        let nominati = parseInt(item.nominati_univoci) || 0;
+                        let maxPos = parseInt(item.max_posizione) || 0;
 
-                            if (nominati > candidati && candidati > 0) { nominati = candidati; }
-                            if (maxPos > candidati && candidati > 0) { maxPos = candidati; }
+                        if (nominati > candidati && candidati > 0) { nominati = candidati; }
+                        if (maxPos > candidati && candidati > 0) { maxPos = candidati; }
 
-                            let assorbimento = candidati > 0 ? ((nominati / candidati) * 100).toFixed(2) : null;
-                            let rinuncia = maxPos > 0 ? (((maxPos - nominati) / maxPos) * 100).toFixed(2) : 0;
+                        let assorbimento = candidati > 0 ? ((nominati / candidati) * 100).toFixed(2) : null;
+                        let rinuncia = maxPos > 0 ? (((maxPos - nominati) / maxPos) * 100).toFixed(2) : 0;
 
-                            item.candidati_totali = candidati;
-                            item.nominati_univoci = nominati;
-                            item.max_posizione = maxPos;
-                            item.assorbimento = assorbimento;
-                            item.rinuncia = rinuncia;
+                        item.candidati_totali = candidati;
+                        item.nominati_univoci = nominati;
+                        item.max_posizione = maxPos;
+                        item.assorbimento = assorbimento;
+                        item.rinuncia = rinuncia;
 
-                            const regione = item.regione === 'N/D' ? '-' : item.regione;
-                            htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento === null ? '<span style="color:#999;">N/D</span>' : item.assorbimento + '%'}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td></tr>`;
-                            statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br><span style="color: #333;">Percentuale di Assunzione: <strong style="color: var(--primary-blue);">${item.assorbimento === null ? 'N/D' : item.assorbimento + '%'}</strong> ${item.candidati_totali === 0 ? '(dato candidati non disponibile)' : `(${item.nominati_univoci} nominate su ${item.candidati_totali} candidati)`}</span><br><span style="color: #333;">Scorrimento della Graduatoria: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Posizione massima raggiunta: ${item.max_posizione})</span><br><span style="color: #333;">Punteggi Minimi di Chiamata: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span></li>`;
-                        });
-                        htmlOutput += `</tbody></table>`;
-                        
-                        if (labels.length > 0) {
-                            htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
-                            chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
-                        }
+                        const regione = item.regione === 'N/D' ? '-' : item.regione;
+                        htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento === null ? '<span style="color:#999;">N/D</span>' : item.assorbimento + '%'}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td></tr>`;
+                        statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br><span style="color: #333;">Percentuale di Assunzione: <strong style="color: var(--primary-blue);">${item.assorbimento === null ? 'N/D' : item.assorbimento + '%'}</strong> ${item.candidati_totali === 0 ? '(dato candidati non disponibile)' : `(${item.nominati_univoci} nominate su ${item.candidati_totali} candidati)`}</span><br><span style="color: #333;">Scorrimento della Graduatoria: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Posizione massima raggiunta: ${item.max_posizione})</span><br><span style="color: #333;">Punteggi Minimi di Chiamata: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span></li>`;
+                    });
+                    htmlOutput += `</tbody></table>`;
+                    
+                    if (labels.length > 0) {
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
+                        chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
                     }
-                });
-                statsAvanzateHTML += `</ul></div>`;
+                }
+            });
+            statsAvanzateHTML += `</ul></div>`;
 
-                document.getElementById('statsTableContainerBollettino').innerHTML = htmlOutput;
-                document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
+            document.getElementById('statsTableContainerBollettino').innerHTML = htmlOutput;
+            document.getElementById('statsAvanzateContainer').innerHTML = statsAvanzateHTML;
 
-                chartsToRender.forEach(c => {
+            chartsToRender.forEach(c => {
                     const classeCode = c.id.replace('chart_bollettino_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
@@ -847,32 +904,26 @@
                         options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
                     });
                     myChartBollettino.push(chart);
-                });
+            });
 
-                if (hasData) {
-                    chartSectionWrapper.style.display = 'block';
-                    analisiWrapper.style.display = 'block';
-                    const tabNav = document.getElementById('tabNav');
-                    tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
-                    if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
-                    showTab('bollettino');
-                } else {
-                    chartSectionWrapper.style.display = 'none'; 
-                    analisiWrapper.style.display = 'none';
-                    statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati."; return;
-                }
+            if (hasData) {
+                chartSectionWrapper.style.display = 'block';
+                analisiWrapper.style.display = 'block';
+                const tabNav = document.getElementById('tabNav');
+                tabNav.style.display = 'flex'; document.getElementById('tab2Btn').style.display = 'block';
+                if (document.getElementById('siteHeader').classList.contains('hidden')) { tabNav.style.top = '0px'; } else { tabNav.style.top = '80px'; }
+                showTab('bollettino');
             } else {
                 chartSectionWrapper.style.display = 'none'; 
                 analisiWrapper.style.display = 'none';
                 statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati."; return;
             }
-            statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i dati qui sotto.";
-        } catch (error) {
-            console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
-        } finally { 
-            btn.disabled = false; btn.innerText = "Nomine"; 
-            stopProgress(); // FERMA BARRA
+        } else {
+            chartSectionWrapper.style.display = 'none'; 
+            analisiWrapper.style.display = 'none';
+            statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Nessun dato trovato per i filtri selezionati."; return;
         }
+        statusMsg.style.color = "var(--primary-blue)"; statusMsg.innerText = "Estrazione completata! Visualizza i dati qui sotto.";
     }
 
     // Funzioni Modali
