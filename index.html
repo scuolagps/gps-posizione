@@ -231,6 +231,18 @@
             <button id="bollettinoBtn" style="flex: 1 1 250px; background: var(--accent-orange);">Nomine</button>
         </div>
         <div id="statusMessage"></div>
+        <!-- BARRA DI CARICAMENTO -->
+        <div id="progressWrapper" style="display:none; margin-top:20px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:6px;">
+                <span id="progressLabel">Estrazione in corso...</span>
+                <span id="progressPercent">0%</span>
+            </div>
+            <div style="width:100%; height:20px; background:#E2E8F0; border-radius:10px; overflow:hidden; position:relative;">
+                <div id="progressBar" style="width:0%; height:100%; background:linear-gradient(90deg, #0055A5, #F39C12); transition: width 0.4s ease; border-radius:10px;"></div>
+            </div>
+            <div id="progressDetail" style="font-size:12px; color:#888; margin-top:6px; text-align:center;">Calcolo tempo stimato...</div>
+        </div>
+    </div>
         <div id="progressWrapper" style="display:none; margin-top:20px;">
             <div style="display:flex; justify-content:space-between; font-size:13px; color:#555; margin-bottom:6px;">
                 <span id="progressLabel">Estrazione in corso...</span>
@@ -425,6 +437,52 @@
 
 <script>
     const RENDER_URL = "https://scanner-scolastico.onrender.com/genera-pdf";
+        let progressInterval;
+    function stimaTempo(tipo) {
+        const numClassi = document.querySelectorAll('.classe-item input[type="checkbox"]:checked').length;
+        const numProvince = selectedProvince.length > 0 ? selectedProvince.length : (selectedRegioni.length * 4);
+        const mult = tipo === 'pdf' ? 6000 : 10000; // ms per classe×provincia
+        return Math.max(20000, numClassi * numProvince * mult); // Minimo 20 secondi
+    }
+    function startProgress(tipo) {
+        const wrapper = document.getElementById('progressWrapper');
+        const bar = document.getElementById('progressBar');
+        const pct = document.getElementById('progressPercent');
+        const det = document.getElementById('progressDetail');
+        const lbl = document.getElementById('progressLabel');
+        
+        wrapper.style.display = 'block';
+        bar.style.width = '0%';
+        pct.innerText = '0%';
+        lbl.innerText = tipo === 'pdf' ? "Estrazione Graduatorie..." : "Estrazione Nomine...";
+        
+        const startTime = Date.now();
+        const estimated = stimaTempo(tipo);
+        
+        progressInterval = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            let progress = Math.min(95, (elapsed / estimated) * 100);
+            bar.style.width = progress + '%';
+            pct.innerText = Math.round(progress) + '%';
+            
+            const remaining = Math.max(0, Math.round((estimated - elapsed) / 1000));
+            if (remaining > 0) {
+                det.innerText = `Tempo rimanente stimato: ${remaining} secondi`;
+            } else {
+                det.innerText = 'Quasi completato... (elaborazione dati lato server)';
+            }
+        }, 200);
+    }
+    function stopProgress() {
+        clearInterval(progressInterval);
+        const bar = document.getElementById('progressBar');
+        const pct = document.getElementById('progressPercent');
+        bar.style.width = '100%';
+        pct.innerText = '100%';
+        setTimeout(() => {
+            document.getElementById('progressWrapper').style.display = 'none';
+        }, 800);
+    }
     const regioniProvince = { "Abruzzo": ["Chieti", "L'Aquila", "Pescara", "Teramo"], "Basilicata": ["Matera", "Potenza"], "Calabria": ["Catanzaro", "Cosenza", "Crotone", "Reggio Calabria", "Vibo Valentia"], "Campania": ["Avellino", "Benevento", "Caserta", "Napoli", "Salerno"], "Emilia-Romagna": ["Bologna", "Ferrara", "Forlì-Cesena", "Modena", "Parma", "Piacenza", "Ravenna", "Reggio Emilia", "Rimini"], "Friuli-Venezia Giulia": ["Gorizia", "Pordenone", "Trieste", "Udine"], "Lazio": ["Frosinone", "Latina", "Rieti", "Roma", "Viterbo"], "Liguria": ["Genova", "Imperia", "La Spezia", "Savona"], "Lombardia": ["Bergamo", "Brescia", "Como", "Cremona", "Lecco", "Lodi", "Mantova", "Milano", "Monza e della Brianza", "Pavia", "Sondrio", "Varese"], "Marche": ["Ancona", "Ascoli Piceno", "Fermo", "Macerata", "Pesaro e Urbino"], "Molise": ["Campobasso", "Isernia"], "Piemonte": ["Alessandria", "Asti", "Biella", "Cuneo", "Novara", "Torino", "Verbano-Cusio-Ossola", "Vercelli"], "Puglia": ["Bari", "Barletta-Andria-Trani", "Brindisi", "Foggia", "Lecce", "Taranto"], "Sardegna": ["Cagliari", "Nuoro", "Oristano", "Sassari", "Sud Sardegna"], "Sicilia": ["Agrigento", "Caltanissetta", "Catania", "Enna", "Messina", "Palermo", "Ragusa", "Siracusa", "Trapani"], "Toscana": ["Arezzo", "Firenze", "Grosseto", "Livorno", "Lucca", "Massa-Carrara", "Pisa", "Pistoia", "Prato", "Siena"], "Trentino-Alto Adige": ["Bolzano", "Trento"], "Umbria": ["Perugia", "Terni"], "Valle d'Aosta": ["Aosta"], "Veneto": ["Belluno", "Padova", "Rovigo", "Treviso", "Venezia", "Verona", "Vicenza"] };
 const classiConcorsoDB = {
     "infanzia": [
@@ -726,8 +784,12 @@ const classiConcorsoDB = {
         });
         if (classiSelezionate.length === 0) { statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: Devi selezionare almeno una classe di concorso."; return; }
         btn.disabled = true; btn.innerText = "Generazione in corso...";
-        statusMsg.style.color = "#0055A5"; statusMsg.innerText = "Estrazione dati in corso... Attendi.";
+        statusMsg.style.color = "#0055A5"; statusMsg.innerText = "Avvio server in corso (può richiedere fino a 60s la prima volta)...";
+        
+        startProgress('pdf'); // <-- AVVIA BARRA
+        await wakeUpServer(); 
         try {
+            // ... il resto del codice fetch ecc ...
             const fasciaSelezionata = document.getElementById('fasciaSelect').value;
             const annoSelezionato = document.getElementById('annoSelect').value;
             const response = await fetch(RENDER_URL, {
@@ -815,8 +877,10 @@ const classiConcorsoDB = {
             showTab('pdf');
         } catch (error) {
             console.error('Errore:', error); statusMsg.style.color = "#E74C3C"; statusMsg.innerText = "Errore: " + error.message;
-        } finally { btn.disabled = false; btn.innerText = "Graduatorie"; }
-    }
+        } finally { 
+            btn.disabled = false; btn.innerText = "Graduatorie";
+            stopProgress(); // <-- FERMA BARRA
+        }
     async function generaBollettino() {
         const statusMsg = document.getElementById('statusMessage');
         const chartSectionWrapper = document.getElementById('chartSectionBollettinoWrapper');
