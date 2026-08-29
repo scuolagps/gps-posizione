@@ -88,6 +88,9 @@
         .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; position: relative; }
         .table-scroll table { min-width: 500px; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; max-width: 100%; position: relative; }
+        .chart-zoom-controls { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 5px; }
+        .zoom-btn { padding: 5px 12px; background: var(--primary-blue); color: var(--white); border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .zoom-btn:hover { background: var(--dark-blue); }
         
         /* Stile Footer */
         .site-footer { max-width: 1000px; margin: 0 auto 60px; padding: 30px 40px; text-align: center; color: #666; font-size: 13px; border-top: 1px solid var(--border-gray); }
@@ -676,6 +679,26 @@
             if (txtValue.toLowerCase().indexOf(filter) > -1) { items[i].style.display = ""; } else { items[i].style.display = "none"; }
         }
     }
+        function zoomChart(containerId, direction) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        let baseWidth = parseInt(container.dataset.baseWidth || 800);
+        let currentWidth = container.offsetWidth;
+        let newWidth = currentWidth * (direction === 1 ? 1.25 : 0.8);
+        
+        // Limite minimo: la larghezza base (prima che i nomi si sovrappongano)
+        if (newWidth < baseWidth) newWidth = baseWidth;
+        
+        container.style.width = newWidth + 'px';
+        container.style.minWidth = newWidth + 'px';
+        
+        // Forza il ridimensionamento del grafico Chart.js
+        const canvas = container.querySelector('canvas');
+        if (canvas) {
+            const chartInstance = Chart.getChart(canvas);
+            if (chartInstance) chartInstance.resize();
+        }
+    }
     function formatScore(val) {
         if (val === "N/D" || val === null || val === undefined) return '-';
         let s = String(val).replace('.', ',');
@@ -761,7 +784,7 @@
                     
                     const validForChart = validLabels.filter(l => classStats[l].scuole > 0);
                     if (validForChart.length > 0) {
-                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_${classe}"></canvas></div></div>`;
+                        htmlOutput += `<div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', 1)">🔍 +</button></div><div class="chart-outer-scroll"><div class="chart-container-generic" id="container_chart_${classe}"><canvas id="chart_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_${classe}`, labels: validForChart, stats: classStats });
                     }
                 }
@@ -773,10 +796,14 @@
                     const classeCode = c.id.replace('chart_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    // FIX: Larghezza dinamica ridotta per avvicinare le colonne tra loro
-                    let dynamicWidth = Math.max(800, c.labels.length * 80);
-                    container.style.width = dynamicWidth + 'px';
-                    container.style.minWidth = dynamicWidth + 'px';
+                    // Larghezza base: 120px per provincia per evitare che i nomi si sovrappongano
+                    let baseWidth = Math.max(800, c.labels.length * 120);
+                    container.style.width = baseWidth + 'px';
+                    container.style.minWidth = baseWidth + 'px';
+                    container.dataset.baseWidth = baseWidth;
+                    
+                    const chart = new Chart(ctx, {
+                        type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Rapporto Scuole/Candidati', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
                     
                     if (isAggregatedClass(classeCode)) {
                         const note = document.createElement('p');
@@ -892,7 +919,7 @@
                     htmlOutput += `</tbody></table>`;
                     
                     if (labels.length > 0) {
-                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-container-generic"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
+                        htmlOutput += `<div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', 1)">🔍 +</button></div><div class="chart-outer-scroll"><div class="chart-container-generic" id="container_chart_bollettino_${classe}"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
                     }
                 }
@@ -906,10 +933,18 @@
                     const classeCode = c.id.replace('chart_bollettino_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    // FIX: Larghezza dinamica ridotta per avvicinare le colonne tra loro
-                    let dynamicWidth = Math.max(800, c.labels.length * 80);
-                    container.style.width = dynamicWidth + 'px';
-                    container.style.minWidth = dynamicWidth + 'px';
+                    // Larghezza base: 120px per provincia per evitare che i nomi si sovrappongano
+                    let baseWidth = Math.max(800, c.labels.length * 120);
+                    container.style.width = baseWidth + 'px';
+                    container.style.minWidth = baseWidth + 'px';
+                    container.dataset.baseWidth = baseWidth;
+                    
+                    const chart = new Chart(ctx, {
+                        type: 'bar', data: { labels: c.labels, datasets: [
+                            { label: 'Candidati Totali', data: c.dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
+                            { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
+                            { type: 'line', label: 'Scorrimento Graduatoria (Posizione Massima)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
+                        ]},
                     
                     if (isAggregatedClass(classeCode)) {
                         const note = document.createElement('p');
