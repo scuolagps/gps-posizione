@@ -71,7 +71,7 @@
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
         #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
-        .chart-container-generic { display: block; width: 100%; max-width: 100%; margin: 0 auto; padding: 30px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 600px; min-width: 800px; box-sizing: border-box; }
+        .chart-container-generic { display: block; width: 100%; max-width: none; margin: 0 auto; padding: 30px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 600px; min-width: 800px; box-sizing: border-box; }
         .tab-navigation { display: none; position: sticky; top: 80px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
         .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
         .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
@@ -85,8 +85,9 @@
         .collapsible-content { display: block; } .collapsible-content.hidden { display: none; }
         .pdf-mobile-actions { display: none; text-align: center; padding: 15px; background: var(--light-blue); border-radius: 4px; margin-bottom: 15px; }
         .pdf-mobile-actions a { display: inline-block; background: var(--primary-blue); color: white !important; padding: 12px 25px; border-radius: 4px; text-decoration: none; font-weight: 600; font-size: 16px; }
-        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; position: relative; }
         .table-scroll table { min-width: 500px; }
+        .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; max-width: 100%; position: relative; }
         
         /* Stile Footer */
         .site-footer { max-width: 1000px; margin: 0 auto 60px; padding: 30px 40px; text-align: center; color: #666; font-size: 13px; border-top: 1px solid var(--border-gray); }
@@ -765,7 +766,10 @@
                     const classeCode = c.id.replace('chart_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 120) + 'px'; } else { container.style.width = '100%'; }
+                    // Larghezza dinamica: forza il grafico a espandersi e attiva la barra di scorrimento interna
+                    let dynamicWidth = Math.max(800, c.labels.length * 140);
+                    container.style.width = dynamicWidth + 'px';
+                    container.style.minWidth = dynamicWidth + 'px';
                     
                     if (isAggregatedClass(classeCode)) {
                         const note = document.createElement('p');
@@ -822,12 +826,9 @@
         myChartBollettino = [];
 
         if (classiPresenti.length > 0) {
+            // FIX: Ordina alfabeticamente per provincia (utile per grafici e tabelle)
             const sortFunc = (a, b) => {
-                if (a.regione < b.regione) return -1;
-                if (a.regione > b.regione) return 1;
-                if (a.provincia < b.provincia) return -1;
-                if (a.provincia > b.provincia) return 1;
-                return 0;
+                return a.provincia.localeCompare(b.provincia);
             };
 
             let htmlOutput = '';
@@ -886,7 +887,10 @@
                     const classeCode = c.id.replace('chart_bollettino_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    if (c.labels.length > 6) { container.style.width = (c.labels.length * 120) + 'px'; } else { container.style.width = '100%'; }
+                    // Larghezza dinamica: forza il grafico a espandersi e attiva la barra di scorrimento interna
+                    let dynamicWidth = Math.max(800, c.labels.length * 140);
+                    container.style.width = dynamicWidth + 'px';
+                    container.style.minWidth = dynamicWidth + 'px';
                     
                     if (isAggregatedClass(classeCode)) {
                         const note = document.createElement('p');
