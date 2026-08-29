@@ -826,9 +826,12 @@
         myChartBollettino = [];
 
         if (classiPresenti.length > 0) {
-            // FIX: Ordina alfabeticamente per provincia (utile per grafici e tabelle)
             const sortFunc = (a, b) => {
-                return a.provincia.localeCompare(b.provincia);
+                if (a.regione < b.regione) return -1;
+                if (a.regione > b.regione) return 1;
+                if (a.provincia < b.provincia) return -1;
+                if (a.provincia > b.provincia) return 1;
+                return 0;
             };
 
             let htmlOutput = '';
@@ -849,6 +852,8 @@
                     const dataNominati = classData.map(item => item.nominati_univoci);
                     const dataMaxPos = classData.map(item => item.max_posizione);
 
+                    let currentRegione = null;
+                    
                     classData.forEach(item => {
                         let candidati = parseInt(item.candidati_totali) || 0;
                         let nominati = parseInt(item.nominati_univoci) || 0;
@@ -868,7 +873,14 @@
 
                         const regione = item.regione === 'N/D' ? '-' : item.regione;
                         htmlOutput += `<tr style="background: #fff;"><td style="border: 1px solid #D1D9E6; padding: 6px;">${regione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; font-weight:600;">${item.provincia}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.candidati_totali}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.nominati_univoci}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; background:#E6F1FB; font-weight:600;">${item.assorbimento === null ? '<span style="color:#999;">N/D</span>' : item.assorbimento + '%'}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center;">${item.max_posizione}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; font-weight:600;">${item.rinuncia}%</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#0055A5;">${item.cut_31_08}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#003B73;">${item.cut_30_06}</td><td style="border: 1px solid #D1D9E6; padding: 6px; text-align: center; color:#E74C3C;">${item.cut_spezzoni}</td></tr>`;
-                        statsAvanzateHTML += `<li style="margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br><span style="color: #333;">Percentuale di Assunzione: <strong style="color: var(--primary-blue);">${item.assorbimento === null ? 'N/D' : item.assorbimento + '%'}</strong> ${item.candidati_totali === 0 ? '(dato candidati non disponibile)' : `(${item.nominati_univoci} nominate su ${item.candidati_totali} candidati)`}</span><br><span style="color: #333;">Scorrimento della Graduatoria: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Posizione massima raggiunta: ${item.max_posizione})</span><br><span style="color: #333;">Punteggi Minimi di Chiamata: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span></li>`;
+                        
+                        // FIX: Inserisce il titolo della Regione sopra le province nel dettaglio
+                        if (regione !== currentRegione) {
+                            currentRegione = regione;
+                            statsAvanzateHTML += `<h4 style="font-family: 'Montserrat', sans-serif; color: var(--accent-orange); margin-top: 25px; margin-bottom: 10px; border-bottom: 2px solid var(--light-blue); padding-bottom: 5px; font-size: 18px;">${currentRegione}</h4>`;
+                        }
+                        
+                        statsAvanzateHTML += `<li style="list-style-type: none; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px dashed #ccc;"><strong style="font-size: 16px; color: var(--dark-blue);">${item.provincia} (${classe})</strong><br><span style="color: #333;">Percentuale di Assunzione: <strong style="color: var(--primary-blue);">${item.assorbimento === null ? 'N/D' : item.assorbimento + '%'}</strong> ${item.candidati_totali === 0 ? '(dato candidati non disponibile)' : `(${item.nominati_univoci} nominate su ${item.candidati_totali} candidati)`}</span><br><span style="color: #333;">Scorrimento della Graduatoria: <strong style="color: var(--accent-orange);">${item.rinuncia}%</strong> (Posizione massima raggiunta: ${item.max_posizione})</span><br><span style="color: #333;">Punteggi Minimi di Chiamata: <strong>31/08:</strong> ${item.cut_31_08} | <strong>30/06:</strong> ${item.cut_30_06} | <strong>Spezzoni:</strong> ${item.cut_spezzoni}</span></li>`;
                     });
                     htmlOutput += `</tbody></table>`;
                     
