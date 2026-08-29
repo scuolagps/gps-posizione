@@ -164,6 +164,47 @@
 
             html { scroll-padding-top: 66px; }
         }
+            /* Guida Navigazione */
+        .guide-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border-gray); }
+        .guide-tab { padding: 10px 15px; border: none; background: none; cursor: pointer; font-weight: 600; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: inherit; font-size: 16px; }
+        .guide-tab.active { color: var(--primary-blue); border-bottom-color: var(--primary-blue); }
+        .guide-section { display: none; }
+        .guide-section.active { display: block; }
+
+        .step-card { background: var(--bg-gray); border: 1px solid var(--border-gray); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; border-bottom: 2px solid var(--light-blue); padding-bottom: 15px; }
+        .step-number { background: var(--primary-blue); color: var(--white); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+        .step-title { font-family: 'Montserrat', sans-serif; color: var(--dark-blue); font-size: 18px; font-weight: 600; margin: 0; }
+        .content-block p { font-size: 15px; }
+
+        .ui-mockup { background: #fff; border: 1px solid var(--border-gray); border-radius: 8px; padding: 15px; margin: 15px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .mock-row { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
+        .mock-label { font-weight: 600; color: var(--dark-blue); width: 80px; font-size: 14px; }
+        .mock-select { flex: 1; padding: 8px; border: 1px solid var(--border-gray); border-radius: 4px; background: #fff; color: #555; font-size: 14px; position: relative; }
+        .mock-select::after { content: "▾"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #888; }
+        .mock-tags { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
+        .mock-tag { background: var(--light-blue); color: var(--dark-blue); padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .mock-tag span { background: var(--primary-blue); color: #fff; border-radius: 50%; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+        .mock-checkbox-group { display: flex; gap: 20px; margin-top: 10px; flex-wrap: wrap; }
+        .mock-cb-item { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+        .mock-cb { width: 18px; height: 18px; border: 2px solid var(--border-gray); border-radius: 3px; display: flex; align-items: center; justify-content: center; }
+        .mock-cb.checked { background: var(--primary-blue); border-color: var(--primary-blue); color: #fff; font-size: 12px; }
+        .mock-search { width: 100%; padding: 8px; border: 1px solid var(--border-gray); border-radius: 4px; margin-bottom: 10px; }
+        .mock-list { background: var(--bg-gray); border: 1px solid var(--border-gray); border-radius: 4px; padding: 10px; max-height: 100px; overflow: hidden; }
+        .mock-list-item { padding: 5px 0; display: flex; align-items: center; gap: 10px; font-size: 14px; }
+        .mock-btn { padding: 10px 20px; border-radius: 4px; color: #fff; font-weight: 600; font-size: 16px; text-align: center; }
+        .mock-btn.blue { background: var(--primary-blue); }
+        .mock-btn.orange { background: var(--accent-orange); }
+        .mock-chart { background: var(--bg-gray); padding: 15px; border-radius: 8px; margin-top: 10px; }
+        .mock-chart-bars { display: flex; align-items: flex-end; justify-content: space-around; height: 120px; border-bottom: 1px solid var(--border-gray); padding-bottom: 5px; }
+        .mock-bar { width: 15%; background: var(--primary-blue); border-radius: 4px 4px 0 0; opacity: 0.7; }
+        .mock-chart-labels { display: flex; justify-content: space-around; margin-top: 5px; font-size: 10px; color: #666; }
+        .mock-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 10px; }
+        .mock-table th { background: var(--accent-orange); color: #fff; padding: 6px; text-align: center; }
+        .mock-table td { border: 1px solid #ddd; padding: 6px; text-align: center; }
+        .mock-table .highlight { background: var(--light-blue); font-weight: bold; color: var(--primary-blue); }
+        .example-box { background: #f8fbff; border-left: 5px solid var(--primary-blue); padding: 15px; border-radius: 4px; margin: 15px 0; }
+        .example-box strong { color: var(--dark-blue); }
     </style>
 </head>
 <body>
@@ -323,78 +364,158 @@
 <div id="guidaModal" class="modal-overlay" onclick="closeGuidaModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()" style="max-width: 900px;">
         <div class="modal-header">
-            <h3>Guida alla Lettura dei Dati</h3>
+            <h3>Guida all'uso</h3>
             <button class="modal-close" onclick="closeGuidaModal(event)">&times;</button>
         </div>
         <div class="modal-body">
-            <div style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
-                <h4>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#0055A5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 12l4-4 4 4 5-5"/></svg>
-                    1. Percentuale di Assunzione
-                </h4>
-                <p><strong>Cosa indica:</strong> La percentuale reale di candidati che ha ottenuto un incarico. Il calcolo esclude le doppie nomine: se una persona riceve più contratti nel corso dell'anno (es. un annuale a settembre e uno breve a novembre), viene contata come <strong>una sola persona nominata</strong>.</p>
-                <div class="info-box">
-                    <strong>Perché è importante?</strong><br>
-                    Mostra quante persone fisiche sono state assorbite dalla graduatoria, fornendo un dato reale e non gonfiato dai rinnovi di contratto.
-                </div>
-                <div style="display:flex; gap:10px; margin-top:15px; align-items:center; background:#f8fbff; padding:10px; border-radius:8px; border:1px solid #cbd5e0;">
-                    <div style="text-align:center; flex:1;">
-                        <div style="font-size:24px; font-weight:bold; color:#0055A5;">30%</div>
-                        <div style="font-size:12px; color:#666;">Assunzione</div>
+            <div class="guide-tabs">
+                <button class="guide-tab active" onclick="switchGuideTab(event, 'guide-nav')">Navigazione al sito</button>
+                <button class="guide-tab" onclick="switchGuideTab(event, 'guide-data')">Lettura dei dati</button>
+            </div>
+
+            <!-- PARTE 1: NAVIGAZIONE AL SITO -->
+            <div id="guide-nav" class="guide-section active">
+                <!-- PASSO 1 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <h2 class="step-title">Seleziona il Luogo (Regione o Provincia)</h2>
                     </div>
-                    <div style="font-size:20px; color:#999;">=</div>
-                    <div style="text-align:center; flex:1;">
-                        <div style="font-size:24px; font-weight:bold; color:#333;">3 su 10</div>
-                        <div style="font-size:12px; color:#666;">Candidati chiamati</div>
+                    <div class="content-block">
+                        <p>Inizia scegliendo dove vuoi cercare. Puoi selezionare un'intera Regione (es. Lombardia) oppure scendere nel dettaglio e selezionare una o più Province specifiche (es. Milano, Bergamo).</p>
+                        <div class="ui-mockup">
+                            <div class="mock-row">
+                                <div class="mock-label">Regioni:</div>
+                                <div class="mock-select">Tutte le regioni</div>
+                                <div class="mock-tags"><div class="mock-tag">Lombardia <span>&times;</span></div></div>
+                            </div>
+                            <div class="mock-row">
+                                <div class="mock-label">Province:</div>
+                                <div class="mock-select">+ Aggiungi Provincia</div>
+                                <div class="mock-tags"><div class="mock-tag">Milano <span>&times;</span></div><div class="mock-tag">Bergamo <span>&times;</span></div></div>
+                            </div>
+                        </div>
+                        <div class="example-box"><strong>Esempio pratico:</strong> Vuoi fare supplenza in Toscana? Seleziona "Toscana". Il sistema caricherà automaticamente i dati di Firenze, Pisa, Siena, ecc.</div>
+                    </div>
+                </div>
+
+                <!-- PASSO 2 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <h2 class="step-title">Scegli l'Ordine di Scuola e la Fascia</h2>
+                    </div>
+                    <div class="content-block">
+                        <p>Spunta la casella relativa all'ordine di scuola che ti interessa. Poi seleziona la Fascia della graduatoria (I Fascia, II Fascia, oppure "Tutte le fasce").</p>
+                        <div class="ui-mockup">
+                            <div class="mock-checkbox-group">
+                                <div class="mock-cb-item"><div class="mock-cb"></div> Infanzia</div>
+                                <div class="mock-cb-item"><div class="mock-cb checked">✓</div> Primaria</div>
+                                <div class="mock-cb-item"><div class="mock-cb"></div> Sec. I grado</div>
+                                <div class="mock-cb-item"><div class="mock-cb"></div> Sec. II grado</div>
+                            </div>
+                            <div style="margin-top: 15px; display: flex; gap: 20px;">
+                                <div style="flex:1;"><div class="mock-label" style="margin-bottom: 5px;">Fascia:</div><div class="mock-select">II fascia</div></div>
+                                <div style="flex:1;"><div class="mock-label" style="margin-bottom: 5px;">Anno:</div><div class="mock-select">2026/2027</div></div>
+                            </div>
+                        </div>
+                        <div class="example-box"><strong>Esempio pratico:</strong> Se sei iscritto solo in II Fascia per la Primaria, metti la spunta su "Primaria" e seleziona "II fascia" dal menu a tendina.</div>
+                    </div>
+                </div>
+
+                <!-- PASSO 3 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <h2 class="step-title">Trova la tua Classe di Concorso</h2>
+                    </div>
+                    <div class="content-block">
+                        <p>Puoi scorrere la lista o usare la barra di ricerca in alto per trovare il tuo codice classe. Metti la spunta sulle classi che ti interessano.</p>
+                        <div class="ui-mockup">
+                            <input type="text" class="mock-search" placeholder="Cerca classe (es. AM56, Matematica...)" value="Lettere" disabled>
+                            <div class="mock-list">
+                                <div class="mock-list-item"><div class="mock-cb checked">✓</div> A-22 - Lettere (Italiano, Storia, Geografia)</div>
+                                <div class="mock-list-item"><div class="mock-cb"></div> A-12 - Lettere (Vecchio ordinamento)</div>
+                            </div>
+                        </div>
+                        <div class="example-box"><strong>Esempio pratico:</strong> Digita "Lettere" nella barra di ricerca per far apparire automaticamente "A-22 - Lettere". Clicca sulla casella per selezionarla.</div>
+                    </div>
+                </div>
+
+                <!-- PASSO 4 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <h2 class="step-title">Genera i Documenti</h2>
+                    </div>
+                    <div class="content-block">
+                        <p>Ora hai due opzioni: puoi generare il PDF con le <strong>Graduatorie complete</strong> (per vedere chi c'è prima di te) oppure generare il <strong>Bollettino delle Nomine</strong> (per vedere quante persone sono state chiamate e a che punteggio).</p>
+                        <div style="display: flex; gap: 15px; margin: 20px 0;">
+                            <div class="mock-btn blue" style="flex:1;">Graduatorie</div>
+                            <div class="mock-btn orange" style="flex:1;">Nomine</div>
+                        </div>
+                        <div class="example-box"><strong>Quale scegliere?</strong> Usa "Graduatorie" se vuoi stampare la lista. Usa "Nomine" se vuoi capire le probabilità reali di essere chiamato in una determinata provincia.</div>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
-                <h4>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#F39C12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    2. Punteggio Minimo di Chiamata (Cut-off)
-                </h4>
-                <p><strong>Cosa indica:</strong> Il punteggio esatto dell'ultimo candidato che è stato chiamato per una specifica tipologia di contratto.</p>
-                <div class="info-box">
-                    <strong>Le tre tipologie di contratto:</strong><br>
-                    1. <strong>Fino al 31/08 (Annuale):</strong> Il contratto più ambito. Punteggio richiesto più ALTO.<br>
-                    2. <strong>Fino al 30/06 (Fine Lezioni):</strong> Contratto lungo ma non annuale. Punteggio richiesto MEDIO.<br>
-                    3. <strong>Brevi (Spezzoni):</strong> Contratti di poche ore o mesi. Punteggio richiesto BASSO.
+            <!-- PARTE 2: LETTURA DEI DATI -->
+            <div id="guide-data" class="guide-section">
+                <!-- PASSO 5 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <h2 class="step-title">Leggere i Grafici e i Dati</h2>
+                    </div>
+                    <div class="content-block">
+                        <p>Dopo aver cliccato, appariranno le tabelle e i grafici. Se le province sono tante, puoi usare i pulsanti di zoom in alto a destra per ingrandire o rimpicciolire la visuale.</p>
+                        <div class="ui-mockup">
+                            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 5px;">
+                                <div style="padding: 2px 8px; background: var(--primary-blue); color: #fff; border-radius: 4px; font-size: 12px;">🔍 -</div>
+                                <div style="padding: 2px 8px; background: var(--primary-blue); color: #fff; border-radius: 4px; font-size: 12px;">🔍 +</div>
+                            </div>
+                            <div class="mock-chart">
+                                <div class="mock-chart-bars">
+                                    <div class="mock-bar" style="height: 80%;"></div>
+                                    <div class="mock-bar" style="height: 60%;"></div>
+                                    <div class="mock-bar" style="height: 40%;"></div>
+                                    <div class="mock-bar" style="height: 30%;"></div>
+                                    <div class="mock-bar" style="height: 50%;"></div>
+                                </div>
+                                <div class="mock-chart-labels"><div>Milano</div><div>Bergamo</div><div>Brescia</div><div>Varese</div><div>Como</div></div>
+                            </div>
+                        </div>
+                        <div class="example-box"><strong>Importante:</strong> Nella sezione "Dettagli per Provincia", i dati sono raggruppati e ordinati prima per Regione e poi per Provincia in ordine alfabetico, per facilitare la lettura.</div>
+                    </div>
                 </div>
-                <table style="width:100%; border-collapse:collapse; margin-top:15px; font-size:13px; text-align:center;">
-                    <tr style="background:#F39C12; color:white;">
-                        <th style="padding:8px; border:1px solid #eee;">Contratto</th>
-                        <th style="padding:8px; border:1px solid #eee;">Punteggio Richiesto</th>
-                    </tr>
-                    <tr><td style="padding:8px; border:1px solid #eee;">Fino al 31/08</td><td style="padding:8px; border:1px solid #eee; font-weight:bold; color:#0055A5;">55,50</td></tr>
-                    <tr><td style="padding:8px; border:1px solid #eee;">Fino al 30/06</td><td style="padding:8px; border:1px solid #eee; font-weight:bold; color:#003B73;">42,00</td></tr>
-                    <tr><td style="padding:8px; border:1px solid #eee;">Spezzoni</td><td style="padding:8px; border:1px solid #eee; font-weight:bold; color:#E74C3C;">28,00</td></tr>
-                </table>
-            </div>
 
-            <div style="margin-bottom: 20px;">
-                <h4>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#E74C3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-                    3. Scorrimento della Graduatoria (Rifiuti)
-                </h4>
-                <p><strong>Cosa indica:</strong> Quante persone hanno rinunciato alla nomina prima che venisse raggiunta l'ultima posizione chiamata.</p>
-                <div class="info-box" style="background: #fffdf5; border-left-color: #F39C12;">
-                    <strong>Utilità strategica:</strong><br>
-                    Un alto tasso di rifiuto (es. 60-70%) indica che molti docenti rifiutano il posto in quella provincia. Questo permette alla graduatoria di scendere rapidamente, aumentando le probabilità di chiamata per chi ha un punteggio più basso.
-                </div>
-                <div style="background:#fff5f5; border:1px dashed #E74C3C; padding:15px; border-radius:8px; margin-top:15px;">
-                    <strong style="color:#E74C3C;">Esempio Pratico:</strong><br>
-                    Posizione massima raggiunta: <strong>120</strong><br>
-                    Persone effettivamente nominate: <strong>42</strong><br>
-                    Rifiuti: <strong>78 (65%)</strong><br>
-                    <span style="font-size:12px; color:#666;">La graduatoria è scesa fino alla posizione 120 nonostante solo 42 persone abbiano accettato.</span>
+                <!-- PASSO 6 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">6</div>
+                        <h2 class="step-title">Capire le Metriche (Assunzione, Cut-off, Rifiuti)</h2>
+                    </div>
+                    <div class="content-block">
+                        <p>Nella vista Nomine, fai attenzione a queste colonne:</p>
+                        <ul style="font-size: 15px;">
+                            <li><strong>Percentuale di Assunzione:</strong> Quante persone fisiche hanno preso un incarico rispetto ai candidati totali disponibili.</li>
+                            <li><strong>Cut-off (31/08, 30/06, Spezzoni):</strong> Il punteggio dell'ultimo chiamato per ogni tipo di contratto.</li>
+                            <li><strong>Scorrimento (Rifiuti):</strong> Quante persone hanno rinunciato, permettendo alla graduatoria di scendere più in basso.</li>
+                        </ul>
+                        <div class="ui-mockup" style="overflow-x: auto;">
+                            <table class="mock-table">
+                                <tr><th>Provincia</th><th>Candidati</th><th>Nominati</th><th>Assunzione</th><th>Cut-off 31/08</th></tr>
+                                <tr><td>Milano</td><td>500</td><td>120</td><td class="highlight">24%</td><td class="highlight">42,00</td></tr>
+                                <tr><td>Bergamo</td><td>200</td><td>50</td><td class="highlight">25%</td><td class="highlight">38,50</td></tr>
+                            </table>
+                        </div>
+                        <div class="example-box"><strong>Esempio pratico:</strong> Se vedi un "Cut-off 31/08" di 42,00 a Milano, significa che se il tuo punteggio è superiore a 42, hai buone probabilità di prendere un contratto annuale in quella provincia!</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <!-- MODAL INFORMATIVA LEGALE -->
 <div id="legalModal" class="modal-overlay" onclick="closeLegalModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
@@ -707,6 +828,19 @@
         let s = String(val).replace('.', ',');
         if (s.endsWith(',0')) s = s.replace(',0', '');
         return s;
+    }
+        function switchGuideTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("guide-section");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].classList.remove('active');
+        }
+        tablinks = document.getElementsByClassName("guide-tab");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("active");
+        }
+        document.getElementById(tabName).classList.add('active');
+        evt.currentTarget.className += " active";
     }
 
     // Logica interna spostata da generaPDF a doGeneraPDF
