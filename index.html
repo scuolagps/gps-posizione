@@ -71,7 +71,7 @@
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
         #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
-        .chart-container-generic { display: block; width: 100%; max-width: none; margin: 0 auto; padding: 30px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 600px; box-sizing: border-box; }
+        .chart-container-generic { display: block; width: 100%; max-width: none; margin: 0 auto; padding: 40px 30px 30px 30px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 600px; box-sizing: border-box; }
         .tab-navigation { display: none; position: sticky; top: 80px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
         .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
         .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
@@ -88,8 +88,8 @@
         .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; position: relative; }
         .table-scroll table { min-width: 500px; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; max-width: 100%; position: relative; }
-        .chart-zoom-controls { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 5px; }
-        .zoom-btn { padding: 5px 12px; background: var(--primary-blue); color: var(--white); border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; }
+        .chart-zoom-controls { display: flex; justify-content: flex-end; gap: 10px; position: absolute; top: 10px; right: 10px; z-index: 10; background: transparent; }
+        .zoom-btn { padding: 5px 12px; background: rgba(0, 85, 165, 0.85); color: var(--white); border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .zoom-btn:hover { background: var(--dark-blue); }
         
         /* Stile Footer */
@@ -682,12 +682,15 @@
     function zoomChart(containerId, direction) {
         const container = document.getElementById(containerId);
         if (!container) return;
-        let baseWidth = parseInt(container.dataset.baseWidth || 800);
-        let currentWidth = container.offsetWidth;
+        const parent = container.parentElement;
+        
+        // Larghezza attuale o base
+        let currentWidth = parseInt(container.style.width) || parent.clientWidth;
         let newWidth = currentWidth * (direction === 1 ? 1.25 : 0.8);
         
-        // Limite minimo: la larghezza base (prima che i nomi si sovrappongano)
-        if (newWidth < baseWidth) newWidth = baseWidth;
+        // Limite minimo: larghezza del genitore (quando la barra orizzontale sparisce)
+        let minWidth = parent.clientWidth - 20; // Margine per ombre/bordi
+        if (newWidth < minWidth) newWidth = minWidth;
         
         container.style.width = newWidth + 'px';
         container.style.minWidth = newWidth + 'px';
@@ -784,7 +787,7 @@
                     
                     const validForChart = validLabels.filter(l => classStats[l].scuole > 0);
                     if (validForChart.length > 0) {
-                        htmlOutput += `<div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', 1)">🔍 +</button></div><div class="chart-outer-scroll"><div class="chart-container-generic" id="container_chart_${classe}"><canvas id="chart_${classe}"></canvas></div></div>`;
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', 1)">🔍 +</button></div><div class="chart-container-generic" id="container_chart_${classe}"><canvas id="chart_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_${classe}`, labels: validForChart, stats: classStats });
                     }
                 }
@@ -916,7 +919,7 @@
                     htmlOutput += `</tbody></table>`;
                     
                     if (labels.length > 0) {
-                        htmlOutput += `<div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', 1)">🔍 +</button></div><div class="chart-outer-scroll"><div class="chart-container-generic" id="container_chart_bollettino_${classe}"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', 1)">🔍 +</button></div><div class="chart-container-generic" id="container_chart_bollettino_${classe}"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
                     }
                 }
