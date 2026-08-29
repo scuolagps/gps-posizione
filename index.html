@@ -679,7 +679,7 @@
             if (txtValue.toLowerCase().indexOf(filter) > -1) { items[i].style.display = ""; } else { items[i].style.display = "none"; }
         }
     }
-        function zoomChart(containerId, direction) {
+    function zoomChart(containerId, direction) {
         const container = document.getElementById(containerId);
         if (!container) return;
         let baseWidth = parseInt(container.dataset.baseWidth || 800);
@@ -796,7 +796,8 @@
                     const classeCode = c.id.replace('chart_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    let baseWidth = Math.max(800, c.labels.length * 120);
+                    // Larghezza base minima (90px per provincia) per non sovrapporre i nomi
+                    let baseWidth = Math.max(800, c.labels.length * 90);
                     container.style.width = baseWidth + 'px';
                     container.style.minWidth = baseWidth + 'px';
                     container.dataset.baseWidth = baseWidth;
@@ -929,7 +930,8 @@
                     const classeCode = c.id.replace('chart_bollettino_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    let baseWidth = Math.max(800, c.labels.length * 120);
+                    // Larghezza base minima (90px per provincia) per non sovrapporre i nomi
+                    let baseWidth = Math.max(800, c.labels.length * 90);
                     container.style.width = baseWidth + 'px';
                     container.style.minWidth = baseWidth + 'px';
                     container.dataset.baseWidth = baseWidth;
