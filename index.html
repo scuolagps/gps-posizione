@@ -796,8 +796,8 @@
                     const classeCode = c.id.replace('chart_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    // Larghezza base molto stretta per far stare quasi tutte le province in una schermata
-                    let baseWidth = Math.max(800, c.labels.length * 55);
+                    // Larghezza base: 65px per provincia per tenere le scritte oblique (45°)
+                    let baseWidth = Math.max(800, c.labels.length * 65);
                     container.style.width = baseWidth + 'px';
                     container.style.minWidth = baseWidth + 'px';
                     container.dataset.baseWidth = baseWidth;
@@ -810,8 +810,8 @@
                     }
                     
                     const chart = new Chart(ctx, {
-                        type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Rapporto Scuole/Candidati', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { bodyFont: { size: 14 } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati', font: { size: 14 } }, ticks: { font: { size: 13 } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 11 } } } } }
+                        type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Rapporto Scuole/Candidati', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, barPercentage: 0.5 }] },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { bodyFont: { size: 14 } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati', font: { size: 14 } }, ticks: { font: { size: 13 } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, font: { size: 11 } } } } }
                     });
                     myChartPdf.push(chart);
             });
@@ -930,8 +930,8 @@
                     const classeCode = c.id.replace('chart_bollettino_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    // Larghezza base molto stretta per far stare quasi tutte le province in una schermata
-                    let baseWidth = Math.max(800, c.labels.length * 55);
+                    // Larghezza base: 65px per provincia per tenere le scritte oblique (45°)
+                    let baseWidth = Math.max(800, c.labels.length * 65);
                     container.style.width = baseWidth + 'px';
                     container.style.minWidth = baseWidth + 'px';
                     container.dataset.baseWidth = baseWidth;
@@ -945,11 +945,11 @@
                     
                     const chart = new Chart(ctx, {
                         type: 'bar', data: { labels: c.labels, datasets: [
-                            { label: 'Candidati Totali', data: c.dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3 },
-                            { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
+                            { label: 'Candidati Totali', data: c.dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3, barPercentage: 0.5 },
+                            { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2, barPercentage: 0.5 },
                             { type: 'line', label: 'Scorrimento Graduatoria (Posizione Massima)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                         ]},
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 45, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
                     });
                     myChartBollettino.push(chart);
             });
