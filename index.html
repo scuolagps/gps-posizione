@@ -71,7 +71,7 @@
         #pdfViewer { display: flex; flex-direction: column; align-items: center; padding: 15px; }
         #pdfViewer iframe { width: 100%; height: 580px; border: none; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; }
-        .chart-container-generic { display: block; width: 100%; max-width: none; margin: 0 auto; padding: 30px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 600px; min-width: 800px; box-sizing: border-box; }
+        .chart-container-generic { display: block; width: 100%; max-width: none; margin: 0 auto; padding: 30px; border: 1px solid var(--border-gray); border-radius: 8px; background: var(--white); height: 600px; box-sizing: border-box; }
         .tab-navigation { display: none; position: sticky; top: 80px; background: var(--white); z-index: 900; padding: 15px 0; border-bottom: 2px solid var(--bg-gray); margin-bottom: 30px; box-shadow: 0 4px 6px -4px rgba(0,0,0,0.1); }
         .tab-btn { background: none; border: none; padding: 10px 25px; cursor: pointer; font-size: 17px; color: var(--text-gray); border-bottom: 3px solid transparent; margin-bottom: -2px; font-weight: 600; width: auto; display: none; font-family: inherit; transition: all 0.2s; }
         .tab-btn:hover { background: var(--light-blue); color: var(--dark-blue); }
@@ -796,8 +796,8 @@
                     const classeCode = c.id.replace('chart_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    // Larghezza base minima (90px per provincia) per non sovrapporre i nomi
-                    let baseWidth = Math.max(800, c.labels.length * 90);
+                    // Larghezza base molto stretta per far stare quasi tutte le province in una schermata
+                    let baseWidth = Math.max(800, c.labels.length * 55);
                     container.style.width = baseWidth + 'px';
                     container.style.minWidth = baseWidth + 'px';
                     container.dataset.baseWidth = baseWidth;
@@ -811,7 +811,7 @@
                     
                     const chart = new Chart(ctx, {
                         type: 'bar', data: { labels: c.labels, datasets: [{ label: 'Rapporto Scuole/Candidati', data: c.labels.map(l => c.stats[l].rapporto), backgroundColor: 'rgba(0, 85, 165, 0.6)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1 }] },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { bodyFont: { size: 14 } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati', font: { size: 14 } }, ticks: { font: { size: 13 } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } } } }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, title: { display: true, text: `Rapporto S/C - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { bodyFont: { size: 14 } } }, scales: { y: { beginAtZero: true, title: { display: true, text: 'Rapporto Scuole/Candidati', font: { size: 14 } }, ticks: { font: { size: 13 } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 11 } } } } }
                     });
                     myChartPdf.push(chart);
             });
@@ -930,8 +930,8 @@
                     const classeCode = c.id.replace('chart_bollettino_', '');
                     const ctx = document.getElementById(c.id).getContext('2d');
                     const container = ctx.canvas.parentNode;
-                    // Larghezza base minima (90px per provincia) per non sovrapporre i nomi
-                    let baseWidth = Math.max(800, c.labels.length * 90);
+                    // Larghezza base molto stretta per far stare quasi tutte le province in una schermata
+                    let baseWidth = Math.max(800, c.labels.length * 55);
                     container.style.width = baseWidth + 'px';
                     container.style.minWidth = baseWidth + 'px';
                     container.dataset.baseWidth = baseWidth;
@@ -949,7 +949,7 @@
                             { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2 },
                             { type: 'line', label: 'Scorrimento Graduatoria (Posizione Massima)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                         ]},
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 13 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30, font: { size: 11 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
                     });
                     myChartBollettino.push(chart);
             });
