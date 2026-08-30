@@ -88,8 +88,8 @@
         .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; position: relative; }
         .table-scroll table { min-width: 500px; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; max-width: 100%; position: relative; }
-        .chart-zoom-controls { display: flex; justify-content: flex-end; gap: 5px; position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255, 255, 255, 0.9); padding: 4px 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .zoom-btn { padding: 3px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; box-shadow: none; transition: all 0.2s; }
+        .chart-zoom-controls { display: flex; justify-content: flex-end; align-items: center; gap: 5px; position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255, 255, 255, 0.95); padding: 4px 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .zoom-btn { display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; line-height: 1; box-shadow: none; transition: all 0.2s; }
         .zoom-btn:hover { background: #e2e8f0; color: #1e293b; }
         
         /* Stile Footer */
@@ -203,8 +203,8 @@
         .mock-table th { background: var(--accent-orange); color: #fff; padding: 6px; text-align: center; }
         .mock-table td { border: 1px solid #ddd; padding: 6px; text-align: center; }
         .mock-table .highlight { background: var(--light-blue); font-weight: bold; color: var(--primary-blue); }
-        .example-box { background: #f8fbff; border-left: 5px solid var(--primary-blue); padding: 15px; border-radius: 4px; margin: 15px 0; }
-        .example-box strong { color: var(--dark-blue); }
+        .example-box { background: #f8fbff; border-left: 5px solid var(--primary-blue); padding: 15px; border-radius: 4px; margin: 15px 0; color: #2D3748; }
+        .example-box strong { color: var(--dark-blue); font-weight: 700; }
     </style>
 </head>
 <body>
@@ -465,14 +465,16 @@
                 <div class="step-card">
                     <div class="step-header">
                         <div class="step-number">5</div>
-                        <h2 class="step-title">Leggere i Grafici e i Dati</h2>
+                        <h2 class="step-title">Leggere il Grafico Rapporto Scuole/Candidati</h2>
                     </div>
                     <div class="content-block">
-                        <p>Dopo aver cliccato, appariranno le tabelle e i grafici. Se le province sono tante, puoi usare i pulsanti di zoom in alto a destra per ingrandire o rimpicciolire la visuale.</p>
+                        <p>Il grafico "Rapporto Scuole/Candidati" ti mostra quante scuole ci sono per ogni candidato in una determinata provincia. Più alto è il valore della barra, migliori sono le probabilità di essere chiamato, perché ci sono più scuole a disposizione rispetto al numero di aspiranti.</p>
+                        <div class="info-box"><strong>Come leggere il dato:</strong> Una provincia con un rapporto di 0,5 significa che c'è circa 1 scuola per ogni 2 candidati. Una provincia con 0,1 ha 1 scuola per 10 candidati (molta competizione).</div>
+                        <p>Se le province sono tante, puoi usare i pulsanti di zoom in alto a destra (🔍 - e 🔍 +) per ingrandire o rimpicciolire la visuale senza perdere il dettaglio. Tutte le province sono ordinate alfabeticamente.</p>
                         <div class="ui-mockup">
-                            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 5px;">
-                                <div style="padding: 2px 8px; background: var(--primary-blue); color: #fff; border-radius: 4px; font-size: 12px;">🔍 -</div>
-                                <div style="padding: 2px 8px; background: var(--primary-blue); color: #fff; border-radius: 4px; font-size: 12px;">🔍 +</div>
+                            <div style="display: flex; justify-content: flex-end; gap: 5px; margin-bottom: 5px;">
+                                <div style="display: inline-flex; align-items: center; padding: 4px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">🔍 -</div>
+                                <div style="display: inline-flex; align-items: center; padding: 4px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">🔍 +</div>
                             </div>
                             <div class="mock-chart">
                                 <div class="mock-chart-bars">
@@ -482,10 +484,9 @@
                                     <div class="mock-bar" style="height: 30%;"></div>
                                     <div class="mock-bar" style="height: 50%;"></div>
                                 </div>
-                                <div class="mock-chart-labels"><div>Milano</div><div>Bergamo</div><div>Brescia</div><div>Varese</div><div>Como</div></div>
+                                <div class="mock-chart-labels"><div>Bergamo</div><div>Brescia</div><div>Como</div><div>Milano</div><div>Varese</div></div>
                             </div>
                         </div>
-                        <div class="example-box"><strong>Importante:</strong> Nella sezione "Dettagli per Provincia", i dati sono raggruppati e ordinati prima per Regione e poi per Provincia in ordine alfabetico, per facilitare la lettura.</div>
                     </div>
                 </div>
 
@@ -493,6 +494,18 @@
                 <div class="step-card">
                     <div class="step-header">
                         <div class="step-number">6</div>
+                        <h2 class="step-title">Navigare Tabelle e Dettagli</h2>
+                    </div>
+                    <div class="content-block">
+                        <p>Tutti i dati, sia nelle tabelle che nei grafici, sono ordinati alfabeticamente per facilitare la ricerca della tua provincia.</p>
+                        <div class="example-box"><strong>Importante:</strong> Nella sezione "Dettagli per Provincia", i dati sono raggruppati e ordinati prima per Regione e poi per Provincia in ordine alfabetico, per facilitare la lettura.</div>
+                    </div>
+                </div>
+
+                <!-- PASSO 7 -->
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">7</div>
                         <h2 class="step-title">Capire le Metriche (Assunzione, Cut-off, Rifiuti)</h2>
                     </div>
                     <div class="content-block">
