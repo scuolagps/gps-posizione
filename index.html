@@ -88,9 +88,9 @@
         .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; position: relative; }
         .table-scroll table { min-width: 500px; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; max-width: 100%; position: relative; }
-        .chart-zoom-controls { display: flex; justify-content: flex-end; gap: 10px; position: absolute; top: 10px; right: 10px; z-index: 10; background: transparent; }
-        .zoom-btn { padding: 5px 12px; background: rgba(0, 85, 165, 0.85); color: var(--white); border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .zoom-btn:hover { background: var(--dark-blue); }
+        .chart-zoom-controls { display: flex; justify-content: flex-end; gap: 5px; position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255, 255, 255, 0.9); padding: 4px 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .zoom-btn { padding: 3px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; box-shadow: none; transition: all 0.2s; }
+        .zoom-btn:hover { background: #e2e8f0; color: #1e293b; }
         
         /* Stile Footer */
         .site-footer { max-width: 1000px; margin: 0 auto 60px; padding: 30px 40px; text-align: center; color: #666; font-size: 13px; border-top: 1px solid var(--border-gray); }
@@ -919,7 +919,7 @@
                     });
                     htmlOutput += `</tbody></table>`;
                     
-                    const validForChart = validLabels.filter(l => classStats[l].scuole > 0);
+                    const validForChart = validLabels.filter(l => classStats[l].scuole > 0).sort((a, b) => a.localeCompare(b));
                     if (validForChart.length > 0) {
                         htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', 1)">🔍 +</button></div><div class="chart-container-generic" id="container_chart_${classe}"><canvas id="chart_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_${classe}`, labels: validForChart, stats: classStats });
@@ -1020,10 +1020,18 @@
                     htmlOutput += `<h3 style="font-family: 'Montserrat', sans-serif; color: var(--primary-blue); margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">Classe: ${classe}</h3>`;
                     htmlOutput += `<table style="width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; border: 1px solid #D1D9E6;"><thead><tr style="background-color: #F39C12; color: white;"><th style="border: 1px solid #D1D9E6; padding: 8px;">Regione</th><th style="border: 1px solid #D1D9E6; padding: 8px;">Provincia</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Candidati Totali</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Persone Nominate</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Assunzione</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Posizione Massima</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Percentuale Rifiuto</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 31/08</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio 30/06</th><th style="border: 1px solid #D1D9E6; padding: 8px; text-align: center;">Punteggio Spezzoni</th></tr></thead><tbody>`;
                     
-                    const labels = classData.map(item => item.provincia);
-                    const dataCand = classData.map(item => item.candidati_totali);
-                    const dataNominati = classData.map(item => item.nominati_univoci);
-                    const dataMaxPos = classData.map(item => item.max_posizione);
+                    // Creazione array di oggetti per ordinare alfabeticamente mantenendo i dati allineati
+                    const chartItems = classData.map(item => ({
+                        provincia: item.provincia,
+                        candidati: item.candidati_totali,
+                        nominati: item.nominati_univoci,
+                        maxPos: item.max_posizione
+                    })).sort((a, b) => a.provincia.localeCompare(b.provincia));
+                    
+                    const labels = chartItems.map(item => item.provincia);
+                    const dataCand = chartItems.map(item => item.candidati);
+                    const dataNominati = chartItems.map(item => item.nominati);
+                    const dataMaxPos = chartItems.map(item => item.maxPos);
 
                     let currentRegione = null;
                     
