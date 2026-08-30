@@ -89,7 +89,8 @@
         .table-scroll table { min-width: 500px; }
         .chart-outer-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 20px 0; max-width: 100%; position: relative; }
         .chart-zoom-controls { display: flex; justify-content: flex-end; align-items: center; gap: 5px; position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255, 255, 255, 0.95); padding: 4px 6px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
-        .zoom-btn { display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; line-height: 1; box-shadow: none; transition: all 0.2s; }
+        /* FIX: Dimensione uniforme per i tasti di ingrandimento */
+        .zoom-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 26px; padding: 0; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; line-height: 1; box-shadow: none; transition: all 0.2s; }
         .zoom-btn:hover { background: #e2e8f0; color: #1e293b; }
         
         /* Stile Footer */
@@ -470,11 +471,11 @@
                     <div class="content-block">
                         <p>Il grafico "Rapporto Scuole/Candidati" ti mostra quante scuole ci sono per ogni candidato in una determinata provincia. Più alto è il valore della barra, migliori sono le probabilità di essere chiamato, perché ci sono più scuole a disposizione rispetto al numero di aspiranti.</p>
                         <div class="info-box"><strong>Come leggere il dato:</strong> Una provincia con un rapporto di 0,5 significa che c'è circa 1 scuola per ogni 2 candidati. Una provincia con 0,1 ha 1 scuola per 10 candidati (molta competizione).</div>
-                        <p>Se le province sono tante, puoi usare i pulsanti di zoom in alto a destra (🔍 - e 🔍 +) per ingrandire o rimpicciolire la visuale senza perdere il dettaglio. Tutte le province sono ordinate alfabeticamente.</p>
+                        <p>Se le province sono tante, puoi usare i pulsanti di zoom in alto a destra (🔍 - e 🔍 +) per ingrandire o rimpicciolire la visuale senza perdere il dettaglio. <strong>I due tasti di ingrandimento hanno la stessa dimensione</strong> in tutti i grafici per garantirti un'esperienza uniforme. Tutte le province sono ordinate alfabeticamente.</p>
                         <div class="ui-mockup">
                             <div style="display: flex; justify-content: flex-end; gap: 5px; margin-bottom: 5px;">
-                                <div style="display: inline-flex; align-items: center; padding: 4px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">🔍 -</div>
-                                <div style="display: inline-flex; align-items: center; padding: 4px 8px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">🔍 +</div>
+                                <div style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 26px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">🔍 -</div>
+                                <div style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 26px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; font-weight: 600;">🔍 +</div>
                             </div>
                             <div class="mock-chart">
                                 <div class="mock-chart-bars">
@@ -487,6 +488,7 @@
                                 <div class="mock-chart-labels"><div>Bergamo</div><div>Brescia</div><div>Como</div><div>Milano</div><div>Varese</div></div>
                             </div>
                         </div>
+                        <div class="info-box" style="margin-top: 20px;"><strong>Grafici Interattivi:</strong> Ricorda che i grafici sono interattivi! Se clicchi sulle voci della legenda (ad esempio "Persone Nominate" o "Candidati Totali" nel grafico delle nomine), puoi nascondere o mostrare i dati specifici per confrontarli meglio. Il cursore cambierà aspetto per indicarti che sono cliccabili.</div>
                     </div>
                 </div>
 
@@ -934,7 +936,7 @@
                     
                     const validForChart = validLabels.filter(l => classStats[l].scuole > 0).sort((a, b) => a.localeCompare(b));
                     if (validForChart.length > 0) {
-                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', 1)">🔍 +</button></div><div class="chart-container-generic" id="container_chart_${classe}"><canvas id="chart_${classe}"></canvas></div></div>`;
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_${classe}', 1)">🔍 +</button></div><p style="font-size:12px; color:#666; margin-bottom:5px; font-style:italic;">ℹ️ <strong>Interattività:</strong> Clicca sulle voci della legenda per nasconderle o mostrarle e analizzare meglio i dati.</p><div class="chart-container-generic" id="container_chart_${classe}"><canvas id="chart_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_${classe}`, labels: validForChart, stats: classStats });
                     }
                 }
@@ -1079,7 +1081,7 @@
                     htmlOutput += `</tbody></table>`;
                     
                     if (labels.length > 0) {
-                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', 1)">🔍 +</button></div><div class="chart-container-generic" id="container_chart_bollettino_${classe}"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
+                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', 1)">🔍 +</button></div><p style="font-size:12px; color:#666; margin-bottom:5px; font-style:italic;">ℹ️ <strong>Interattività:</strong> Clicca sulle voci della legenda (es. "Persone Nominate") per nasconderle o mostrarle e confrontare meglio i dati.</p><div class="chart-container-generic" id="container_chart_bollettino_${classe}"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
                     }
                 }
@@ -1117,7 +1119,14 @@
                             { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2, barPercentage: 0.5 },
                             { type: 'line', label: 'Scorrimento Graduatoria (Posizione Massima)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                         ]},
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } }, scales: { x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 90, font: { size: 10 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { 
+                            legend: { 
+                                onHover: (e) => e.native.target.style.cursor = 'pointer', 
+                                onLeave: (e) => e.native.target.style.cursor = 'default' 
+                            }, 
+                            title: { display: true, text: `Confronto Candidati e Nomine - ${classeCode}`, font: { size: 16, weight: 'bold' } }, 
+                            tooltip: { mode: 'index', intersect: false, bodyFont: { size: 14 } } 
+                        }, scales: { x: { ticks: { autoSkip: false, maxRotation: 90, minRotation: 90, font: { size: 10 } } }, y1: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Numero Persone', font: { size: 14 } }, grid: { drawOnChartArea: true }, beginAtZero: true, ticks: { font: { size: 13 } } } } }
                     });
                     myChartBollettino.push(chart);
             });
