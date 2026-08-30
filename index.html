@@ -1081,7 +1081,7 @@
                     htmlOutput += `</tbody></table>`;
                     
                     if (labels.length > 0) {
-                        htmlOutput += `<div class="chart-outer-scroll"><div class="chart-zoom-controls"><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', 1)">🔍 +</button></div><div id="legend_box_${classe}" style="display:flex; justify-content:center; gap:12px; margin:15px 0 0 0; flex-wrap:wrap;"></div><div class="chart-container-generic" id="container_chart_bollettino_${classe}"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
+                        htmlOutput += `<div class="chart-outer-scroll"><div style="position:relative; margin-bottom:10px; padding:0 5px;"><div id="legend_box_${classe}" style="display:flex; gap:15px; flex-wrap:wrap; justify-content:center;"></div><div class="chart-zoom-controls" style="position:absolute; top:0; right:5px; box-shadow:none; background:transparent; border:none; padding:0;"><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', -1)">🔍 -</button><button class="zoom-btn" onclick="zoomChart('container_chart_bollettino_${classe}', 1)">🔍 +</button></div></div><div class="chart-container-generic" id="container_chart_bollettino_${classe}"><canvas id="chart_bollettino_${classe}"></canvas></div></div>`;
                         chartsToRender.push({ id: `chart_bollettino_${classe}`, labels, dataCand, dataNominati, dataMaxPos });
                     }
                 }
@@ -1127,15 +1127,18 @@
                     });
                     myChartBollettino.push(chart);
                     
-                    // Creazione legenda personalizzata in HTML per effetto rilievo e ombra
+                    // Creazione legenda personalizzata in HTML per effetto rilievo, ombra e colori esatti
                     const legendBox = document.getElementById('legend_box_' + classeCode);
                     if (legendBox) {
                         legendBox.innerHTML = '';
                         chart.data.datasets.forEach((dataset, i) => {
                             const btn = document.createElement('button');
                             btn.style.cssText = 'display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:6px; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.15); border:1px solid #cbd5e1; background:#fff; font-weight:600; font-size:13px; color:#333; transition: all 0.2s; font-family: inherit;';
-                            const bgColor = Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[0] : dataset.backgroundColor;
-                            btn.innerHTML = `<span style="display:inline-block; width:14px; height:14px; background:${bgColor}; border-radius:3px;"></span>${dataset.label}`;
+                            
+                            // Prende il colore del bordo se è una linea, altrimenti lo sfondo
+                            const color = dataset.borderColor || (Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[0] : dataset.backgroundColor);
+                            btn.innerHTML = `<span style="display:inline-block; width:14px; height:14px; background:${color}; border-radius:3px;"></span>${dataset.label}`;
+                            
                             btn.onmouseover = () => { btn.style.boxShadow = '0 6px 10px rgba(0,0,0,0.25)'; btn.style.transform = 'translateY(-1px)'; };
                             btn.onmouseout = () => { btn.style.boxShadow = '0 4px 6px rgba(0,0,0,0.15)'; btn.style.transform = 'translateY(0)'; };
                             btn.onclick = () => {
