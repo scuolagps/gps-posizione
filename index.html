@@ -1240,6 +1240,10 @@
         }
         document.getElementById(tabName).style.display = "block";
         document.getElementById(tabName).classList.add('active');
+        if(evt) evt.currentTarget.className += " active";
+    }
+</script>
+
 <!-- INIZIO BANNER COOKIE PERSONALIZZATO -->
 <div id="cookie-banner" style="display:none; position:fixed; bottom:0; left:0; width:100%; background-color:#003B73; color:white; padding:20px; z-index:3000; box-shadow:0 -4px 15px rgba(0,0,0,0.2); flex-direction:column; align-items:center; gap:15px; text-align:center;">
     <p style="margin:0; font-size:15px; max-width:800px;">
