@@ -4,7 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- FAVICON -->
+    <!-- 1. IMPOSTAZIONI PREDEFINITE CONSENSO (GDPR: TUTTO NEGATO ALL'INIZIO) -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      // Diciamo a Google che l'utente NON ha ancora dato il consenso
+      gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied'
+      });
+    </script>
+    
+    <!-- 2. SCRIPT DI GOOGLE ANALYTICS -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TUO_CODICE_GA4"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-BMBFNGFED2');
+    </script>
+
+    <!-- FAVICON (Il resto del tuo codice originale) -->
     <link rel="icon" type="image/png" href="logo.png" sizes="32x32">
     <link rel="icon" type="image/png" href="logo.png" sizes="16x16">
     <link rel="apple-touch-icon" href="logo.png">
