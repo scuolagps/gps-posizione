@@ -1003,7 +1003,20 @@
         const fasciaSelezionata = document.getElementById('fasciaSelect').value;
         const bollettinoURL = RENDER_URL.replace('/genera-pdf', '/genera-bollettino');
         const response = await fetch(bollettinoURL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ classi: classiSelezionate, regioni: selectedRegioni, province: selectedProvince, fascia: fasciaSelezionata }) });
-        if (!response.ok) { let errorMessage = "Errore sconosciuto."; try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} throw new Error(errorMessage); }
+        if (!response.ok) { 
+            // MODIFICA: Se il server non trova i file (404), mostriamo un messaggio pulito
+            if (response.status === 404) {
+                statusMsg.style.color = "#F39C12"; // Colore arancione per avviso, non rosso da errore
+                statusMsg.innerText = "Nessuna nomina trovata per la selezione effettuata.";
+                document.getElementById('chartSectionBollettinoWrapper').style.display = 'none'; 
+                document.getElementById('analisiBollettinoWrapper').style.display = 'none';
+                return; // Ferma l'esecuzione senza far apparire la scritta "Errore"
+            }
+            
+            let errorMessage = "Errore sconosciuto."; 
+            try { const errorData = await response.json(); if (errorData.error) errorMessage = errorData.error; } catch (e) {} 
+            throw new Error(errorMessage); 
+        }
         const result = await response.json();
         const data = result.data; 
         
