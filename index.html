@@ -1182,14 +1182,15 @@
                         legendBox.innerHTML = '';
                         chart.data.datasets.forEach((dataset, i) => {
                             const btn = document.createElement('button');
-                            btn.style.cssText = 'display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:6px; cursor:pointer; box-shadow:0 4px 6px rgba(0,0,0,0.15); border:1px solid #cbd5e1; background:#fff; font-weight:600; font-size:13px; color:#333; transition: all 0.2s; font-family: inherit;';
+                            // MODIFICHE: display:inline-flex, padding e font ridotti, aggiunto white-space:nowrap
+                            btn.style.cssText = 'display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:5px; cursor:pointer; box-shadow:0 3px 5px rgba(0,0,0,0.12); border:1px solid #cbd5e1; background:#fff; font-weight:600; font-size:12px; white-space:nowrap; color:#333; transition: all 0.2s; font-family: inherit;';
                             
                             // Prende il colore del bordo se è una linea, altrimenti lo sfondo
                             const color = dataset.borderColor || (Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[0] : dataset.backgroundColor);
-                            btn.innerHTML = `<span style="display:inline-block; width:14px; height:14px; background:${color}; border-radius:3px;"></span>${dataset.label}`;
+                            btn.innerHTML = `<span style="display:inline-block; width:12px; height:12px; background:${color}; border-radius:3px;"></span>${dataset.label}`;
                             
-                            btn.onmouseover = () => { btn.style.boxShadow = '0 6px 10px rgba(0,0,0,0.25)'; btn.style.transform = 'translateY(-1px)'; };
-                            btn.onmouseout = () => { btn.style.boxShadow = '0 4px 6px rgba(0,0,0,0.15)'; btn.style.transform = 'translateY(0)'; };
+                            btn.onmouseover = () => { btn.style.boxShadow = '0 5px 8px rgba(0,0,0,0.2)'; btn.style.transform = 'translateY(-1px)'; };
+                            btn.onmouseout = () => { btn.style.boxShadow = '0 3px 5px rgba(0,0,0,0.12)'; btn.style.transform = 'translateY(0)'; };
                             btn.onclick = () => {
                                 const meta = chart.getDatasetMeta(i);
                                 meta.hidden = !meta.hidden;
