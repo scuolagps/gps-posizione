@@ -1166,7 +1166,7 @@
                         type: 'bar', data: { labels: c.labels, datasets: [
                             { label: 'Candidati Totali', data: c.dataCand, backgroundColor: 'rgba(211, 211, 211, 0.6)', borderColor: 'rgba(211, 211, 211, 1)', borderWidth: 1, yAxisID: 'y1', order: 3, barPercentage: 0.5 },
                             { label: 'Persone Nominate', data: c.dataNominati, backgroundColor: 'rgba(0, 85, 165, 0.7)', borderColor: 'rgba(0, 85, 165, 1)', borderWidth: 1, yAxisID: 'y1', order: 2, barPercentage: 0.5 },
-                            { type: 'line', label: 'Scorrimento Graduatoria (Posizione Massima)', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
+                            { type: 'line', label: 'Scorrimento Graduatoria', data: c.dataMaxPos, borderColor: 'rgba(239, 71, 111, 1)', backgroundColor: 'rgba(239, 71, 111, 0.2)', yAxisID: 'y1', tension: 0.2, order: 1 }
                         ]},
                         options: { responsive: true, maintainAspectRatio: false, plugins: { 
                             legend: { display: false }, 
@@ -1182,8 +1182,8 @@
                         legendBox.innerHTML = '';
                         chart.data.datasets.forEach((dataset, i) => {
                             const btn = document.createElement('button');
-                            // MODIFICHE: display:inline-flex, padding e font ridotti, aggiunto white-space:nowrap
-                            btn.style.cssText = 'display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:5px; cursor:pointer; box-shadow:0 3px 5px rgba(0,0,0,0.12); border:1px solid #cbd5e1; background:#fff; font-weight:600; font-size:12px; white-space:nowrap; color:#333; transition: all 0.2s; font-family: inherit;';
+                            // AGGIUNTO width:auto; e ridotto ulteriormente padding/font
+                            btn.style.cssText = 'display:inline-flex; width:auto; align-items:center; gap:5px; padding:4px 8px; border-radius:4px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.1); border:1px solid #cbd5e1; background:#fff; font-weight:600; font-size:11px; white-space:nowrap; color:#333; transition: all 0.2s; font-family: inherit;';
                             
                             // Prende il colore del bordo se è una linea, altrimenti lo sfondo
                             const color = dataset.borderColor || (Array.isArray(dataset.backgroundColor) ? dataset.backgroundColor[0] : dataset.backgroundColor);
